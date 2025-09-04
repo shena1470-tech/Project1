@@ -6,123 +6,101 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 한화생명 사내 AI 어시스턴트 - AI 기반 통합 업무 지원 플랫폼
 
-This is a web-based AI assistant platform for Hanwha Life Insurance employees, focusing on integrated information search, intelligent report generation, and smart schedule management.
+This is a web-based AI assistant platform for Hanwha Life Insurance employees, providing integrated information search, intelligent report generation, and smart schedule management.
 
 ## Development Commands
 
 ### Running the Application
 ```bash
-# Open the application locally
+# Open the application directly in browser (simplest method)
 open index.html
-# Or use a local web server (if Python is installed)
+
+# Use local web server for better development experience
 python3 -m http.server 8000
 # Then navigate to http://localhost:8000
+
+# Alternative: Use any static file server
+npx http-server -p 8000  # If Node.js is available
 ```
 
-### File Serving
-For production deployment, serve these files using a standard web server (Apache, Nginx, etc.) or deploy to a CDN/static hosting service.
+### Testing Mobile Responsiveness
+```bash
+# Open Chrome DevTools → Toggle device toolbar (Cmd+Shift+M on Mac)
+# Test breakpoints: Mobile (<768px), Tablet (768-1024px), Desktop (>1024px)
+```
 
 ## Code Architecture
 
-### File Structure
+### Core Application Flow
+The application follows a state-driven pattern:
+1. **Initial State**: Welcome screen with central input (`index.html` + `hanwha-app.js`)
+2. **Chat Initiation**: User input triggers `initiateChatMode()` → UI transformation
+3. **Message Flow**: `sendMessage()` → `addUserMessage()` → `addAIResponse()` (simulated)
+4. **State Persistence**: Chat history and theme preferences stored in localStorage
+
+### Key Technical Decisions
+- **No Framework**: Pure vanilla JavaScript for minimal dependencies and fast loading
+- **CSS Custom Properties**: Dynamic theming without JavaScript manipulation
+- **Mobile-First**: Base styles for mobile, progressive enhancement for larger screens
+- **DOM Caching**: Elements cached on load to avoid repeated queries (`hanwha-app.js:8-15`)
+
+### State Management Pattern
+```javascript
+// Global state (hanwha-app.js:3-6)
+let chatStarted = false;     // Controls UI mode
+let messages = [];           // Chat history
+let currentTheme = 'light';  // Theme preference
 ```
-projectH/
-├── index.html           # Main application entry point
-├── css/
-│   ├── hanwha-design-system.css  # Primary design system styles
-│   └── styles.css      # Legacy styles (may be deprecated)
-├── js/
-│   ├── hanwha-app.js   # Main application logic
-│   └── app.js          # Legacy application code
-├── data/
-│   └── sampleData.json # Sample data for templates and users
-└── assets/             # Images and icons
-```
 
-### Key Components
-
-#### Frontend Architecture
-- **Single Page Application**: Pure vanilla JavaScript with DOM manipulation
-- **State Management**: Global variables in `hanwha-app.js` managing `chatStarted`, `messages`, and `currentTheme`
-- **UI Components**:
-  - Sidebar navigation with user profile and chat management
-  - Main chat interface with welcome screen and message area
-  - Quick action buttons for common tasks
-  - Dark mode toggle functionality
-  - Mobile responsive design with hamburger menu
-
-#### Styling System
-- **Design System**: `hanwha-design-system.css` implements Hanwha's brand identity
-- **Theme Support**: Light/dark mode toggle with CSS custom properties
-- **Responsive Design**: Mobile-first approach with breakpoints for tablets and desktop
-
-### Core Functionality
-
-1. **Chat Interface** (`hanwha-app.js`):
-   - `startNewChat()`: Initializes new conversation
-   - `sendMessage()`: Handles message sending and UI updates
-   - `addMessage()`: Renders messages in chat area
-   - `handleAIResponse()`: Simulates AI responses
-
-2. **Quick Actions**:
-   - Report creation (`createReport()`)
-   - Meeting scheduler (`scheduleMeeting()`)
-   - Menu viewer (`showMenu()`)
-
-3. **Theme Management**:
-   - `toggleTheme()`: Switches between light and dark modes
-   - Persists theme preference in localStorage
-
-4. **Mobile Support**:
-   - `toggleMobileSidebar()`: Handles mobile navigation
-   - Responsive layout adjustments
+### Data Layer Architecture
+Two parallel data management systems:
+1. **Session State** (`hanwha-app.js`): Runtime chat and UI state
+2. **Persistent Storage** (`app.js` via `DataManager`): LocalStorage for user data, stats, documents
 
 ## Important Integrations
 
-### Figma Design Resources
-The UI/UX designs are maintained in Figma. Use the MCP Figma integration to access:
-1. Main UI Components: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-1993
-2. Additional Screens: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-2061
+### Figma Design Integration
+When implementing UI changes, reference these Figma designs using MCP:
+- **Main Interface**: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-1993
+- **Additional Screens**: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-2061
 
-### Data Structure
-Sample data in `data/sampleData.json` includes:
-- User profiles with preferences
-- Document templates (회의록, 보고서)
-- Quick responses and suggestions
-- Menu information
+### Design System Variables
+The design system (`hanwha-design-system.css`) uses CSS custom properties:
+- **Colors**: Brand orange `#FA6600`, secondary `#403f3e`
+- **Typography**: Font stack includes `HanwhaGothic` (custom) → `Pretendard` → `Noto Sans KR`
+- **Spacing Scale**: xs(4px) → sm(8px) → md(12px) → lg(16px) → xl(24px) → 2xl(32px) → 3xl(48px)
 
-## Development Guidelines
+## Critical Implementation Notes
 
-### Adding New Features
-1. Follow the existing vanilla JavaScript patterns in `hanwha-app.js`
-2. Maintain the single-page application structure
-3. Use the established CSS class naming conventions from `hanwha-design-system.css`
-4. Ensure mobile responsiveness for all new components
+### Mobile Navigation Pattern
+The mobile sidebar uses a three-part system:
+1. **Toggle Button** (`.mobile-menu-toggle`): Triggers `toggleMobileSidebar()`
+2. **Overlay** (`.mobile-sidebar-overlay`): Click-to-close backdrop
+3. **Sidebar Transform**: CSS transforms for slide-in animation
 
-### Styling Guidelines
-- Use CSS custom properties for theme-aware styling
-- Follow BEM-like naming convention for CSS classes
-- Maintain consistent spacing using the existing CSS variables
-- Test both light and dark modes
+### Message Rendering
+Messages are rendered with distinct styling:
+- **User Messages**: Orange gradient background, right-aligned
+- **AI Messages**: White background with border, left-aligned
+- HTML is escaped using `escapeHtml()` function for security
 
-### State Management
-- Keep global state minimal in the main JavaScript file
-- Use DOM data attributes for component-specific state when needed
-- Handle async operations with appropriate loading states
+### Theme Toggle Implementation
+Dark mode toggle modifies:
+1. Root `data-theme` attribute on `<html>`
+2. CSS variables cascade automatically
+3. Preference saved to localStorage
 
-### Security Considerations
-- This is currently a frontend-only prototype
-- Production implementation will require:
-  - Backend API integration for actual AI responses
-  - Proper authentication and authorization
-  - Secure handling of employee data
-  - API rate limiting and error handling
+## Production Considerations
 
-## Future Enhancements
+### Current Limitations (Frontend-Only Prototype)
+- AI responses are simulated with setTimeout delays
+- No actual backend API integration
+- Data stored in browser localStorage only
+- No user authentication
 
-Based on the project roadmap, future development should focus on:
-1. Backend API integration for real AI responses
-2. User authentication system
-3. Real-time data synchronization
-4. Advanced reporting features with data visualization
-5. Integration with existing Hanwha Life systems
+### Required for Production
+1. **Backend API**: Real AI integration endpoint
+2. **Authentication**: Employee SSO integration
+3. **Data Security**: Encryption for sensitive employee data
+4. **Performance**: CDN for assets, code splitting for scalability
+5. **Error Handling**: Comprehensive error boundaries and fallbacks

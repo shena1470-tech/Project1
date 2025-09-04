@@ -314,6 +314,11 @@ body {
     justify-content: center;
 }
 
+.hanwha-logo img {
+    width: 100%;
+    height: 100%;
+}
+
 .hanwha-logo svg {
     width: 100%;
     height: 100%;
@@ -491,9 +496,11 @@ body {
     transform: translateY(-1px);
 }
 
-.quick-button-icon {
+.quick-button-icon,
+.tab-icon {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 }
 
 /* Chat Messages Area */

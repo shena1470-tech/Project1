@@ -15,10 +15,10 @@
             <path d="M3 18H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
         </svg>
     </button>
-    
+
     <!-- 모바일 사이드바 오버레이 -->
     <div class="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
-    
+
     <div class="app-container">
         <!-- 사이드바 -->
         <aside class="sidebar">
@@ -50,23 +50,15 @@
             <!-- 상단 헤더 -->
             <header class="top-header">
                 <div class="header-tabs">
-                    <button class="tab-button active">AI 어시스턴트</button>
+                    <button class="tab-button active">AI 비서</button>
                     <button class="tab-button" onclick="openReportBuilder()">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <rect x="3" y="3" width="10" height="12" stroke="currentColor" stroke-width="1.5"/>
-                            <line x1="6" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1.5"/>
-                            <line x1="6" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M13 8L17 12L13 16" stroke="currentColor" stroke-width="1.5"/>
-                        </svg>
+                        <img src="http://localhost:3845/assets/e1b51be7019747bf8ac33fc5978eb0e23e4f1f6d.svg" alt="" class="tab-icon" />
                         보고서 만들기
                     </button>
                     <button class="tab-button" onclick="openBoard()">게시판</button>
                 </div>
                 <div class="hanwha-logo">
-                    <svg viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="20" fill="#FA6600"/>
-                        <text x="24" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="bold">H</text>
-                    </svg>
+                    <img src="http://localhost:3845/assets/8ef148fc54019b8fc988297f5222a2486d7750b7.svg" alt="Hanwha Life" />
                 </div>
             </header>
 
@@ -79,9 +71,9 @@
                             <button class="input-plus-button" onclick="showAttachments()">
                                 <span class="plus-icon"></span>
                             </button>
-                            <input 
-                                type="text" 
-                                class="input-field" 
+                            <input
+                                type="text"
+                                class="input-field"
                                 placeholder="무엇이든 물어보세요."
                                 onkeypress="handleEnter(event)"
                                 id="mainInput"
@@ -92,12 +84,7 @@
                         </div>
                         <div class="quick-actions">
                             <button class="quick-button" onclick="createReport()">
-                                <svg class="quick-button-icon" viewBox="0 0 20 20" fill="none">
-                                    <rect x="4" y="3" width="12" height="14" stroke="#403f3e" stroke-width="1.2"/>
-                                    <line x1="7" y1="7" x2="13" y2="7" stroke="#403f3e" stroke-width="1.2"/>
-                                    <line x1="7" y1="10" x2="11" y2="10" stroke="#403f3e" stroke-width="1.2"/>
-                                    <line x1="7" y1="13" x2="13" y2="13" stroke="#403f3e" stroke-width="1.2"/>
-                                </svg>
+                                <img src="http://localhost:3845/assets/e1b51be7019747bf8ac33fc5978eb0e23e4f1f6d.svg" alt="" class="quick-button-icon" />
                                 보고서 만들기
                             </button>
                             <button class="quick-button" onclick="showMenu()">
@@ -132,9 +119,9 @@
                     <button class="input-plus-button" onclick="showAttachments()">
                         <span class="plus-icon"></span>
                     </button>
-                    <input 
-                        type="text" 
-                        class="input-field" 
+                    <input
+                        type="text"
+                        class="input-field"
                         placeholder="무엇이든 물어보세요."
                         onkeypress="handleEnter(event)"
                         id="bottomInputField"
