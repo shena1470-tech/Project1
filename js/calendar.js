@@ -186,31 +186,48 @@ class CalendarManager {
                 <div class="week-body">
         `;
         
-        // 시간별 그리드 (6시부터 22시까지)
+        // 30분 단위 시간별 그리드 (6시부터 22시까지)
         for (let hour = 6; hour <= 22; hour++) {
-            html += `
-                <div class="week-row">
-                    <div class="week-time">${hour}:00</div>
-            `;
-            
-            for (let day = 0; day < 7; day++) {
-                const date = new Date(startOfWeek);
-                date.setDate(date.getDate() + day);
-                const dateStr = this.formatDate(date);
-                const events = this.getEventsForDateTime(dateStr, hour);
+            for (let minute = 0; minute < 60; minute += 30) {
+                const timeStr = `${hour}:${minute === 0 ? '00' : '30'}`;
+                const isHalfHour = minute === 30;
                 
-                html += `<div class="week-cell" data-date="${dateStr}" data-hour="${hour}">`;
+                html += `
+                    <div class="week-row ${isHalfHour ? 'half-hour' : ''}">
+                        <div class="week-time">${timeStr}</div>
+                `;
                 
-                events.forEach(event => {
-                    const type = event.type === '회의' ? 'meeting' : 
-                               event.roomId ? 'meeting' : 'personal';
-                    html += `<div class="event-item ${type}">${event.title}</div>`;
-                });
+                for (let day = 0; day < 7; day++) {
+                    const date = new Date(startOfWeek);
+                    date.setDate(date.getDate() + day);
+                    const dateStr = this.formatDate(date);
+                    const events = this.getEventsForDateTimeSlot(dateStr, hour, minute);
+                    
+                    html += `<div class="week-cell" 
+                             data-date="${dateStr}" 
+                             data-time="${timeStr}"
+                             onclick="calendarManager.handleTimeSlotClick('${dateStr}', '${timeStr}')">`;
+                    
+                    if (events.length > 0) {
+                        events.forEach(event => {
+                            const type = event.type === '회의' ? 'meeting' : 
+                                       event.roomId ? 'meeting' : 'personal';
+                            const duration = this.getEventDuration(event);
+                            const height = duration > 30 ? Math.floor(duration / 30) * 30 : 30;
+                            
+                            html += `<div class="week-event ${type}" 
+                                     style="height: ${height}px"
+                                     onclick="event.stopPropagation(); calendarManager.showEventDetails('${event.id}')">
+                                     <div class="week-event-title">${event.title}</div>
+                                     </div>`;
+                        });
+                    }
+                    
+                    html += `</div>`;
+                }
                 
                 html += `</div>`;
             }
-            
-            html += `</div>`;
         }
         
         html += `
@@ -542,6 +559,9 @@ class CalendarManager {
     
     // 일정 추가 모달 표시
     showAddScheduleModal(presetDate = null, presetTime = null) {
+        // 모달이 없으면 먼저 생성
+        this.renderScheduleModal();
+        
         const modal = document.getElementById('scheduleModal');
         if (!modal) return;
         
@@ -560,14 +580,36 @@ class CalendarManager {
             }
             
             if (presetTime) {
-                const timeInput = form.querySelector('input[name="startTime"]');
-                if (timeInput) timeInput.value = presetTime;
+                const [hour, minute] = presetTime.split(':');
+                
+                // 시작 시간 설정
+                const startHourSelect = form.querySelector('select[name="startHour"]');
+                const startMinuteSelect = form.querySelector('select[name="startMinute"]');
+                if (startHourSelect) startHourSelect.value = hour;
+                if (startMinuteSelect) startMinuteSelect.value = minute;
                 
                 // 종료 시간을 시작 시간 + 1시간으로 설정
-                const [hour, minute] = presetTime.split(':').map(Number);
-                const endHour = hour + 1;
-                const endTimeInput = form.querySelector('input[name="endTime"]');
-                if (endTimeInput) endTimeInput.value = `${endHour}:${minute === 0 ? '00' : '30'}`;
+                const endHour = parseInt(hour) + 1;
+                const endHourSelect = form.querySelector('select[name="endHour"]');
+                const endMinuteSelect = form.querySelector('select[name="endMinute"]');
+                if (endHourSelect && endHour <= 22) endHourSelect.value = endHour.toString().padStart(2, '0');
+                if (endMinuteSelect) endMinuteSelect.value = minute;
+            } else {
+                // 기본값: 현재 시간의 다음 30분 단위
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                
+                let startHour = currentHour;
+                let startMinute = currentMinute < 30 ? '30' : '00';
+                if (startMinute === '00') startHour++;
+                
+                if (startHour >= 6 && startHour <= 22) {
+                    const startHourSelect = form.querySelector('select[name="startHour"]');
+                    const startMinuteSelect = form.querySelector('select[name="startMinute"]');
+                    if (startHourSelect) startHourSelect.value = startHour.toString().padStart(2, '0');
+                    if (startMinuteSelect) startMinuteSelect.value = startMinute;
+                }
             }
         }
         
@@ -588,11 +630,21 @@ class CalendarManager {
         if (!form) return;
         
         const formData = new FormData(form);
+        
+        // 시간과 분을 조합
+        const startHour = formData.get('startHour');
+        const startMinute = formData.get('startMinute');
+        const endHour = formData.get('endHour');
+        const endMinute = formData.get('endMinute');
+        
+        const startTime = startHour && startMinute ? `${startHour}:${startMinute}` : '';
+        const endTime = endHour && endMinute ? `${endHour}:${endMinute}` : '';
+        
         const scheduleData = {
             title: formData.get('title'),
             date: formData.get('date'),
-            startTime: formData.get('startTime') || formData.get('time'),
-            endTime: formData.get('endTime'),
+            startTime: startTime,
+            endTime: endTime,
             type: formData.get('type') || '개인',
             location: formData.get('location'),
             description: formData.get('description'),
@@ -660,6 +712,16 @@ class CalendarManager {
         }
     }
     
+    // 시간 옵션 생성
+    generateHourOptions() {
+        let options = '';
+        for (let hour = 6; hour <= 22; hour++) {
+            const hourStr = hour.toString().padStart(2, '0');
+            options += `<option value="${hourStr}">${hourStr}</option>`;
+        }
+        return options;
+    }
+    
     // 일정 추가 모달 HTML 렌더링
     renderScheduleModal() {
         if (document.getElementById('scheduleModal')) return;
@@ -696,11 +758,29 @@ class CalendarManager {
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="scheduleStartTime">시작 시간 *</label>
-                                <input type="time" id="scheduleStartTime" name="startTime" required>
+                                <div class="time-selector">
+                                    <select id="startHour" name="startHour" class="time-select">
+                                        ${this.generateHourOptions()}
+                                    </select>
+                                    <span class="time-separator">:</span>
+                                    <select id="startMinute" name="startMinute" class="time-select">
+                                        <option value="00">00</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="scheduleEndTime">종료 시간</label>
-                                <input type="time" id="scheduleEndTime" name="endTime">
+                                <div class="time-selector">
+                                    <select id="endHour" name="endHour" class="time-select">
+                                        ${this.generateHourOptions()}
+                                    </select>
+                                    <span class="time-separator">:</span>
+                                    <select id="endMinute" name="endMinute" class="time-select">
+                                        <option value="00">00</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         

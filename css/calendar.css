@@ -263,25 +263,68 @@
     display: grid;
     grid-template-columns: 60px repeat(7, 1fr);
     border-bottom: 1px solid var(--border-color);
-    min-height: 60px;
+    min-height: 30px;
+}
+
+.week-row.half-hour {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .week-row.half-hour {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .week-time {
-    padding: var(--spacing-sm);
-    font-size: 0.75rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.7rem;
     color: var(--text-secondary);
     border-right: 1px solid var(--border-color);
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
 }
 
 .week-cell {
     border-right: 1px solid var(--border-color);
     padding: var(--spacing-xs);
     position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.week-cell:hover {
+    background: var(--bg-hover);
 }
 
 .week-cell:last-child {
     border-right: none;
+}
+
+.week-event {
+    padding: 2px 4px;
+    margin-bottom: 2px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.week-event.meeting {
+    background: #3b82f6;
+}
+
+.week-event.personal {
+    background: #10b981;
+}
+
+.week-event-title {
+    font-weight: 500;
 }
 
 /* 일 보기 스타일 */
@@ -355,16 +398,25 @@
     padding: var(--spacing-sm) var(--spacing-md);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
     position: relative;
+    min-height: 30px;
 }
 
 .day-event {
     padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
     background: var(--primary-color);
     color: white;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .day-event.meeting {
@@ -382,6 +434,26 @@
 }
 
 /* 일정 추가 모달 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 .modal-overlay {
     display: flex;
     position: fixed;
@@ -389,11 +461,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-xl);
+    animation: fadeIn 0.3s ease;
 }
 
 .schedule-modal {
@@ -402,21 +477,26 @@
 }
 
 .modal-content {
-    background: var(--bg-primary);
+    background: #ffffff;
     border-radius: var(--radius-xl);
     width: 90%;
-    max-width: 500px;
-    max-height: 80vh;
+    max-width: 550px;
+    max-height: 85vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(250, 102, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.4s ease;
 }
 
 .modal-header {
     padding: var(--spacing-xl);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid #f3f4f6;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: linear-gradient(to bottom, #ffffff, #fafafa);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 .modal-title {
@@ -426,20 +506,75 @@
 }
 
 .modal-close {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: transparent;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e5e7eb;
+    background: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
-    transition: background 0.2s ease;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    font-size: 1.5rem;
+    color: #6b7280;
+    font-weight: bold;
 }
 
 .modal-close:hover {
-    background: var(--bg-hover);
+    background: #FA6600;
+    color: #ffffff;
+    border-color: #FA6600;
+    transform: rotate(90deg);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: -0.5px;
+}
+
+/* 다크 모드 모달 개선 */
+[data-theme="dark"] .modal-content {
+    background: #1f2937;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+    background: #111827;
+}
+
+[data-theme="dark"] .schedule-form input,
+[data-theme="dark"] .schedule-form select,
+[data-theme="dark"] .schedule-form textarea {
+    background: #1f2937;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .schedule-form input:focus,
+[data-theme="dark"] .schedule-form select:focus,
+[data-theme="dark"] .schedule-form textarea:focus {
+    border-color: var(--primary-color);
+    background: #111827;
+}
+
+[data-theme="dark"] .time-select {
+    background: #1f2937;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .time-select:focus {
+    border-color: var(--primary-color);
+    background: #111827;
+}
+
+[data-theme="dark"] .time-separator {
+    color: #9ca3af;
 }
 
 .modal-body {
@@ -511,10 +646,11 @@
 
 .modal-footer {
     padding: var(--spacing-xl);
-    border-top: 1px solid var(--border-color);
+    border-top: 2px solid #f3f4f6;
     display: flex;
     gap: var(--spacing-md);
     justify-content: flex-end;
+    background: linear-gradient(to top, #ffffff, #fafafa);
 }
 
 .btn-cancel,
@@ -549,37 +685,44 @@
 
 .btn-primary,
 .btn-secondary {
-    padding: var(--spacing-sm) var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-xl);
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-secondary {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #6b7280;
 }
 
 .btn-secondary:hover {
-    background: var(--bg-hover);
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #4b5563;
 }
 
 .btn-primary {
-    background: var(--primary-color);
-    border: none;
+    background: #FA6600;
+    border: 2px solid #FA6600;
     color: white;
+    box-shadow: 0 2px 4px rgba(250, 102, 0, 0.2);
 }
 
 .btn-primary:hover {
-    background: var(--primary-dark);
+    background: #e55a00;
+    border-color: #e55a00;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(250, 102, 0, 0.3);
 }
 
 /* 일정 폼 스타일 */
 .schedule-form {
     padding: var(--spacing-xl);
+    background: #ffffff;
 }
 
 .schedule-form .form-group {
@@ -589,9 +732,9 @@
 .schedule-form label {
     display: block;
     margin-bottom: var(--spacing-sm);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
 }
 
 .schedule-form input,
@@ -599,26 +742,61 @@
 .schedule-form textarea {
     width: 100%;
     padding: var(--spacing-md);
-    border: 1px solid var(--border-color);
+    border: 2px solid #e5e7eb;
     border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    transition: border-color 0.2s ease;
+    font-size: 0.95rem;
+    background: #ffffff;
+    color: #1f2937;
+    transition: all 0.2s ease;
 }
 
 .schedule-form input:focus,
 .schedule-form select:focus,
 .schedule-form textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(250, 102, 0, 0.1);
+    border-color: #FA6600;
+    box-shadow: 0 0 0 4px rgba(250, 102, 0, 0.15);
+    background: #fffbf7;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
+}
+
+/* 시간 선택기 스타일 */
+.time-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.time-select {
+    flex: 1;
+    padding: var(--spacing-md);
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    background: #ffffff;
+    color: #1f2937;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-select:focus {
+    outline: none;
+    border-color: #FA6600;
+    box-shadow: 0 0 0 4px rgba(250, 102, 0, 0.15);
+    background: #fffbf7;
+}
+
+.time-separator {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 0 4px;
 }
 
 /* 토스트 메시지 */
