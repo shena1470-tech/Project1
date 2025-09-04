@@ -8,24 +8,24 @@
       "email": "dongjun.kim@hanwhalife.com",
       "phone": "010-1234-5678",
       "department": "디지털프로덕트팀",
-      "team": "AI개발파트",
+      "team": "세일즈플러스파트",
       "position": "과장",
-      "jobTitle": "AI 서비스 개발",
+      "jobTitle": "Backend 개발",
       "level": "L4",
       "joinDate": "2021-03-15",
-      "birthDate": "1988-07-22",
+      "birthDate": "1987-04-16",
       "avatar": "assets/avatars/kim-dongjun.png",
       "status": "active",
       "location": {
         "office": "본사",
         "building": "63빌딩",
-        "floor": "42F",
+        "floor": "8F",
         "seat": "A-42-15"
       },
       "manager": {
         "id": "user-005",
-        "name": "박상현",
-        "position": "부장"
+        "name": "유지영",
+        "position": "차장"
       },
       "permissions": {
         "chat": true,
@@ -62,7 +62,67 @@
     },
     {
       "id": "user-002",
-      "employeeId": "HW2019002",
+      "employeeId": "HW2022002",
+      "name": "이정은",
+      "nameEn": "Lee Jung Eun",
+      "email": "jungeun.lee@hanwhalife.com",
+      "phone": "010-2222-3333",
+      "department": "디지털프로덕트팀",
+      "team": "고객서비스파트",
+      "position": "대리",
+      "jobTitle": "UX 기획",
+      "level": "L3",
+      "joinDate": "2022-02-14",
+      "birthDate": "1998-08-22",
+      "avatar": "assets/avatars/lee-jungeun.png",
+      "status": "active",
+      "location": {
+        "office": "본사",
+        "building": "63빌딩",
+        "floor": "42F",
+        "seat": "B-42-08"
+      },
+      "manager": {
+        "id": "user-005",
+        "name": "박상현",
+        "position": "부장"
+      },
+      "permissions": {
+        "chat": true,
+        "reports": true,
+        "schedule": true,
+        "board": true,
+        "admin": false
+      },
+      "preferences": {
+        "theme": "light",
+        "language": "ko",
+        "fontSize": "medium",
+        "notifications": {
+          "email": true,
+          "push": true,
+          "sms": false,
+          "desktop": true
+        },
+        "workingHours": {
+          "start": "09:00",
+          "end": "18:00",
+          "timezone": "Asia/Seoul"
+        }
+      },
+      "stats": {
+        "lastLogin": "2024-01-15T09:30:00Z",
+        "totalChats": 412,
+        "documentsCreated": 98,
+        "meetingsScheduled": 67,
+        "averageResponseTime": 2.3
+      },
+      "skills": ["UX Design", "User Research", "Prototyping", "Figma", "User Testing"],
+      "certifications": ["UX Design Professional", "Google UX Design Certificate"]
+    },
+    {
+      "id": "user-003",
+      "employeeId": "HW2019003",
       "name": "이서연",
       "nameEn": "Lee Seo Yeon",
       "email": "seoyeon.lee@hanwhalife.com",
@@ -121,8 +181,8 @@
       "certifications": ["Google Analytics", "Facebook Blueprint", "HubSpot Marketing"]
     },
     {
-      "id": "user-003",
-      "employeeId": "HW2020003",
+      "id": "user-004",
+      "employeeId": "HW2020004",
       "name": "박준혁",
       "nameEn": "Park Jun Hyuk",
       "email": "junhyuk.park@hanwhalife.com",
@@ -181,8 +241,8 @@
       "certifications": ["CFA", "FRM", "Investment Management Certificate"]
     },
     {
-      "id": "user-004",
-      "employeeId": "HW2022004",
+      "id": "user-005",
+      "employeeId": "HW2022005",
       "name": "정민지",
       "nameEn": "Jung Min Ji",
       "email": "minji.jung@hanwhalife.com",
@@ -241,8 +301,8 @@
       "certifications": ["SHRM-CP", "교육훈련전문가"]
     },
     {
-      "id": "user-005",
-      "employeeId": "HW2018005",
+      "id": "user-006",
+      "employeeId": "HW2018006",
       "name": "박상현",
       "nameEn": "Park Sang Hyun",
       "email": "sanghyun.park@hanwhalife.com",
@@ -301,8 +361,8 @@
       "certifications": ["PMP", "AI Professional", "Digital Transformation Leader"]
     },
     {
-      "id": "user-006",
-      "employeeId": "HW2017006",
+      "id": "user-007",
+      "employeeId": "HW2017007",
       "name": "최지훈",
       "nameEn": "Choi Ji Hoon",
       "email": "jihoon.choi@hanwhalife.com",
