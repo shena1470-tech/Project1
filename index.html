@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한화생명 AI 어시스턴트</title>
+    <link rel="stylesheet" href="css/hanwha-design-system.css">
+</head>
+<body>
+    <!-- 모바일 메뉴 토글 -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 12H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 6H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 18H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+    
+    <!-- 모바일 사이드바 오버레이 -->
+    <div class="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
+    
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-profile">
+                    <div class="logo-icon"></div>
+                    <div class="user-name">
+                        김동준
+                        <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <button class="new-chat-button" onclick="startNewChat()">
+                    <span class="plus-icon"></span>
+                    새 대화 시작하기
+                </button>
+                <button class="menu-item">대화목록</button>
+                <button class="menu-item placeholder">ㄹㄹㄹ</button>
+                <button class="menu-item placeholder">ㄹㄹㄹ</button>
+                <button class="menu-item placeholder">ㄹㄹ</button>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 상단 헤더 -->
+            <header class="top-header">
+                <div class="header-tabs">
+                    <button class="tab-button active">AI 어시스턴트</button>
+                    <button class="tab-button" onclick="openReportBuilder()">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <rect x="3" y="3" width="10" height="12" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="6" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="6" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M13 8L17 12L13 16" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        보고서 만들기
+                    </button>
+                    <button class="tab-button" onclick="openBoard()">게시판</button>
+                </div>
+                <div class="hanwha-logo">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="20" fill="#FA6600"/>
+                        <text x="24" y="30" text-anchor="middle" fill="white" font-size="12" font-weight="bold">H</text>
+                    </svg>
+                </div>
+            </header>
+
+            <!-- 채팅 영역 - 초기 화면 -->
+            <div class="chat-area" id="chatArea">
+                <div class="welcome-container" id="welcomeScreen">
+                    <h1 class="welcome-title">안녕하세요. 김동준 과장님!</h1>
+                    <div class="input-wrapper">
+                        <div class="input-container">
+                            <button class="input-plus-button" onclick="showAttachments()">
+                                <span class="plus-icon"></span>
+                            </button>
+                            <input 
+                                type="text" 
+                                class="input-field" 
+                                placeholder="무엇이든 물어보세요."
+                                onkeypress="handleEnter(event)"
+                                id="mainInput"
+                            />
+                            <button class="send-button" onclick="sendMessage()">
+                                <span class="send-icon"></span>
+                            </button>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-button" onclick="createReport()">
+                                <svg class="quick-button-icon" viewBox="0 0 20 20" fill="none">
+                                    <rect x="4" y="3" width="12" height="14" stroke="#403f3e" stroke-width="1.2"/>
+                                    <line x1="7" y1="7" x2="13" y2="7" stroke="#403f3e" stroke-width="1.2"/>
+                                    <line x1="7" y1="10" x2="11" y2="10" stroke="#403f3e" stroke-width="1.2"/>
+                                    <line x1="7" y1="13" x2="13" y2="13" stroke="#403f3e" stroke-width="1.2"/>
+                                </svg>
+                                보고서 만들기
+                            </button>
+                            <button class="quick-button" onclick="showMenu()">
+                                <svg class="quick-button-icon" viewBox="0 0 20 20" fill="none">
+                                    <circle cx="10" cy="6" r="2" stroke="#403f3e" stroke-width="1.2"/>
+                                    <path d="M4 14C4 14 6 11 10 11C14 11 16 14 16 14" stroke="#403f3e" stroke-width="1.2"/>
+                                    <rect x="3" y="2" width="14" height="16" rx="2" stroke="#403f3e" stroke-width="1.2" fill="none"/>
+                                </svg>
+                                구내식당 메뉴
+                            </button>
+                            <button class="quick-button" onclick="scheduleMeeting()">
+                                <svg class="quick-button-icon" viewBox="0 0 20 20" fill="none">
+                                    <circle cx="7" cy="7" r="3" stroke="#403f3e" stroke-width="1.2"/>
+                                    <circle cx="13" cy="13" r="3" stroke="#403f3e" stroke-width="1.2"/>
+                                    <line x1="9" y1="9" x2="11" y2="11" stroke="#403f3e" stroke-width="1.2"/>
+                                </svg>
+                                회의잡기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 채팅 메시지 영역 (숨김 상태) -->
+                <div class="chat-messages" id="chatMessages" style="display: none;">
+                    <!-- 메시지들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 입력 영역 (채팅 시작 후 하단 고정) -->
+            <div class="input-wrapper" id="bottomInput" style="display: none; padding: 20px;">
+                <div class="input-container">
+                    <button class="input-plus-button" onclick="showAttachments()">
+                        <span class="plus-icon"></span>
+                    </button>
+                    <input 
+                        type="text" 
+                        class="input-field" 
+                        placeholder="무엇이든 물어보세요."
+                        onkeypress="handleEnter(event)"
+                        id="bottomInputField"
+                    />
+                    <button class="send-button" onclick="sendMessage()">
+                        <span class="send-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Dark Mode Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="theme-toggle-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="theme-toggle-icon moon-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+    </button>
+
+    <script src="js/hanwha-app.js"></script>
+</body>
+</html>
