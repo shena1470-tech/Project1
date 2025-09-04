@@ -231,40 +231,55 @@ class CalendarManager {
                 <div class="day-header">
                     <div class="day-date">${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일</div>
                     <div class="day-weekday">${weekdays[date.getDay()]}</div>
+                    <button class="add-schedule-btn" onclick="calendarManager.showAddScheduleModal()">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        일정 추가
+                    </button>
                 </div>
                 <div class="day-timeline">
         `;
         
-        // 시간별 일정 (6시부터 22시까지)
+        // 30분 단위 시간 슬롯 (6시부터 22시까지)
         for (let hour = 6; hour <= 22; hour++) {
-            const events = this.getEventsForDateTime(dateStr, hour);
-            
-            html += `
-                <div class="time-slot">
-                    <div class="time-label">${hour}:00</div>
-                    <div class="time-events">
-            `;
-            
-            if (events.length > 0) {
-                events.forEach(event => {
-                    const type = event.type === '회의' ? 'meeting' : 
-                               event.roomId ? 'meeting' : 'personal';
-                    html += `
-                        <div class="day-event ${type}">
-                            <div class="day-event-title">${event.title}</div>
-                            <div class="day-event-detail">
-                                ${event.location || ''} 
-                                ${event.participants ? `• ${event.participants.length}명` : ''}
+            for (let minute = 0; minute < 60; minute += 30) {
+                const timeStr = `${hour}:${minute === 0 ? '00' : '30'}`;
+                const events = this.getEventsForDateTimeSlot(dateStr, hour, minute);
+                
+                html += `
+                    <div class="time-slot ${minute === 30 ? 'half-hour' : ''}" 
+                         data-date="${dateStr}" 
+                         data-time="${timeStr}"
+                         onclick="calendarManager.handleTimeSlotClick('${dateStr}', '${timeStr}')">
+                        <div class="time-label">${timeStr}</div>
+                        <div class="time-events">
+                `;
+                
+                if (events.length > 0) {
+                    events.forEach(event => {
+                        const type = event.type === '회의' ? 'meeting' : 
+                                   event.roomId ? 'meeting' : 'personal';
+                        const duration = this.getEventDuration(event);
+                        const height = duration > 30 ? Math.floor(duration / 30) * 40 : 40;
+                        
+                        html += `
+                            <div class="day-event ${type}" style="height: ${height}px" onclick="event.stopPropagation(); calendarManager.showEventDetails('${event.id}')">
+                                <div class="day-event-title">${event.title}</div>
+                                <div class="day-event-detail">
+                                    ${event.location || ''} 
+                                    ${event.participants ? `• ${event.participants.length}명` : ''}
+                                </div>
                             </div>
+                        `;
+                    });
+                }
+                
+                html += `
                         </div>
-                    `;
-                });
-            }
-            
-            html += `
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
         
         html += `
@@ -273,6 +288,7 @@ class CalendarManager {
         `;
         
         container.innerHTML = html;
+        this.renderScheduleModal();
     }
     
     getEventsForDate(dateStr) {
@@ -293,6 +309,35 @@ class CalendarManager {
             const eventHour = parseInt(time.split(':')[0]);
             return eventHour === hour;
         });
+    }
+    
+    getEventsForDateTimeSlot(dateStr, hour, minute) {
+        return this.schedules.filter(schedule => {
+            const scheduleDate = schedule.date || schedule.startDate;
+            if (!scheduleDate || !scheduleDate.startsWith(dateStr)) return false;
+            
+            const time = schedule.time || schedule.startTime;
+            if (!time) return false;
+            
+            const [eventHour, eventMinute] = time.split(':').map(Number);
+            const eventTotalMinutes = eventHour * 60 + eventMinute;
+            const slotTotalMinutes = hour * 60 + minute;
+            
+            // 해당 30분 슬롯에 시작하는 일정만 표시
+            return eventTotalMinutes >= slotTotalMinutes && eventTotalMinutes < slotTotalMinutes + 30;
+        });
+    }
+    
+    getEventDuration(event) {
+        const startTime = event.time || event.startTime;
+        const endTime = event.endTime;
+        
+        if (!startTime || !endTime) return 60; // 기본 1시간
+        
+        const start = this.timeToMinutes(startTime);
+        const end = this.timeToMinutes(endTime);
+        
+        return end - start;
     }
     
     formatDate(date) {
@@ -489,6 +534,208 @@ class CalendarManager {
         this.render();
         return true;
     }
+    
+    // 시간 슬롯 클릭 핸들러
+    handleTimeSlotClick(dateStr, timeStr) {
+        this.showAddScheduleModal(dateStr, timeStr);
+    }
+    
+    // 일정 추가 모달 표시
+    showAddScheduleModal(presetDate = null, presetTime = null) {
+        const modal = document.getElementById('scheduleModal');
+        if (!modal) return;
+        
+        // 폼 초기화
+        const form = document.getElementById('scheduleForm');
+        if (form) {
+            form.reset();
+            
+            // 기본값 설정
+            if (presetDate) {
+                const dateInput = form.querySelector('input[name="date"]');
+                if (dateInput) dateInput.value = presetDate;
+            } else {
+                const dateInput = form.querySelector('input[name="date"]');
+                if (dateInput) dateInput.value = this.formatDate(this.currentDate);
+            }
+            
+            if (presetTime) {
+                const timeInput = form.querySelector('input[name="startTime"]');
+                if (timeInput) timeInput.value = presetTime;
+                
+                // 종료 시간을 시작 시간 + 1시간으로 설정
+                const [hour, minute] = presetTime.split(':').map(Number);
+                const endHour = hour + 1;
+                const endTimeInput = form.querySelector('input[name="endTime"]');
+                if (endTimeInput) endTimeInput.value = `${endHour}:${minute === 0 ? '00' : '30'}`;
+            }
+        }
+        
+        modal.style.display = 'flex';
+    }
+    
+    // 모달 닫기
+    closeScheduleModal() {
+        const modal = document.getElementById('scheduleModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    
+    // 일정 저장
+    saveSchedule() {
+        const form = document.getElementById('scheduleForm');
+        if (!form) return;
+        
+        const formData = new FormData(form);
+        const scheduleData = {
+            title: formData.get('title'),
+            date: formData.get('date'),
+            startTime: formData.get('startTime') || formData.get('time'),
+            endTime: formData.get('endTime'),
+            type: formData.get('type') || '개인',
+            location: formData.get('location'),
+            description: formData.get('description'),
+            reminder: formData.get('reminder')
+        };
+        
+        // 유효성 검사
+        if (!scheduleData.title || !scheduleData.date || !scheduleData.startTime) {
+            alert('제목, 날짜, 시작 시간은 필수 입력 항목입니다.');
+            return;
+        }
+        
+        // 시간 유효성 검사
+        if (scheduleData.endTime && this.timeToMinutes(scheduleData.startTime) >= this.timeToMinutes(scheduleData.endTime)) {
+            alert('종료 시간은 시작 시간보다 늦어야 합니다.');
+            return;
+        }
+        
+        // 일정 추가
+        this.addSchedule(scheduleData);
+        
+        // 모달 닫기
+        this.closeScheduleModal();
+        
+        // 성공 메시지
+        this.showToast('일정이 성공적으로 추가되었습니다.');
+    }
+    
+    // 토스트 메시지 표시
+    showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+    
+    // 일정 상세 표시
+    showEventDetails(eventId) {
+        const event = this.schedules.find(s => s.id === eventId);
+        if (!event) return;
+        
+        // 간단한 상세 정보 표시 (추후 모달로 개선 가능)
+        const details = `
+            제목: ${event.title}
+            날짜: ${event.date || event.startDate}
+            시간: ${event.startTime || event.time} - ${event.endTime || ''}
+            ${event.location ? `장소: ${event.location}` : ''}
+            ${event.description ? `설명: ${event.description}` : ''}
+        `;
+        
+        if (confirm(details + '\n\n이 일정을 삭제하시겠습니까?')) {
+            this.deleteSchedule(eventId);
+            this.showToast('일정이 삭제되었습니다.');
+        }
+    }
+    
+    // 일정 추가 모달 HTML 렌더링
+    renderScheduleModal() {
+        if (document.getElementById('scheduleModal')) return;
+        
+        const modalHtml = `
+            <div id="scheduleModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content schedule-modal">
+                    <div class="modal-header">
+                        <h3>일정 추가</h3>
+                        <button class="modal-close" onclick="calendarManager.closeScheduleModal()">✕</button>
+                    </div>
+                    <form id="scheduleForm" class="schedule-form">
+                        <div class="form-group">
+                            <label for="scheduleTitle">제목 *</label>
+                            <input type="text" id="scheduleTitle" name="title" required placeholder="일정 제목을 입력하세요">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scheduleDate">날짜 *</label>
+                                <input type="date" id="scheduleDate" name="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleType">구분</label>
+                                <select id="scheduleType" name="type">
+                                    <option value="개인">개인</option>
+                                    <option value="회의">회의</option>
+                                    <option value="외근">외근</option>
+                                    <option value="휴가">휴가</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="scheduleStartTime">시작 시간 *</label>
+                                <input type="time" id="scheduleStartTime" name="startTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="scheduleEndTime">종료 시간</label>
+                                <input type="time" id="scheduleEndTime" name="endTime">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scheduleLocation">장소</label>
+                            <input type="text" id="scheduleLocation" name="location" placeholder="장소를 입력하세요">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scheduleDescription">설명</label>
+                            <textarea id="scheduleDescription" name="description" rows="3" placeholder="일정에 대한 설명을 입력하세요"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scheduleReminder">알림</label>
+                            <select id="scheduleReminder" name="reminder">
+                                <option value="">알림 없음</option>
+                                <option value="10">10분 전</option>
+                                <option value="30">30분 전</option>
+                                <option value="60">1시간 전</option>
+                                <option value="1440">1일 전</option>
+                            </select>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn-secondary" onclick="calendarManager.closeScheduleModal()">취소</button>
+                            <button type="button" class="btn-primary" onclick="calendarManager.saveSchedule()">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
 }
 
 // 전역 함수들
@@ -539,8 +786,9 @@ function nextPeriod() {
 }
 
 function openScheduleModal() {
-    // 일정 추가 모달 표시 (추후 구현)
-    alert('일정 추가 기능은 준비 중입니다.');
+    if (calendarManager) {
+        calendarManager.showAddScheduleModal();
+    }
 }
 
 // DOMContentLoaded 시 초기화

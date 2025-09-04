@@ -297,7 +297,9 @@
     padding: var(--spacing-lg);
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .day-date {
@@ -313,7 +315,7 @@
 }
 
 .day-timeline {
-    max-height: 600px;
+    max-height: 700px;
     overflow-y: auto;
 }
 
@@ -321,22 +323,40 @@
     display: grid;
     grid-template-columns: 80px 1fr;
     border-bottom: 1px solid var(--border-color);
-    min-height: 60px;
+    min-height: 40px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.time-slot:hover {
+    background: var(--bg-hover);
+}
+
+.time-slot.half-hour {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .time-slot.half-hour {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .time-label {
-    padding: var(--spacing-md);
-    font-size: 0.875rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.75rem;
     color: var(--text-secondary);
     border-right: 1px solid var(--border-color);
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .time-events {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    position: relative;
 }
 
 .day-event {
@@ -362,8 +382,8 @@
 }
 
 /* 일정 추가 모달 */
-.schedule-modal {
-    display: none;
+.modal-overlay {
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -373,10 +393,12 @@
     z-index: 1000;
     align-items: center;
     justify-content: center;
+    padding: var(--spacing-xl);
 }
 
-.schedule-modal.active {
-    display: flex;
+.schedule-modal {
+    max-width: 550px;
+    width: 100%;
 }
 
 .modal-content {
@@ -523,6 +545,103 @@
 
 .btn-submit:hover {
     background: var(--primary-dark);
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* 일정 폼 스타일 */
+.schedule-form {
+    padding: var(--spacing-xl);
+}
+
+.schedule-form .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.schedule-form label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.schedule-form input,
+.schedule-form select,
+.schedule-form textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease;
+}
+
+.schedule-form input:focus,
+.schedule-form select:focus,
+.schedule-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(250, 102, 0, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* 토스트 메시지 */
+.toast-message {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 1100;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.toast-message.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* 반응형 디자인 */
