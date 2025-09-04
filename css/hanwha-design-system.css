@@ -17,7 +17,7 @@
     --color-border-medium: #d0cfce;
     --color-neutral-100: #f7f7f7;
     --color-neutral-50: #f5f5f5;
-    
+
     /* Brand Colors */
     --brand-coolgray-100: #D3DCE8;
     --brand-coolgray-300: #AEBED3;
@@ -26,7 +26,7 @@
     --brand-deepblue-400: #6396FB;
     --brand-deepblue-700: #1E5AD2;
     --brand-orange-ember-100: #FDEBE0;
-    
+
     /* Typography */
     --font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
     --font-size-title: 28px;
@@ -36,7 +36,7 @@
     --font-size-xsmall: 12px;
     --line-height-normal: 1.5;
     --line-height-small: 1.4;
-    
+
     /* Spacing */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
@@ -45,7 +45,7 @@
     --spacing-xl: 24px;
     --spacing-2xl: 32px;
     --spacing-3xl: 48px;
-    
+
     /* Border Radius */
     --radius-xs: 4px;
     --radius-sm: 6px;
@@ -54,12 +54,12 @@
     --radius-xl: 21px;
     --radius-2xl: 30px;
     --radius-full: 36px;
-    
+
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-    
+
     /* Transitions */
     --transition-fast: all 0.15s ease;
     --transition-normal: all 0.25s ease;
@@ -156,6 +156,7 @@ body {
     padding: 20px 24px;
     border-bottom: 1px solid var(--color-border-light);
     background-color: var(--color-neutral-50);
+    position: relative;
 }
 
 .sidebar-profile {
@@ -241,6 +242,126 @@ body {
     font-size: var(--font-size-small);
     font-weight: 300;
     color: var(--color-text-secondary);
+}
+
+/* User Dropdown Styles */
+.sidebar-header {
+    position: relative;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-neutral-50);
+}
+
+.dropdown-header span {
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.dropdown-content {
+    padding: 8px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+.user-item:hover {
+    background-color: var(--color-neutral-100);
+}
+
+.user-item.active {
+    background-color: var(--brand-orange-ember-100);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), #ff8833);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: var(--font-size-body);
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info .user-name {
+    font-size: var(--font-size-body);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.user-info .user-role {
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+}
+
+.check-icon {
+    color: var(--color-primary);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.user-name {
+    cursor: pointer;
+    user-select: none;
+}
+
+.user-name:hover {
+    opacity: 0.8;
 }
 
 /* Main Content Area */
@@ -476,6 +597,31 @@ body {
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M2 21l21-9L2 3v7l15 2-15 2z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
+/* Bottom Input Container - Fixed Position */
+#bottomInput {
+    position: fixed;
+    bottom: 0;
+    left: 260px;
+    right: 0;
+    background-color: white;
+    padding: 20px 84px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+#bottomInput .input-wrapper {
+    width: 100%;
+    max-width: 1012px;
+    margin: 0 auto;
+}
+
+#bottomInput .input-container {
+    width: 100%;
+    background-color: var(--color-neutral-100);
+}
+
 /* Quick Actions */
 .quick-actions {
     display: flex;
@@ -516,48 +662,74 @@ body {
 /* Chat Messages Area */
 .chat-messages {
     flex: 1;
-    padding: 24px 84px;
+    padding: 40px 84px 120px 84px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
+    background-color: white;
 }
 
-.message-wrapper {
+/* Message Container */
+.message-container {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: flex-start;
 }
 
-.message-avatar {
+/* AI Avatar */
+.ai-avatar {
     width: 56px;
     height: 56px;
     background-color: var(--color-neutral-100);
     border: 1px solid var(--color-border-medium);
     border-radius: var(--radius-sm);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
 }
 
-.message-content {
-    flex: 1;
-    padding: 10px;
+.ai-avatar::before {
+    content: "AI";
+}
+
+/* Message Bubble */
+.message-bubble {
+    background-color: transparent;
+    padding: 10px 0;
+    max-width: 70%;
 }
 
 .message-text {
-    font-size: var(--font-size-large);
+    font-size: 18px;
     font-weight: 300;
     color: var(--color-text-primary);
-    line-height: var(--line-height-normal);
+    line-height: 1.5;
+    margin: 0;
 }
 
+/* User Message */
 .user-message {
+    justify-content: flex-end;
+}
+
+.user-message .message-container {
     flex-direction: row-reverse;
 }
 
-.user-message .message-content {
+.user-message .message-bubble {
     background-color: var(--color-neutral-100);
-    border-radius: var(--radius-lg);
-    padding: 12px 16px;
+    padding: 12px 20px;
+    border-radius: 20px;
+    max-width: 60%;
+}
+
+.user-message .message-text {
+    font-size: var(--font-size-body);
 }
 
 /* Mobile Menu Toggle Button */
@@ -648,32 +820,32 @@ body.dark .moon-icon {
     .sidebar {
         transform: translateX(-100%);
     }
-    
+
     .sidebar.active {
         transform: translateX(0);
     }
-    
+
     .main-content {
         margin-left: 0;
     }
-    
+
     .mobile-menu-toggle {
         display: flex;
     }
-    
+
     .welcome-container {
         padding: 15% 16px;
     }
-    
+
     .chat-messages {
         padding: 24px 16px;
     }
-    
+
     .input-wrapper {
         width: 100%;
         max-width: 700px;
     }
-    
+
     .input-container {
         width: 100%;
     }
@@ -686,31 +858,31 @@ body.dark .moon-icon {
         --font-size-body: 14px;
         --font-size-small: 12px;
     }
-    
+
     .header-tabs {
         gap: 8px;
     }
-    
+
     .tab-button {
         padding: 6px 12px;
         font-size: var(--font-size-small);
     }
-    
+
     .quick-actions {
         flex-wrap: wrap;
         gap: 8px;
     }
-    
+
     .quick-button {
         padding: 8px 12px;
         font-size: var(--font-size-xsmall);
     }
-    
+
     .input-container {
         height: 56px;
         width: 100%;
     }
-    
+
     .hanwha-logo {
         width: 40px;
         height: 40px;
@@ -721,24 +893,24 @@ body.dark .moon-icon {
     .welcome-container {
         padding: 10% 16px;
     }
-    
+
     .welcome-title {
         font-size: 20px;
     }
-    
+
     .input-wrapper {
         padding: 0 16px;
         width: 100%;
     }
-    
+
     .quick-button span {
         display: none;
     }
-    
+
     .quick-button {
         padding: 10px;
     }
-    
+
     .theme-toggle {
         width: 40px;
         height: 40px;
@@ -869,7 +1041,7 @@ input:focus-visible {
     .input-wrapper {
         display: none !important;
     }
-    
+
     .main-content {
         margin-left: 0 !important;
     }

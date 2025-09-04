@@ -4,6 +4,8 @@
 let chatStarted = false;
 let messages = [];
 let currentTheme = 'light';
+let currentUser = null;
+let usersData = [];
 
 // DOM 요소 캐싱
 const welcomeScreen = document.getElementById('welcomeScreen');
@@ -12,6 +14,156 @@ const bottomInput = document.getElementById('bottomInput');
 const mainInput = document.getElementById('mainInput');
 const bottomInputField = document.getElementById('bottomInputField');
 const chatArea = document.getElementById('chatArea');
+
+// 초기화 함수
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadUsers();
+    loadCurrentUser();
+    updateUserDisplay();
+});
+
+// 유저 데이터 로드
+async function loadUsers() {
+    try {
+        const response = await fetch('data/users.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        usersData = data.users;
+        console.log('유저 데이터 로드 성공:', usersData.length + '명의 사용자');
+    } catch (error) {
+        console.error('유저 데이터 로드 실패:', error);
+        console.error('에러 상세:', error.message);
+        // 폴백 데이터 - 더미 사용자 여러명 추가
+        usersData = [
+            {
+                id: 'user-001',
+                name: '김동준',
+                position: '과장',
+                department: '디지털프로덕트팀',
+                email: 'dongjun.kim@hanwhalife.com'
+            },
+            {
+                id: 'user-002',
+                name: '이서연',
+                position: '대리',
+                department: '마케팅본부',
+                email: 'seoyeon.lee@hanwhalife.com'
+            },
+            {
+                id: 'user-003',
+                name: '박준혁',
+                position: '차장',
+                department: '재무관리팀',
+                email: 'junhyuk.park@hanwhalife.com'
+            }
+        ];
+    }
+}
+
+// 현재 유저 로드 (localStorage에서)
+function loadCurrentUser() {
+    const savedUserId = localStorage.getItem('currentUserId');
+    if (savedUserId && usersData.length > 0) {
+        currentUser = usersData.find(user => user.id === savedUserId) || usersData[0];
+    } else if (usersData.length > 0) {
+        currentUser = usersData[0];
+    }
+    
+    if (currentUser) {
+        localStorage.setItem('currentUserId', currentUser.id);
+    }
+}
+
+// 유저 정보 표시 업데이트
+function updateUserDisplay() {
+    if (!currentUser) return;
+    
+    // 사이드바 유저 이름 업데이트
+    const userNameElement = document.querySelector('.user-name');
+    if (userNameElement) {
+        userNameElement.innerHTML = `
+            ${currentUser.name}
+            <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        `;
+        userNameElement.onclick = toggleUserDropdown;
+    }
+    
+    // 웰컴 메시지 업데이트
+    const welcomeTitle = document.querySelector('.welcome-title');
+    if (welcomeTitle) {
+        welcomeTitle.textContent = `안녕하세요. ${currentUser.name} ${currentUser.position}님!`;
+    }
+}
+
+// 유저 드롭다운 토글
+function toggleUserDropdown() {
+    let dropdown = document.getElementById('userDropdown');
+    
+    if (dropdown) {
+        dropdown.remove();
+        return;
+    }
+    
+    dropdown = createUserDropdown();
+    document.querySelector('.sidebar-header').appendChild(dropdown);
+}
+
+// 유저 드롭다운 생성
+function createUserDropdown() {
+    console.log('Creating dropdown with users:', usersData);
+    console.log('Current user:', currentUser);
+    
+    const dropdown = document.createElement('div');
+    dropdown.id = 'userDropdown';
+    dropdown.className = 'user-dropdown';
+    dropdown.innerHTML = `
+        <div class="dropdown-header">
+            <span>계정 전환</span>
+            <button onclick="closeUserDropdown()" class="close-btn">×</button>
+        </div>
+        <div class="dropdown-content">
+            ${usersData && usersData.length > 0 ? usersData.map(user => `
+                <div class="user-item ${user.id === currentUser.id ? 'active' : ''}" 
+                     onclick="selectUser('${user.id}')">
+                    <div class="user-avatar">${user.name ? user.name[0] : '?'}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name || 'Unknown'}</div>
+                        <div class="user-role">${user.position || ''} ${user.department ? '• ' + user.department : ''}</div>
+                    </div>
+                    ${user.id === currentUser.id ? '<span class="check-icon">✓</span>' : ''}
+                </div>
+            `).join('') : '<div class="user-item">사용자 데이터를 불러오는 중...</div>'}
+        </div>
+    `;
+    
+    return dropdown;
+}
+
+// 유저 선택
+function selectUser(userId) {
+    const user = usersData.find(u => u.id === userId);
+    if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUserId', userId);
+        updateUserDisplay();
+        closeUserDropdown();
+        
+        // 새로운 유저로 전환 시 채팅 초기화
+        startNewChat();
+    }
+}
+
+// 드롭다운 닫기
+function closeUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.remove();
+    }
+}
 
 // 새 대화 시작
 function startNewChat() {
@@ -72,15 +224,16 @@ function initiateChatMode() {
     welcomeScreen.style.display = 'none';
     
     // 채팅 메시지 영역 표시
-    chatMessages.style.display = 'block';
+    chatMessages.style.display = 'flex';
     
     // 하단 입력 영역 표시
-    bottomInput.style.display = 'block';
+    bottomInput.style.display = 'flex';
     
     // 채팅 영역 스타일 변경
     chatArea.style.justifyContent = 'flex-start';
     chatArea.style.alignItems = 'stretch';
     chatArea.style.padding = '0';
+    chatArea.style.paddingBottom = '104px'; // 하단 입력창 높이만큼 패딩
 }
 
 // 사용자 메시지 추가
