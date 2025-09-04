@@ -58,14 +58,54 @@
                         보고서 만들기
                     </button>
                     <button class="tab-button" onclick="openBoard()">게시판</button>
+                    <button class="tab-button" onclick="openCalendar()">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="tab-icon">
+                            <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="3" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="7" y1="2" x2="7" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="13" y1="2" x2="13" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        캘린더
+                    </button>
                 </div>
                 <div class="hanwha-logo">
                     <img src="assets/icons/hanwha-logo.svg" alt="Hanwha Life" />
                 </div>
             </header>
 
+            <!-- 캘린더 영역 (숨김 상태) -->
+            <div class="calendar-container" id="calendarContainer" style="display: none;">
+                <div class="calendar-header">
+                    <div class="calendar-controls">
+                        <button class="calendar-nav-btn" onclick="previousPeriod()">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <h2 class="calendar-title" id="calendarTitle">2024년 3월</h2>
+                        <button class="calendar-nav-btn" onclick="nextPeriod()">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="calendar-view-toggle">
+                        <button class="view-btn active" data-view="month" onclick="changeView('month')">월</button>
+                        <button class="view-btn" data-view="week" onclick="changeView('week')">주</button>
+                        <button class="view-btn" data-view="day" onclick="changeView('day')">일</button>
+                    </div>
+                    <button class="add-schedule-btn" onclick="openScheduleModal()">
+                        <span class="plus-icon"></span>
+                        일정 추가
+                    </button>
+                </div>
+                <div class="calendar-content" id="calendarContent">
+                    <!-- 캘린더 뷰가 동적으로 렌더링됩니다 -->
+                </div>
+            </div>
+
             <!-- 채팅 영역 - 초기 화면 -->
-            <div class="chat-area" id="chatArea">
+            <div class="chat-area" id="chatArea" style="display: block;">
                 <div class="welcome-container" id="welcomeScreen">
                     <h1 class="welcome-title">로딩중...</h1>
                     <p class="welcome-subtitle">무엇을 도와드릴까요?</p>
@@ -152,6 +192,9 @@
     <!-- 회의실 예약 스타일 -->
     <link rel="stylesheet" href="css/meeting-reservation.css">
     
+    <!-- 캘린더 스타일 -->
+    <link rel="stylesheet" href="css/calendar.css">
+    
     <!-- 샘플 데이터 파일들 -->
     <script src="data/sample-data.js"></script>
     <script src="data/sample-sampleData.js"></script>
@@ -163,6 +206,7 @@
     <script src="js/chat-manager.js"></script>
     <script src="js/meeting-reservation.js"></script>
     <script src="js/meeting-reservation-ui.js"></script>
+    <script src="js/calendar.js"></script>
     <script src="js/hanwha-app.js"></script>
 </body>
 </html>
