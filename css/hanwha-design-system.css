@@ -657,10 +657,11 @@ body {
     transition: var(--transition-normal);
 }
 
+/* hover 효과 제거 - 비활성화된 버튼이므로 hover 효과 불필요 */
 .quick-button:hover {
-    background-color: var(--color-neutral-100);
-    border-color: var(--color-border-medium);
-    transform: translateY(-1px);
+    /* background-color: var(--color-neutral-100); */
+    /* border-color: var(--color-border-medium); */
+    /* transform: translateY(-1px); */
 }
 
 .quick-button-icon,

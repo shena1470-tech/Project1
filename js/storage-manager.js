@@ -1,344 +1,297 @@
 /**
- * StorageManager - localStorage 관리 공통 모듈
- * 모든 localStorage 작업을 중앙화하여 관리
+ * LocalStorage 관리 클래스
+ * 애플리케이션의 모든 데이터 저장 및 조회를 담당
  */
 class StorageManager {
     constructor() {
-        // 스토리지 키 정의
-        this.KEYS = {
-            // 유저 관련
-            CURRENT_USER_ID: 'currentUserId',
-            
-            // 채팅 관련
+        this.STORAGE_KEYS = {
+            USER_PROFILE: 'hanwha_user_profile',
+            STATS: 'hanwha_stats',
+            DOCUMENTS: 'hanwha_documents',
+            SCHEDULES: 'hanwha_schedules',
             CHAT_HISTORY: 'hanwha_chat_history',
-            
-            // 테마 관련
-            THEME: 'theme',
-            
-            // 기타 설정
-            APP_SETTINGS: 'app_settings',
-            USER_PREFERENCES: 'user_preferences'
+            BOOKMARKS: 'hanwha_bookmarks',
+            NOTIFICATION_SETTINGS: 'hanwha_notification_settings',
+            SYSTEM_SETTINGS: 'hanwha_system_settings',
+            THEME: 'hanwha_theme',
+            SETTINGS: 'hanwha_settings',
+            CURRENT_USER: 'hanwha_current_user'
         };
-        
-        // 스토리지 가용 여부 확인
-        this.isAvailable = this.checkAvailability();
+
+        this.initializeStorage();
     }
-    
-    /**
-     * localStorage 사용 가능 여부 확인
-     */
-    checkAvailability() {
+
+    initializeStorage() {
+        // 모든 샘플 데이터 수집
+        const sampleData = this.collectSampleData();
+        
+        if (!sampleData) {
+            console.warn('샘플 데이터를 찾을 수 없습니다. 샘플 데이터 파일들을 확인하세요.');
+            return;
+        }
+
+        // 각 데이터 타입별로 초기화
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.USER_PROFILE, sampleData.userProfile);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.STATS, sampleData.stats);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.DOCUMENTS, sampleData.documents);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.SCHEDULES, sampleData.schedules);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.CHAT_HISTORY, sampleData.chatHistory);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.BOOKMARKS, sampleData.bookmarks);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.NOTIFICATION_SETTINGS, sampleData.notificationSettings);
+        this.initializeDataIfEmpty(this.STORAGE_KEYS.SYSTEM_SETTINGS, sampleData.systemSettings);
+
+        // 기존 설정 유지 (하위 호환성)
+        if (!this.getData(this.STORAGE_KEYS.SETTINGS)) {
+            this.saveData(this.STORAGE_KEYS.SETTINGS, {
+                theme: sampleData.systemSettings?.theme || 'light',
+                notifications: sampleData.notificationSettings?.emailNotifications || true,
+                autoSave: sampleData.systemSettings?.autoSave || true
+            });
+        }
+
+        console.log('스토리지 초기화 완료');
+    }
+
+    collectSampleData() {
+        // 여러 샘플 데이터 소스에서 데이터 수집
+        const data = {};
+        
+        // SAMPLE_DATA (data/sample-data.js)에서 기본 데이터 가져오기
+        if (typeof SAMPLE_DATA !== 'undefined') {
+            Object.assign(data, SAMPLE_DATA);
+        }
+        
+        // SAMPLE_SAMPLE_DATA (data/sample-sampleData.js)에서 추가 데이터 가져오기
+        if (typeof SAMPLE_SAMPLE_DATA !== 'undefined') {
+            // 필요한 데이터 병합
+            if (!data.templates) data.templates = SAMPLE_SAMPLE_DATA.templates;
+            if (!data.aiResponses) data.aiResponses = SAMPLE_SAMPLE_DATA.aiResponses;
+            if (!data.scheduleTypes) data.scheduleTypes = SAMPLE_SAMPLE_DATA.scheduleTypes;
+            if (!data.taskCategories) data.taskCategories = SAMPLE_SAMPLE_DATA.taskCategories;
+            if (!data.analyticsData) data.analyticsData = SAMPLE_SAMPLE_DATA.analyticsData;
+            if (!data.settings) data.settings = SAMPLE_SAMPLE_DATA.settings;
+        }
+        
+        // SAMPLE_USERS_DATA (data/sample-users.js)에서 사용자 데이터 가져오기
+        if (typeof SAMPLE_USERS_DATA !== 'undefined') {
+            if (!data.users) data.users = SAMPLE_USERS_DATA.users;
+            if (!data.departments) data.departments = SAMPLE_USERS_DATA.departments;
+            if (!data.positions) data.positions = SAMPLE_USERS_DATA.positions;
+            if (!data.offices) data.offices = SAMPLE_USERS_DATA.offices;
+        }
+        
+        // SAMPLE_CHAT_HISTORY (data/sample-chat-history.js)에서 채팅 히스토리 가져오기
+        if (typeof SAMPLE_CHAT_HISTORY !== 'undefined') {
+            if (!data.chatHistory) data.chatHistory = SAMPLE_CHAT_HISTORY.chatHistory;
+        }
+        
+        // 최소한의 데이터라도 있으면 반환
+        return Object.keys(data).length > 0 ? data : null;
+    }
+
+    initializeDataIfEmpty(key, defaultData) {
+        const existingData = this.getData(key);
+        if (!existingData || (Array.isArray(existingData) && existingData.length === 0)) {
+            this.saveData(key, defaultData);
+            console.log(`${key} 초기 데이터 설정 완료`);
+        }
+    }
+
+    // 데이터 저장
+    saveData(key, data) {
         try {
-            const testKey = '__storage_test__';
-            localStorage.setItem(testKey, 'test');
-            localStorage.removeItem(testKey);
+            localStorage.setItem(key, JSON.stringify(data));
             return true;
-        } catch (e) {
-            console.warn('localStorage를 사용할 수 없습니다:', e);
+        } catch (error) {
+            console.error(`데이터 저장 실패 (${key}):`, error);
             return false;
         }
     }
-    
-    /**
-     * 데이터 저장
-     * @param {string} key - 저장할 키
-     * @param {*} value - 저장할 값 (자동으로 JSON 문자열로 변환)
-     * @returns {boolean} 저장 성공 여부
-     */
-    set(key, value) {
-        if (!this.isAvailable) {
-            console.warn('localStorage를 사용할 수 없습니다');
-            return false;
-        }
-        
+
+    // 데이터 조회
+    getData(key) {
         try {
-            const serializedValue = JSON.stringify(value);
-            localStorage.setItem(key, serializedValue);
-            return true;
-        } catch (e) {
-            console.error(`데이터 저장 실패 [${key}]:`, e);
-            
-            // 용량 초과 에러 처리
-            if (e.name === 'QuotaExceededError') {
-                this.handleQuotaExceeded();
-            }
-            return false;
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error(`데이터 조회 실패 (${key}):`, error);
+            return null;
         }
     }
-    
-    /**
-     * 데이터 가져오기
-     * @param {string} key - 가져올 키
-     * @param {*} defaultValue - 값이 없을 때 반환할 기본값
-     * @returns {*} 저장된 값 또는 기본값
-     */
-    get(key, defaultValue = null) {
-        if (!this.isAvailable) {
-            return defaultValue;
-        }
-        
-        try {
-            const item = localStorage.getItem(key);
-            if (item === null) {
-                return defaultValue;
-            }
-            return JSON.parse(item);
-        } catch (e) {
-            console.error(`데이터 파싱 실패 [${key}]:`, e);
-            return defaultValue;
-        }
-    }
-    
-    /**
-     * 단순 문자열 저장 (JSON 변환 없이)
-     */
-    setString(key, value) {
-        if (!this.isAvailable) return false;
-        
-        try {
-            localStorage.setItem(key, value);
-            return true;
-        } catch (e) {
-            console.error(`문자열 저장 실패 [${key}]:`, e);
-            return false;
-        }
-    }
-    
-    /**
-     * 단순 문자열 가져오기 (JSON 파싱 없이)
-     */
-    getString(key, defaultValue = '') {
-        if (!this.isAvailable) return defaultValue;
-        
-        try {
-            return localStorage.getItem(key) || defaultValue;
-        } catch (e) {
-            console.error(`문자열 가져오기 실패 [${key}]:`, e);
-            return defaultValue;
-        }
-    }
-    
-    /**
-     * 데이터 삭제
-     * @param {string} key - 삭제할 키
-     * @returns {boolean} 삭제 성공 여부
-     */
-    remove(key) {
-        if (!this.isAvailable) return false;
-        
+
+    // 데이터 삭제
+    removeData(key) {
         try {
             localStorage.removeItem(key);
             return true;
-        } catch (e) {
-            console.error(`데이터 삭제 실패 [${key}]:`, e);
+        } catch (error) {
+            console.error(`데이터 삭제 실패 (${key}):`, error);
             return false;
         }
     }
-    
-    /**
-     * 모든 데이터 삭제
-     * @param {boolean} confirm - 확인 플래그 (안전장치)
-     * @returns {boolean} 삭제 성공 여부
-     */
-    clear(confirm = false) {
-        if (!confirm) {
-            console.warn('clear 메서드는 confirm=true 파라미터가 필요합니다');
-            return false;
-        }
-        
-        if (!this.isAvailable) return false;
-        
-        try {
-            localStorage.clear();
-            return true;
-        } catch (e) {
-            console.error('전체 데이터 삭제 실패:', e);
-            return false;
-        }
-    }
-    
-    /**
-     * 특정 접두사로 시작하는 모든 키 가져오기
-     * @param {string} prefix - 접두사
-     * @returns {Array} 매칭되는 키 배열
-     */
-    getKeysByPrefix(prefix) {
-        if (!this.isAvailable) return [];
-        
-        const keys = [];
-        try {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith(prefix)) {
-                    keys.push(key);
-                }
+
+    // 특정 항목 업데이트
+    updateItem(storageKey, itemId, updates) {
+        const data = this.getData(storageKey);
+        if (Array.isArray(data)) {
+            const index = data.findIndex(item => item.id === itemId);
+            if (index !== -1) {
+                data[index] = { ...data[index], ...updates };
+                return this.saveData(storageKey, data);
             }
-        } catch (e) {
-            console.error('키 목록 가져오기 실패:', e);
         }
-        return keys;
+        return false;
     }
-    
-    /**
-     * 스토리지 용량 정보 가져오기
-     * @returns {Object} 사용량 정보
-     */
-    getStorageInfo() {
-        if (!this.isAvailable) {
-            return { used: 0, total: 0, percentage: 0 };
+
+    // 새 항목 추가
+    addItem(storageKey, item) {
+        const data = this.getData(storageKey) || [];
+        if (Array.isArray(data)) {
+            data.push(item);
+            return this.saveData(storageKey, data);
         }
-        
-        try {
-            let used = 0;
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key)) {
-                    used += localStorage[key].length + key.length;
-                }
+        return false;
+    }
+
+    // 항목 삭제
+    deleteItem(storageKey, itemId) {
+        const data = this.getData(storageKey);
+        if (Array.isArray(data)) {
+            const filtered = data.filter(item => item.id !== itemId);
+            return this.saveData(storageKey, filtered);
+        }
+        return false;
+    }
+
+    // 전체 스토리지 초기화
+    clearAll() {
+        Object.values(this.STORAGE_KEYS).forEach(key => {
+            this.removeData(key);
+        });
+    }
+
+    // 스토리지 사용량 확인
+    getStorageSize() {
+        let totalSize = 0;
+        Object.values(this.STORAGE_KEYS).forEach(key => {
+            const data = localStorage.getItem(key);
+            if (data) {
+                totalSize += data.length;
             }
-            
-            // 브라우저별 기본 제한 (약 5-10MB)
-            const total = 5 * 1024 * 1024; // 5MB
-            const percentage = (used / total * 100).toFixed(2);
-            
-            return {
-                used: used,
-                total: total,
-                percentage: parseFloat(percentage),
-                usedMB: (used / 1024 / 1024).toFixed(2),
-                totalMB: (total / 1024 / 1024).toFixed(2)
-            };
-        } catch (e) {
-            console.error('스토리지 정보 가져오기 실패:', e);
-            return { used: 0, total: 0, percentage: 0 };
-        }
+        });
+        return (totalSize / 1024).toFixed(2) + ' KB';
     }
-    
-    /**
-     * 용량 초과 처리
-     */
-    handleQuotaExceeded() {
-        console.warn('localStorage 용량이 초과되었습니다');
-        const info = this.getStorageInfo();
-        console.warn(`현재 사용량: ${info.usedMB}MB / ${info.totalMB}MB (${info.percentage}%)`);
-        
-        // 오래된 채팅 히스토리 정리 시도
-        this.cleanupOldData();
+
+    // 특정 데이터 타입 메서드들
+    getUserProfile() {
+        return this.getData(this.STORAGE_KEYS.USER_PROFILE);
     }
-    
-    /**
-     * 오래된 데이터 정리
-     */
-    cleanupOldData() {
-        try {
-            // 채팅 히스토리에서 30일 이상 된 대화 삭제
-            const chatHistory = this.get(this.KEYS.CHAT_HISTORY, {});
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            
-            let cleaned = false;
-            
-            if (chatHistory.chatHistory) {
-                for (const userId in chatHistory.chatHistory) {
-                    const userChats = chatHistory.chatHistory[userId];
-                    const filteredChats = userChats.filter(chat => {
-                        const lastUpdated = new Date(chat.lastUpdated);
-                        return lastUpdated > thirtyDaysAgo;
-                    });
-                    
-                    if (filteredChats.length < userChats.length) {
-                        chatHistory.chatHistory[userId] = filteredChats;
-                        cleaned = true;
-                    }
-                }
-                
-                if (cleaned) {
-                    this.set(this.KEYS.CHAT_HISTORY, chatHistory);
-                    console.log('오래된 채팅 히스토리가 정리되었습니다');
-                }
-            }
-        } catch (e) {
-            console.error('데이터 정리 실패:', e);
-        }
+
+    updateUserProfile(updates) {
+        const profile = this.getUserProfile();
+        return this.saveData(this.STORAGE_KEYS.USER_PROFILE, { ...profile, ...updates });
     }
-    
-    // ===== 애플리케이션 특화 메서드 =====
-    
-    /**
-     * 현재 유저 ID 저장
-     */
-    setCurrentUserId(userId) {
-        return this.setString(this.KEYS.CURRENT_USER_ID, userId);
+
+    getStats() {
+        return this.getData(this.STORAGE_KEYS.STATS);
     }
-    
-    /**
-     * 현재 유저 ID 가져오기
-     */
-    getCurrentUserId() {
-        return this.getString(this.KEYS.CURRENT_USER_ID);
+
+    updateStats(updates) {
+        const stats = this.getStats();
+        return this.saveData(this.STORAGE_KEYS.STATS, { ...stats, ...updates });
     }
-    
-    /**
-     * 채팅 히스토리 저장
-     */
-    setChatHistory(chatHistory) {
-        return this.set(this.KEYS.CHAT_HISTORY, chatHistory);
+
+    getDocuments() {
+        return this.getData(this.STORAGE_KEYS.DOCUMENTS) || [];
     }
-    
-    /**
-     * 채팅 히스토리 가져오기
-     */
+
+    getSchedules() {
+        return this.getData(this.STORAGE_KEYS.SCHEDULES) || [];
+    }
+
     getChatHistory() {
-        return this.get(this.KEYS.CHAT_HISTORY, { chatHistory: {}, metadata: {} });
+        return this.getData(this.STORAGE_KEYS.CHAT_HISTORY) || [];
     }
     
-    /**
-     * 테마 저장
-     */
+    setChatHistory(chatHistory) {
+        return this.saveData(this.STORAGE_KEYS.CHAT_HISTORY, chatHistory);
+    }
+
+    addChatMessage(chatSession) {
+        return this.addItem(this.STORAGE_KEYS.CHAT_HISTORY, chatSession);
+    }
+
+    getBookmarks() {
+        return this.getData(this.STORAGE_KEYS.BOOKMARKS) || [];
+    }
+
+    addBookmark(bookmark) {
+        return this.addItem(this.STORAGE_KEYS.BOOKMARKS, bookmark);
+    }
+
+    removeBookmark(bookmarkId) {
+        return this.deleteItem(this.STORAGE_KEYS.BOOKMARKS, bookmarkId);
+    }
+
+    getNotificationSettings() {
+        return this.getData(this.STORAGE_KEYS.NOTIFICATION_SETTINGS);
+    }
+
+    updateNotificationSettings(settings) {
+        return this.saveData(this.STORAGE_KEYS.NOTIFICATION_SETTINGS, settings);
+    }
+
+    getSystemSettings() {
+        return this.getData(this.STORAGE_KEYS.SYSTEM_SETTINGS);
+    }
+
+    updateSystemSettings(settings) {
+        const current = this.getSystemSettings();
+        return this.saveData(this.STORAGE_KEYS.SYSTEM_SETTINGS, { ...current, ...settings });
+    }
+
+    // 테마 관련 메서드
+    getTheme() {
+        const systemSettings = this.getSystemSettings();
+        return systemSettings?.theme || 'light';
+    }
+
     setTheme(theme) {
-        return this.setString(this.KEYS.THEME, theme);
+        return this.updateSystemSettings({ theme });
     }
-    
-    /**
-     * 테마 가져오기
-     */
-    getTheme(defaultTheme = 'light') {
-        return this.getString(this.KEYS.THEME, defaultTheme);
+
+    // 현재 사용자 ID 관련 메서드
+    getCurrentUserId() {
+        return this.getData(this.STORAGE_KEYS.CURRENT_USER);
     }
-    
-    /**
-     * 앱 설정 저장
-     */
-    setAppSettings(settings) {
-        return this.set(this.KEYS.APP_SETTINGS, settings);
+
+    setCurrentUserId(userId) {
+        return this.saveData(this.STORAGE_KEYS.CURRENT_USER, userId);
     }
-    
-    /**
-     * 앱 설정 가져오기
-     */
-    getAppSettings(defaultSettings = {}) {
-        return this.get(this.KEYS.APP_SETTINGS, defaultSettings);
+
+    // 데이터 내보내기
+    exportData() {
+        const data = {};
+        Object.entries(this.STORAGE_KEYS).forEach(([name, key]) => {
+            data[name] = this.getData(key);
+        });
+        return data;
     }
-    
-    /**
-     * 유저 설정 저장
-     */
-    setUserPreferences(userId, preferences) {
-        const allPreferences = this.get(this.KEYS.USER_PREFERENCES, {});
-        allPreferences[userId] = preferences;
-        return this.set(this.KEYS.USER_PREFERENCES, allPreferences);
-    }
-    
-    /**
-     * 유저 설정 가져오기
-     */
-    getUserPreferences(userId) {
-        const allPreferences = this.get(this.KEYS.USER_PREFERENCES, {});
-        return allPreferences[userId] || {};
+
+    // 데이터 가져오기
+    importData(data) {
+        Object.entries(data).forEach(([name, value]) => {
+            if (this.STORAGE_KEYS[name]) {
+                this.saveData(this.STORAGE_KEYS[name], value);
+            }
+        });
     }
 }
 
-// 싱글톤 인스턴스 생성 및 export
+// 싱글톤 인스턴스 생성
 const storageManager = new StorageManager();
 
-// 전역 객체로도 노출 (다른 스크립트에서 접근 가능)
-window.storageManager = storageManager;
+// 전역에서 사용할 수 있도록 export
+if (typeof window !== 'undefined') {
+    window.StorageManager = storageManager;
+}

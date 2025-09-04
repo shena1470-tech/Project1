@@ -1,0 +1,631 @@
+/* 회의실 예약 시스템 스타일 */
+
+.meeting-reservation-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 헤더 */
+.reservation-header {
+    margin-bottom: 32px;
+}
+
+.reservation-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+/* 진행 바 */
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #999;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active .step-number {
+    background: #fa6600;
+    border-color: #fa6600;
+    color: white;
+}
+
+.progress-step.completed .step-number {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: white;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #666;
+}
+
+/* 단계 컨테이너 */
+.step-container {
+    animation: fadeIn 0.3s ease;
+}
+
+.step-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.step-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+/* 참가자 단계 */
+.meeting-title-input {
+    margin-bottom: 24px;
+}
+
+.meeting-title-input label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #fa6600;
+}
+
+.participant-search {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.search-btn {
+    padding: 12px 16px;
+    background: #fa6600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #e55500;
+}
+
+.search-results {
+    margin-bottom: 24px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: background 0.2s ease;
+}
+
+.search-result-item:hover {
+    background: #f9f9f9;
+}
+
+.selected-participants {
+    margin-bottom: 24px;
+}
+
+.selected-participants h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.participants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.participant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: white;
+}
+
+.participant-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.participant-avatar,
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fa6600, #ff8833);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.participant-details,
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.participant-name,
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.participant-position,
+.user-position {
+    font-size: 12px;
+    color: #666;
+}
+
+.remove-btn {
+    background: #ff5252;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.remove-btn:hover {
+    background: #ff1744;
+}
+
+/* 투표 컨테이너 */
+.voting-container {
+    margin-bottom: 24px;
+}
+
+.voter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 12px;
+}
+
+.voter-tab {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.voter-tab.active {
+    background: #fa6600;
+    color: white;
+    border-color: #fa6600;
+}
+
+.voter-tab.voted {
+    border-color: #4caf50;
+}
+
+.check-mark {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #4caf50;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* 시간 슬롯 그리드 */
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.time-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.time-slot:hover {
+    border-color: #fa6600;
+}
+
+.time-slot.selected {
+    background: #fa6600;
+    border-color: #fa6600;
+    color: white;
+}
+
+.time-slot input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.time-display {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 회의실 그리드 */
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.room-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.room-card:hover {
+    border-color: #fa6600;
+    box-shadow: 0 4px 8px rgba(250, 102, 0, 0.1);
+}
+
+.room-card.selected {
+    border-color: #fa6600;
+    background: #fff5f0;
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.room-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.room-capacity {
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.room-floor {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.room-equipment {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.equipment-tag {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* 음료 그리드 */
+.beverages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.beverage-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.beverage-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.beverage-header:hover {
+    background: #f9f9f9;
+}
+
+.beverage-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+.beverage-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.beverage-variants {
+    display: none;
+    padding: 12px;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+.beverage-variants.show {
+    display: block;
+}
+
+.variant-btn {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variant-btn:hover {
+    border-color: #fa6600;
+}
+
+.variant-btn.selected {
+    background: #fa6600;
+    color: white;
+    border-color: #fa6600;
+}
+
+/* 투표 상태 */
+.voting-status {
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+/* 완료 단계 */
+.completion-step {
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.reservation-summary {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: left;
+}
+
+.summary-item {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.summary-item label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #999;
+    margin-bottom: 6px;
+}
+
+.summary-item p {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+}
+
+.beverage-summary p {
+    display: inline-block;
+    margin-right: 16px;
+    margin-bottom: 8px;
+}
+
+/* 액션 버튼 */
+.step-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: #fa6600;
+    color: white;
+}
+
+.btn-primary:hover:not(.disabled) {
+    background: #e55500;
+}
+
+.btn-primary.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #f9f9f9;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .meeting-reservation-container {
+        padding: 16px;
+    }
+    
+    .progress-bar {
+        flex-wrap: wrap;
+    }
+    
+    .rooms-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .beverages-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .time-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .voter-tabs {
+        flex-wrap: wrap;
+    }
+}

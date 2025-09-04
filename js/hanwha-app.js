@@ -27,17 +27,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 // 유저 데이터 로드
 async function loadUsers() {
-    try {
-        const response = await fetch('data/users.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        usersData = data.users;
+    // SAMPLE_USERS_DATA가 정의되어 있으면 사용
+    if (typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users) {
+        usersData = SAMPLE_USERS_DATA.users;
         console.log('유저 데이터 로드 성공:', usersData.length + '명의 사용자');
-    } catch (error) {
-        console.error('유저 데이터 로드 실패:', error);
-        console.error('에러 상세:', error.message);
+    } else {
+        console.warn('샘플 유저 데이터를 찾을 수 없습니다. 폴백 데이터 사용');
         // 폴백 데이터 - 더미 사용자 여러명 추가
         usersData = [
             {
@@ -371,7 +366,19 @@ function renderUserMessage(text) {
 
 // AI 응답 추가
 function addAIResponse(userMessage) {
-    // AI 응답 로직
+    // 회의실 예약 요청 감지
+    if (userMessage.includes('회의실') && (
+        userMessage.includes('잡아') || 
+        userMessage.includes('예약') || 
+        userMessage.includes('예약해') ||
+        userMessage.includes('보아')
+    )) {
+        // 회의실 예약 UI 활성화
+        activateMeetingReservation();
+        return;
+    }
+    
+    // 일반 AI 응답 로직
     let response = generateAIResponse(userMessage);
     
     renderAIMessage(response);
@@ -581,11 +588,14 @@ style.textContent = `
         box-shadow: 0 0 0 2px rgba(250, 102, 0, 0.2);
     }
     
+    /* quick-button hover 효과 제거 - 비활성화된 버튼이므로 hover 효과 불필요 */
     .quick-button {
         position: relative;
-        overflow: hidden;
+        /* overflow: hidden; */
     }
     
+    /* hover 효과 제거 */
+    /*
     .quick-button::before {
         content: '';
         position: absolute;
@@ -603,6 +613,7 @@ style.textContent = `
         width: 100%;
         height: 100%;
     }
+    */
     
     /* 대화 히스토리 스타일 */
     .chat-history-section {
@@ -654,6 +665,62 @@ style.textContent = `
         color: #999;
     }
     
+    /* 회의실 예약 오버레이 스타일 */
+    .meeting-reservation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .meeting-reservation-wrapper {
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        background: white;
+        border-radius: 16px;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+    }
+    
+    .close-reservation-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #f5f5f5;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10;
+        transition: background 0.2s ease;
+    }
+    
+    .close-reservation-btn:hover {
+        background: #e0e0e0;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
     .empty-history {
         text-align: center;
         padding: 20px;
@@ -696,6 +763,75 @@ function toggleTheme() {
         setTimeout(() => {
             toggleBtn.style.transform = '';
         }, 200);
+    }
+}
+
+// 회의실 예약 시스템 활성화
+function activateMeetingReservation() {
+    // 회의실 예약 시스템 초기화
+    meetingReservation.initializeNewReservation();
+    
+    // 현재 사용자를 첫 번째 참가자로 추가
+    if (currentUser) {
+        meetingReservation.addParticipant(currentUser);
+        meetingReservation.currentReservation.createdBy = currentUser.id;
+    }
+    
+    // AI 메시지 표시
+    renderAIMessage('회의실 예약을 시작합니다. 아래 화면에서 참가자를 추가해주세요.');
+    
+    // 회의실 예약 UI를 별도의 컨테이너에 렌더링
+    const reservationContainer = document.createElement('div');
+    reservationContainer.id = 'meetingReservationContainer';
+    reservationContainer.className = 'meeting-reservation-overlay';
+    reservationContainer.innerHTML = `
+        <div class="meeting-reservation-wrapper">
+            <button class="close-reservation-btn" onclick="closeMeetingReservation()">×</button>
+            <div id="meetingReservationContent"></div>
+        </div>
+    `;
+    
+    // 채팅 메시지 영역에 추가
+    chatMessages.appendChild(reservationContainer);
+    
+    // 회의실 예약 UI 활성화
+    const contentDiv = document.getElementById('meetingReservationContent');
+    meetingReservationUI.activate(contentDiv);
+    
+    messages.push({ type: 'ai', text: '회의실 예약 시스템이 활성화되었습니다.' });
+    
+    // ChatManager에 저장
+    if (currentUser && currentChatId) {
+        chatManager.addMessage(currentUser.id, currentChatId, 'ai', '회의실 예약을 시작합니다.');
+        updateChatHistory();
+    }
+}
+
+// 회의실 예약 닫기
+function closeMeetingReservation() {
+    const container = document.getElementById('meetingReservationContainer');
+    if (container) {
+        container.remove();
+    }
+    
+    // 예약 완료 확인
+    if (meetingReservation.currentStep === 'complete') {
+        const summary = meetingReservation.getReservationSummary();
+        const message = `회의실 예약이 완료되었습니다!\n
+` +
+                       `회의 제목: ${summary.title || '팀 회의'}\n` +
+                       `시간: ${summary.time}\n` +
+                       `장소: ${summary.room.name}\n` +
+                       `참석자: ${summary.participants.map(p => p.name).join(', ')}`;
+        
+        renderAIMessage(message);
+        
+        if (currentUser && currentChatId) {
+            chatManager.addMessage(currentUser.id, currentChatId, 'ai', message);
+            updateChatHistory();
+        }
+    } else {
+        renderAIMessage('회의실 예약이 취소되었습니다.');
     }
 }
 
