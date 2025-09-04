@@ -339,7 +339,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px 20px;
+    padding: 20% 20px;
     min-height: calc(100vh - 72px);
     gap: 48px;
 }
@@ -357,14 +357,15 @@ body {
     flex-direction: column;
     gap: 8px;
     align-items: center;
-    width: 100%;
-    max-width: 700px;
+    width: 700px;
+    max-width: 100%;
 }
 
 .input-container {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 700px;
+    max-width: 100%;
     height: 64px;
     background-color: var(--color-neutral-100);
     border: 1px solid var(--color-border-light);
@@ -652,11 +653,20 @@ body.dark .moon-icon {
     }
     
     .welcome-container {
-        padding: 32px 16px;
+        padding: 15% 16px;
     }
     
     .chat-messages {
         padding: 24px 16px;
+    }
+    
+    .input-wrapper {
+        width: 100%;
+        max-width: 700px;
+    }
+    
+    .input-container {
+        width: 100%;
     }
 }
 
@@ -689,6 +699,7 @@ body.dark .moon-icon {
     
     .input-container {
         height: 56px;
+        width: 100%;
     }
     
     .hanwha-logo {
@@ -698,12 +709,17 @@ body.dark .moon-icon {
 }
 
 @media (max-width: 480px) {
+    .welcome-container {
+        padding: 10% 16px;
+    }
+    
     .welcome-title {
         font-size: 20px;
     }
     
     .input-wrapper {
         padding: 0 16px;
+        width: 100%;
     }
     
     .quick-button span {

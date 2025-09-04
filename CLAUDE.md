@@ -64,6 +64,25 @@ When implementing UI changes, reference these Figma designs using MCP:
 - **Main Interface**: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-1993
 - **Additional Screens**: https://www.figma.com/design/ekVkR9adztkXLOtHIGSPvy/AI-%EB%B9%84%EC%84%9C-MCP?node-id=4-2061
 
+#### Figma Asset Management Rules
+- Figma Dev Mode MCP 서버는 이미지 및 SVG 에셋을 제공할 수 있는 끝점을 제공합니다
+- **중요**: Figma에서 제공하는 localhost 소스는 먼저 로컬 파일로 다운로드하여 `assets/icons/` 디렉토리에 저장 후 상대경로로 참조
+- **중요**: 새로운 아이콘 패키지를 가져오거나 추가하지 마세요. 모든 에셋은 Figma 페이로드에 있어야 합니다
+- **중요**: 피그마 디자인으로 작업된 내용을 절대 변경하지 마세요
+- **중요**: 피그마 디자인을 가져올때 변환하지 말고 디자인 요소 그대로를 가져오세요
+
+### Asset Directory Structure
+```
+assets/
+├── icons/          # SVG icons downloaded from Figma
+│   ├── document-pen.svg
+│   ├── document-pen-full.svg
+│   ├── menu-food.svg
+│   ├── meeting.svg
+│   └── hanwha-logo.svg
+└── avatar-placeholder.png  # User avatar placeholder
+```
+
 ### Design System Variables
 The design system (`hanwha-design-system.css`) uses CSS custom properties:
 - **Colors**: Brand orange `#FA6600`, secondary `#403f3e`
@@ -104,3 +123,9 @@ Dark mode toggle modifies:
 3. **Data Security**: Encryption for sensitive employee data
 4. **Performance**: CDN for assets, code splitting for scalability
 5. **Error Handling**: Comprehensive error boundaries and fallbacks
+
+## Path and Link Guidelines
+
+- **Always use relative paths** for all assets and links (e.g., `assets/icons/logo.svg`)
+- **Never use absolute URLs** like `http://localhost` or `https://localhost`
+- When downloading Figma assets via localhost URLs, save them locally first then reference with relative paths

@@ -1,0 +1,14 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Document outline -->
+  <rect x="3.375" y="2.25" width="10.125" height="13.5" stroke="#403f3e" stroke-width="1.2" fill="none"/>
+  
+  <!-- Document lines -->
+  <line x1="5.625" y1="5.625" x2="11.25" y2="5.625" stroke="#403f3e" stroke-width="1.2"/>
+  <line x1="5.625" y1="8.325" x2="9" y2="8.325" stroke="#403f3e" stroke-width="1.2"/>
+  <line x1="5.625" y1="11.025" x2="11.25" y2="11.025" stroke="#403f3e" stroke-width="1.2"/>
+  
+  <!-- Pen -->
+  <path d="M11.8125 7.3125L16.3125 11.8125L11.8125 16.3125L7.3125 11.8125L11.8125 7.3125Z" stroke="#403f3e" stroke-width="1.2" fill="none"/>
+  <path d="M14.0625 9.5625L15.9375 11.4375" stroke="#403f3e" stroke-width="1.2"/>
+  <circle cx="9.5625" cy="14.0625" r="0.5625" fill="#403f3e"/>
+</svg>
