@@ -17,11 +17,10 @@ class ChatManager {
     // 채팅 히스토리 로드 (파일 또는 localStorage)
     async loadChatHistory() {
         try {
-            // 먼저 localStorage에서 로드 시도
-            const localData = localStorage.getItem(this.storageKey);
-            if (localData) {
-                const parsed = JSON.parse(localData);
-                this.chatHistory = parsed.chatHistory || {};
+            // StorageManager를 통해 로드
+            const data = storageManager.getChatHistory();
+            if (data && data.chatHistory) {
+                this.chatHistory = data.chatHistory;
                 return;
             }
 
@@ -50,7 +49,7 @@ class ChatManager {
                     totalUsers: Object.keys(this.chatHistory).length
                 }
             };
-            localStorage.setItem(this.storageKey, JSON.stringify(data));
+            storageManager.setChatHistory(data);
         } catch (error) {
             console.error('채팅 히스토리 저장 실패:', error);
         }

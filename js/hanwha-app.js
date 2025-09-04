@@ -67,7 +67,7 @@ async function loadUsers() {
 
 // 현재 유저 로드 (localStorage에서)
 function loadCurrentUser() {
-    const savedUserId = localStorage.getItem('currentUserId');
+    const savedUserId = storageManager.getCurrentUserId();
     if (savedUserId && usersData.length > 0) {
         currentUser = usersData.find(user => user.id === savedUserId) || usersData[0];
     } else if (usersData.length > 0) {
@@ -75,7 +75,7 @@ function loadCurrentUser() {
     }
     
     if (currentUser) {
-        localStorage.setItem('currentUserId', currentUser.id);
+        storageManager.setCurrentUserId(currentUser.id);
     }
 }
 
@@ -240,7 +240,7 @@ function selectUser(userId) {
     const user = usersData.find(u => u.id === userId);
     if (user) {
         currentUser = user;
-        localStorage.setItem('currentUserId', userId);
+        storageManager.setCurrentUserId(userId);
         updateUserDisplay();
         closeUserDropdown();
         
@@ -665,15 +665,8 @@ document.head.appendChild(style);
 
 // 테마 관련 함수
 function initTheme() {
-    // localStorage에서 저장된 테마 확인
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme) {
-        currentTheme = savedTheme;
-    } else {
-        // 기본값은 라이트 모드
-        currentTheme = 'light';
-    }
+    // StorageManager를 통해 저장된 테마 확인
+    currentTheme = storageManager.getTheme('light');
     
     // 테마 적용
     if (currentTheme === 'dark') {
@@ -693,8 +686,8 @@ function toggleTheme() {
         document.body.classList.remove('dark-mode');
     }
     
-    // localStorage에 저장
-    localStorage.setItem('theme', currentTheme);
+    // StorageManager를 통해 저장
+    storageManager.setTheme(currentTheme);
     
     // 애니메이션 효과
     const toggleBtn = document.querySelector('.theme-toggle');

@@ -1,12 +1,14 @@
 // 로컬 스토리지를 사용한 데이터 관리
 class DataManager {
     constructor() {
+        this.dataKey = 'aiAssistantData';
         this.initializeData();
     }
 
     initializeData() {
         // 초기 데이터가 없으면 생성
-        if (!localStorage.getItem('aiAssistantData')) {
+        const existingData = storageManager.get(this.dataKey);
+        if (!existingData) {
             const initialData = {
                 activities: [],
                 stats: {
@@ -19,16 +21,27 @@ class DataManager {
                 documents: [],
                 schedules: []
             };
-            localStorage.setItem('aiAssistantData', JSON.stringify(initialData));
+            storageManager.set(this.dataKey, initialData);
         }
     }
 
     getData() {
-        return JSON.parse(localStorage.getItem('aiAssistantData'));
+        return storageManager.get(this.dataKey, {
+            activities: [],
+            stats: {
+                tasksCompleted: 0,
+                timesSaved: 0,
+                documentsCreated: 0,
+                chatSessions: 0
+            },
+            chats: [],
+            documents: [],
+            schedules: []
+        });
     }
 
     saveData(data) {
-        localStorage.setItem('aiAssistantData', JSON.stringify(data));
+        return storageManager.set(this.dataKey, data);
     }
 
     addActivity(activity) {
