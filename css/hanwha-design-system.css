@@ -497,9 +497,9 @@ body {
     width: 700px;
     max-width: 100%;
     height: 64px;
-    background-color: var(--color-neutral-100);
-    border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-full);
+    background-color: #f5f5f5;
+    border: 1px solid #e5e4e3;
+    border-radius: 36px;
     padding: 0 12px 0 16px;
     position: relative;
 }
@@ -510,15 +510,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-neutral-100);
+    background-color: #f7f7f7;
     border: none;
-    border-radius: var(--radius-xs);
+    border-radius: 4px;
     cursor: pointer;
     transition: var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .input-plus-button:hover {
-    background-color: var(--color-border-light);
+    background-color: #efefef;
 }
 
 .plus-icon {
@@ -537,16 +538,16 @@ body {
 }
 
 .plus-icon::before {
-    width: 14px;
-    height: 1.5px;
+    width: 14.286px;
+    height: 1.429px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .plus-icon::after {
-    width: 1.5px;
-    height: 14px;
+    width: 1.429px;
+    height: 14.286px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -556,13 +557,15 @@ body {
     flex: 1;
     height: 24px;
     padding: 0 10px;
-    margin: 0 8px;
+    margin: 0 60px 0 8px;
     background-color: transparent;
     border: none;
     outline: none;
-    font-size: var(--font-size-body);
+    font-size: 16px;
     font-weight: 300;
     color: var(--color-text-primary);
+    font-family: var(--font-family);
+    line-height: 1.5;
 }
 
 .input-field::placeholder {
@@ -575,11 +578,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-primary);
+    background-color: #FA6600;
     border: none;
-    border-radius: var(--radius-2xl);
+    border-radius: 30px;
     cursor: pointer;
     transition: var(--transition-normal);
+    flex-shrink: 0;
+    position: absolute;
+    right: 12px;
+    top: 12px;
 }
 
 .send-button:hover {
@@ -594,7 +601,10 @@ body {
 .send-icon {
     width: 20px;
     height: 20px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M2 21l21-9L2 3v7l15 2-15 2z'/%3E%3C/svg%3E") center/contain no-repeat;
+    background-image: url('../assets/icons/send-message.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 /* Bottom Input Container - Fixed Position */
@@ -619,7 +629,8 @@ body {
 
 #bottomInput .input-container {
     width: 100%;
-    background-color: var(--color-neutral-100);
+    max-width: 1012px;
+    background-color: #f5f5f5;
 }
 
 /* Quick Actions */

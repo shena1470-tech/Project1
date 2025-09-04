@@ -107,21 +107,23 @@
             </div>
 
             <!-- 입력 영역 (채팅 시작 후 하단 고정) -->
-            <div class="input-wrapper" id="bottomInput" style="display: none; padding: 20px;">
-                <div class="input-container">
-                    <button class="input-plus-button" onclick="showAttachments()">
-                        <span class="plus-icon"></span>
-                    </button>
-                    <input
-                        type="text"
-                        class="input-field"
-                        placeholder="무엇이든 물어보세요."
-                        onkeypress="handleEnter(event)"
-                        id="bottomInputField"
-                    />
-                    <button class="send-button" onclick="sendMessage()">
-                        <span class="send-icon"></span>
-                    </button>
+            <div id="bottomInput">
+                <div class="input-wrapper">
+                    <div class="input-container">
+                        <button class="input-plus-button" onclick="showAttachments()">
+                            <span class="plus-icon"></span>
+                        </button>
+                        <input
+                            type="text"
+                            class="input-field"
+                            placeholder="무엇이든 물어보세요."
+                            onkeypress="handleEnter(event)"
+                            id="bottomInputField"
+                        />
+                        <button class="send-button" onclick="sendMessage()">
+                            <span class="send-icon"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
