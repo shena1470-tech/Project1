@@ -6,6 +6,7 @@ let messages = [];
 let currentTheme = 'light';
 let currentUser = null;
 let usersData = [];
+let currentChatId = null;
 
 // DOM 요소 캐싱
 const welcomeScreen = document.getElementById('welcomeScreen');
@@ -20,6 +21,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     await loadUsers();
     loadCurrentUser();
     updateUserDisplay();
+    await chatManager.init();
+    updateChatHistory();
 });
 
 // 유저 데이터 로드
@@ -99,6 +102,95 @@ function updateUserDisplay() {
     }
 }
 
+// 대화 히스토리 업데이트
+function updateChatHistory() {
+    if (!currentUser) return;
+    
+    const historyList = document.getElementById('chatHistoryList');
+    if (!historyList) return;
+    
+    const recentChats = chatManager.getRecentChats(currentUser.id, 20);
+    
+    if (recentChats.length === 0) {
+        historyList.innerHTML = '<div class="empty-history">대화 내역이 없습니다</div>';
+        return;
+    }
+    
+    historyList.innerHTML = recentChats.map(chat => `
+        <div class="chat-history-item ${chat.id === currentChatId ? 'active' : ''}" 
+             onclick="loadChat('${chat.id}')">
+            <div class="chat-title">${escapeHtml(chat.title)}</div>
+            <div class="chat-date">${formatDate(chat.lastUpdated)}</div>
+        </div>
+    `).join('');
+}
+
+// 날짜 포맷 함수
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const diff = now - date;
+    
+    // 1분 미만
+    if (diff < 60000) {
+        return '방금 전';
+    }
+    // 1시간 미만
+    if (diff < 3600000) {
+        const minutes = Math.floor(diff / 60000);
+        return `${minutes}분 전`;
+    }
+    // 24시간 미만
+    if (diff < 86400000) {
+        const hours = Math.floor(diff / 3600000);
+        return `${hours}시간 전`;
+    }
+    // 7일 미만
+    if (diff < 604800000) {
+        const days = Math.floor(diff / 86400000);
+        return `${days}일 전`;
+    }
+    
+    // 그 외
+    return date.toLocaleDateString('ko-KR');
+}
+
+// 채팅 로드
+function loadChat(chatId) {
+    if (!currentUser) return;
+    
+    const chat = chatManager.getChat(currentUser.id, chatId);
+    if (!chat) return;
+    
+    // 현재 채팅 ID 설정
+    currentChatId = chatId;
+    chatManager.currentChatId = chatId;
+    
+    // 메시지 로드
+    messages = chat.messages.map(msg => ({
+        type: msg.type,
+        text: msg.text
+    }));
+    
+    // 채팅 화면 초기화 및 메시지 표시
+    if (!chatStarted) {
+        initiateChatMode();
+    }
+    
+    // 기존 메시지 클리어 후 다시 렌더링
+    chatMessages.innerHTML = '';
+    messages.forEach(msg => {
+        if (msg.type === 'user') {
+            renderUserMessage(msg.text);
+        } else {
+            renderAIMessage(msg.text);
+        }
+    });
+    
+    scrollToBottom();
+    updateChatHistory();
+}
+
 // 유저 드롭다운 토글
 function toggleUserDropdown() {
     let dropdown = document.getElementById('userDropdown');
@@ -154,6 +246,9 @@ function selectUser(userId) {
         
         // 새로운 유저로 전환 시 채팅 초기화
         startNewChat();
+        
+        // 해당 유저의 대화 히스토리 업데이트
+        updateChatHistory();
     }
 }
 
@@ -170,6 +265,8 @@ function startNewChat() {
     // 메시지 초기화
     messages = [];
     chatStarted = false;
+    currentChatId = null;
+    chatManager.currentChatId = null;
     
     // UI 초기화
     if (welcomeScreen) {
@@ -190,6 +287,9 @@ function startNewChat() {
     // 채팅 영역 스타일 초기화
     chatArea.style.justifyContent = 'center';
     chatArea.style.alignItems = 'center';
+    
+    // 대화 히스토리 업데이트
+    updateChatHistory();
 }
 
 // 메시지 전송
@@ -198,6 +298,12 @@ function sendMessage() {
     const message = input.value.trim();
     
     if (!message) return;
+    
+    // 새 채팅이면 ChatManager에 새 세션 생성
+    if (!currentChatId && currentUser) {
+        currentChatId = chatManager.createNewChat(currentUser.id);
+        chatManager.currentChatId = currentChatId;
+    }
     
     // 첫 메시지인 경우 채팅 화면으로 전환
     if (!chatStarted) {
@@ -238,6 +344,19 @@ function initiateChatMode() {
 
 // 사용자 메시지 추가
 function addUserMessage(text) {
+    renderUserMessage(text);
+    
+    messages.push({ type: 'user', text: text });
+    
+    // ChatManager에 저장
+    if (currentUser && currentChatId) {
+        chatManager.addMessage(currentUser.id, currentChatId, 'user', text);
+        updateChatHistory();
+    }
+}
+
+// 사용자 메시지 렌더링
+function renderUserMessage(text) {
     const messageHtml = `
         <div class="message-container user-message" style="justify-content: flex-end;">
             <div class="message-bubble" style="background: linear-gradient(135deg, #fa6600, #ff8833); color: white; padding: 12px 20px; border-radius: 18px; max-width: 70%;">
@@ -248,8 +367,6 @@ function addUserMessage(text) {
     
     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
     scrollToBottom();
-    
-    messages.push({ type: 'user', text: text });
 }
 
 // AI 응답 추가
@@ -257,19 +374,30 @@ function addAIResponse(userMessage) {
     // AI 응답 로직
     let response = generateAIResponse(userMessage);
     
+    renderAIMessage(response);
+    
+    messages.push({ type: 'ai', text: response });
+    
+    // ChatManager에 저장
+    if (currentUser && currentChatId) {
+        chatManager.addMessage(currentUser.id, currentChatId, 'ai', response);
+        updateChatHistory();
+    }
+}
+
+// AI 메시지 렌더링
+function renderAIMessage(text) {
     const messageHtml = `
         <div class="message-container">
             <div class="ai-avatar"></div>
             <div class="message-bubble">
-                <p class="message-text">${response}</p>
+                <p class="message-text">${text}</p>
             </div>
         </div>
     `;
     
     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
     scrollToBottom();
-    
-    messages.push({ type: 'ai', text: response });
 }
 
 // AI 응답 생성 (시뮬레이션)
@@ -474,6 +602,63 @@ style.textContent = `
     .quick-button:hover::before {
         width: 100%;
         height: 100%;
+    }
+    
+    /* 대화 히스토리 스타일 */
+    .chat-history-section {
+        padding: 16px;
+    }
+    
+    .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: 12px;
+        padding-left: 8px;
+    }
+    
+    .chat-history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .chat-history-item {
+        padding: 10px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    .chat-history-item:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .chat-history-item.active {
+        background-color: #fff3e8;
+        border-left: 3px solid #fa6600;
+        padding-left: 9px;
+    }
+    
+    .chat-history-item .chat-title {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .chat-history-item .chat-date {
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .empty-history {
+        text-align: center;
+        padding: 20px;
+        color: #999;
+        font-size: 14px;
     }
 `;
 document.head.appendChild(style);

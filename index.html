@@ -38,10 +38,12 @@
                     <span class="plus-icon"></span>
                     새 대화 시작하기
                 </button>
-                <button class="menu-item">대화목록</button>
-                <button class="menu-item placeholder">ㄹㄹㄹ</button>
-                <button class="menu-item placeholder">ㄹㄹㄹ</button>
-                <button class="menu-item placeholder">ㄹㄹ</button>
+                <div class="chat-history-section">
+                    <h3 class="section-title">최근 대화</h3>
+                    <div id="chatHistoryList" class="chat-history-list">
+                        <!-- 대화 히스토리가 동적으로 추가됩니다 -->
+                    </div>
+                </div>
             </nav>
         </aside>
 
@@ -147,6 +149,7 @@
         </svg>
     </button>
 
+    <script src="js/chat-manager.js"></script>
     <script src="js/hanwha-app.js"></script>
 </body>
 </html>
