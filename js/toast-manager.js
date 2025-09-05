@@ -209,7 +209,26 @@ function hideAllToasts() {
     }
 }
 
+// 전역 함수들을 window 객체에 할당
+window.showToast = showToast;
+window.showSuccessToast = showSuccessToast;
+window.showErrorToast = showErrorToast;
+window.showMeetingSuccessToast = showMeetingSuccessToast;
+window.hideToast = hideToast;
+window.hideAllToasts = hideAllToasts;
+
 // DOM이 준비되면 토스트 매니저 초기화
 document.addEventListener('DOMContentLoaded', function() {
-    initToastManager();
+    const manager = initToastManager();
+    // 전역 접근을 위해 window 객체에 할당
+    window.toastManager = manager;
 });
+
+// 즉시 초기화도 수행 (스크립트 로드 시점에)
+if (document.readyState === 'loading') {
+    // DOM이 로딩 중인 경우 DOMContentLoaded 이벤트를 기다림
+} else {
+    // DOM이 이미 로드된 경우 즉시 초기화
+    const manager = initToastManager();
+    window.toastManager = manager;
+}
