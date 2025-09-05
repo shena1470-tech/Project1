@@ -538,6 +538,20 @@ body {
     margin-bottom: 16px;
 }
 
+/* Header Greeting */
+.header-greeting {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.greeting-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+}
+
 .notification-button {
     width: 28px;
     height: 28px;

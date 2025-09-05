@@ -1,0 +1,318 @@
+/* Report Mode - Figma Design Exact Implementation */
+
+.report-mode-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffff;
+    display: none;
+    overflow: auto;
+    z-index: 1000;
+}
+
+.report-mode-container.active {
+    display: block;
+}
+
+/* User Message Bubble */
+.report-user-message {
+    position: relative;
+    max-width: 508px;
+    margin: 77px auto 24px;
+    padding: 16px 24px;
+    background: #f5f5f5;
+    border-radius: 30px;
+}
+
+.report-user-message-content {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #000000;
+}
+
+.report-user-message-content p {
+    margin-bottom: 12px;
+}
+
+.report-user-message-content ul {
+    list-style-type: disc;
+    padding-left: 27px;
+    margin: 0;
+}
+
+.report-user-message-content li {
+    margin-bottom: 8px;
+}
+
+/* Report Selection Panel */
+.report-selection-wrapper {
+    max-width: 1130px;
+    margin: 200px auto 40px;
+    position: relative;
+}
+
+.report-selection-panel {
+    background: #ffffff;
+    border: 1px solid #d0cfce;
+    border-radius: 30px;
+    padding: 40px 32px;
+}
+
+.report-header {
+    margin-bottom: 20px;
+}
+
+.report-title {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: normal;
+    color: #333333;
+    margin-bottom: 8px;
+}
+
+.report-subtitle {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: normal;
+    color: #666666;
+}
+
+/* Report Template Grid */
+.report-template-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 250px);
+    gap: 20px;
+    padding: 10px 0;
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Report Cards */
+.report-card {
+    position: relative;
+    width: 250px;
+    height: 200px;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: #fa6600;
+}
+
+.report-card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.report-card-title {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+    right: 20px;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: normal;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.report-card-description {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: normal;
+    color: #808080;
+}
+
+/* Report Template Backgrounds */
+.report-card[data-template="quarterly"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/quarterly-report.png');
+}
+
+.report-card[data-template="project"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/project-progress.png');
+}
+
+.report-card[data-template="marketing"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/marketing-campaign.png');
+}
+
+.report-card[data-template="market"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/market-analysis.png');
+}
+
+.report-card[data-template="hr"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/hr-evaluation.png');
+}
+
+.report-card[data-template="financial"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/financial-status.png');
+}
+
+.report-card[data-template="risk"] .report-card-background {
+    background-image: url('../assets/report-backgrounds/risk-management.png');
+}
+
+/* Add New Report Card */
+.report-card-add {
+    background: #f5f5f5;
+    border: 2px dashed #d9d9d9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.report-card-add:hover {
+    background: #ffffff;
+    border-color: #fa6600;
+    transform: translateY(-2px);
+}
+
+.report-card-add-icon {
+    font-size: 48px;
+    color: #999999;
+    font-weight: 300;
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.report-card-add-text {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #808080;
+}
+
+/* AI Avatar */
+.report-ai-avatar {
+    position: absolute;
+    left: -68px;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    background: #266cc9;
+    border-radius: 6px;
+    border: 1px solid #d0cfce;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* Scrollbar Styling */
+.report-template-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.report-template-grid::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.report-template-grid::-webkit-scrollbar-thumb {
+    background: #d0cfce;
+    border-radius: 4px;
+}
+
+.report-template-grid::-webkit-scrollbar-thumb:hover {
+    background: #b4b3b2;
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+    .report-template-grid {
+        grid-template-columns: repeat(3, 250px);
+    }
+}
+
+@media (max-width: 1024px) {
+    .report-mode-container {
+        left: 280px;
+    }
+    
+    .report-template-grid {
+        grid-template-columns: repeat(2, 250px);
+    }
+}
+
+@media (max-width: 768px) {
+    .report-mode-container {
+        left: 0;
+        top: 64px;
+    }
+    
+    .report-user-message {
+        margin: 24px 16px;
+        padding: 12px 20px;
+    }
+    
+    .report-selection-wrapper {
+        margin: 24px 16px;
+    }
+    
+    .report-selection-panel {
+        padding: 24px 16px;
+        border-radius: 20px;
+    }
+    
+    .report-title {
+        font-size: 24px;
+    }
+    
+    .report-template-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        max-height: none;
+    }
+    
+    .report-card,
+    .report-card-add {
+        width: 100%;
+        height: 180px;
+    }
+    
+    .report-card-title {
+        font-size: 16px;
+        bottom: 50px;
+    }
+    
+    .report-card-description {
+        font-size: 12px;
+        bottom: 25px;
+    }
+    
+    .report-ai-avatar {
+        display: none;
+    }
+}

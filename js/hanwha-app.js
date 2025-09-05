@@ -450,6 +450,11 @@ function renderUserMessage(text, mode = null) {
 
 // AI 응답 추가
 function addAIResponse(userMessage, mode = null) {
+    // 보고서 작성 요청 처리
+    if (handleReportRequest(userMessage)) {
+        return;
+    }
+
     // 상태카드 관련 요청 처리
     const statusCardResponse = handleStatusCardRequest(userMessage);
     if (statusCardResponse) {
@@ -480,6 +485,14 @@ function addAIResponse(userMessage, mode = null) {
                 updateChatHistory();
             }, 100);
         }
+        return;
+    }
+
+    // User Test 관련 요청 처리
+    const userTestResponse = handleUserTestRequest(userMessage);
+    if (userTestResponse || (mode && mode.id === 'userTest')) {
+        // User Test 모달 활성화
+        activateUserTestModal();
         return;
     }
 
@@ -1331,6 +1344,61 @@ function formatDateKorean(date) {
     const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
     const dayOfWeek = weekDays[date.getDay()];
     return `${year}. ${month}. ${day}. (${dayOfWeek})`;
+}
+
+// 보고서 작성 요청 처리 - Figma Design Integration
+function handleReportRequest(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // 보고서 작성 관련 키워드 체크
+    const reportKeywords = ['보고서', '보고서 작성', '리포트', '보고서 만들기', '보고서 생성', '문서 작성', '보고서 양식', '보고서 템플릿', '서비스 개선', '실적', '프로젝트 진행'];
+    
+    const hasReportKeyword = reportKeywords.some(keyword => 
+        lowerMessage.includes(keyword)
+    );
+    
+    if (hasReportKeyword) {
+        console.log('보고서 작성 요청 감지');
+        
+        // 보고서 모드 즉시 활성화 (Figma 디자인)
+        if (typeof reportModeManager !== 'undefined' && reportModeManager) {
+            // 사용자 요청 메시지 설정
+            if (reportModeManager.setUserRequest) {
+                reportModeManager.setUserRequest(userMessage);
+            }
+            reportModeManager.showReportMode();
+            
+            // ChatManager에 저장
+            if (currentUser && currentChatId) {
+                chatManager.addMessage(currentUser.id, currentChatId, 'user', userMessage);
+                updateChatHistory();
+            }
+        } else if (typeof activateReportMode === 'function') {
+            activateReportMode();
+        } else {
+            // Fallback - AI 응답만 표시
+            const aiResponse = `
+                <div class="ai-message-content">
+                    <p>보고서 작성을 도와드리겠습니다. 다양한 템플릿을 준비했으니 원하시는 보고서 양식을 선택해 주세요.</p>
+                    <p>한화생명 스타일로 전문적인 보고서를 작성해 드립니다.</p>
+                </div>
+            `;
+            
+            renderAIMessage(aiResponse);
+            messages.push({ type: 'ai', text: aiResponse });
+            
+            if (currentUser && currentChatId) {
+                chatManager.addMessage(currentUser.id, currentChatId, 'ai', aiResponse);
+                updateChatHistory();
+            }
+            
+            console.warn('보고서 모드 관리자를 찾을 수 없습니다.');
+        }
+        
+        return true;
+    }
+    
+    return false;
 }
 
 // 휴가 관련 요청 처리
@@ -2608,5 +2676,22 @@ function showGuide() {
 // 설정 화면 표시 함수
 function showSettings() {
     alert('설정 기능은 준비중입니다.');
+}
+
+// User Test 모달 활성화 함수
+function activateUserTestModal() {
+    // UserTestModal 인스턴스 생성 및 열기
+    if (typeof UserTestModal !== 'undefined') {
+        const modal = new UserTestModal();
+        modal.open();
+    } else if (typeof openUserTestModal !== 'undefined') {
+        // 전역 함수 사용
+        openUserTestModal();
+    } else {
+        // 폴백: 기본 User Test 응답 표시
+        const fallbackResponse = generateUserTestGeneralResponse();
+        renderAIMessageWithCard(fallbackResponse.message, null, fallbackResponse.responsiblePerson);
+        console.warn('UserTestModal 클래스를 찾을 수 없어 기본 응답으로 처리했습니다.');
+    }
 }
 

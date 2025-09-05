@@ -1,0 +1,485 @@
+/* User Test Modal - Figma 디자인 기반 스타일 */
+
+/* 메인 컨테이너 */
+.user-test-main-container {
+    position: fixed;
+    top: 50%;
+    right: 50px;
+    transform: translateY(-50%);
+    width: 400px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    overflow: hidden;
+}
+
+/* 헤더 - 사용자 메시지 */
+.user-test-header {
+    background: #f5f5f5;
+    padding: 20px 30px;
+    border-bottom: 1px solid #e5e4e3;
+}
+
+.user-test-title {
+    background: #f5f5f5;
+    color: #333;
+    font-size: 18px;
+    font-weight: 300;
+    padding: 15px 25px;
+    border-radius: 30px;
+    display: inline-block;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+/* 컨텐츠 영역 */
+.user-test-content {
+    padding: 30px;
+    background: white;
+    min-height: 400px;
+}
+
+/* AI 선택 화면 */
+.ai-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.ai-message-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #d0cfce;
+    border-radius: 30px;
+}
+
+.ai-avatar-icon {
+    width: 48px;
+    height: 48px;
+    background: #419576;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.ai-message {
+    font-size: 18px;
+    color: #333;
+    font-weight: 300;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+/* AI 페르소나 컨테이너 */
+.ai-personas-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.ai-persona-box {
+    width: 160px;
+    padding: 15px;
+    border: 1px solid #d0cfce;
+    border-radius: 30px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ai-persona-box:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ai-persona-box.selected {
+    border-color: #fa6600;
+    background: rgba(250, 102, 0, 0.05);
+}
+
+.persona-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.persona-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #403f3e;
+    font-weight: 400;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.persona-checkbox {
+    width: 24px;
+    height: 24px;
+    accent-color: #fa6600;
+}
+
+.persona-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.persona-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.persona-info {
+    text-align: center;
+    font-size: 14px;
+    color: #403f3e;
+    font-weight: 300;
+    line-height: 1.5;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-complete, .btn-custom {
+    padding: 16px 40px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.btn-complete {
+    background: #fa6600;
+    color: white;
+}
+
+.btn-complete:hover:not(.disabled) {
+    background: #e55a00;
+}
+
+.btn-complete.disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-custom {
+    background: #403f3e;
+    color: white;
+}
+
+.btn-custom:hover {
+    background: #333;
+}
+
+/* 설정 모달 오버레이 */
+.settings-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+}
+
+/* 설정 모달 컨테이너 */
+.settings-modal-container {
+    background: white;
+    border-radius: 30px;
+    width: 500px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #403f3e;
+    font-weight: 400;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.close-btn img {
+    width: 100%;
+    height: 100%;
+}
+
+/* 설정 컨텐츠 */
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setting-group label {
+    font-size: 16px;
+    color: #403f3e;
+    font-weight: 400;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.option-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.option-btn {
+    padding: 8px 16px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 15px;
+    font-size: 14px;
+    color: #403f3e;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.option-btn:hover {
+    background: #e5e5e5;
+}
+
+.option-btn.selected {
+    background: #fa6600;
+    color: white;
+}
+
+/* 설정 완료 버튼 */
+.settings-footer {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-setting-complete {
+    width: 100%;
+    padding: 16px;
+    background: #403f3e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.btn-setting-complete:hover {
+    background: #333;
+}
+
+/* 채팅 화면 */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.selected-ai-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.ai-badge {
+    font-size: 10px;
+}
+
+.end-test-btn {
+    padding: 6px 12px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.end-test-btn:hover {
+    background: #e5e5e5;
+}
+
+/* 채팅 메시지 영역 */
+.chat-messages {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ai-initial-message {
+    width: 100%;
+}
+
+.message-box {
+    padding: 15px 20px;
+    border-radius: 30px;
+    border: 1px solid #d0cfce;
+    background: white;
+    max-width: 85%;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+.message-box p {
+    margin: 0;
+}
+
+.user-message {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.user-message .message-box {
+    background: #fa6600;
+    color: white;
+    border: none;
+    border-radius: 30px 30px 5px 30px;
+}
+
+.ai-message {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* 채팅 입력 영역 */
+.chat-input-container {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e5;
+}
+
+#testChatInput {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #e5e5e5;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+}
+
+#testChatInput:focus {
+    border-color: #fa6600;
+}
+
+.send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fa6600;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.send-btn:hover {
+    background: #e55a00;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .user-test-main-container {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+        transform: translateY(-50%);
+    }
+    
+    .ai-personas-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .settings-modal-container {
+        width: 90%;
+        padding: 20px;
+    }
+    
+    .option-buttons {
+        justify-content: center;
+    }
+}
+
+/* 스크롤바 스타일 */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

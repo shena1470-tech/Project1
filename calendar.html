@@ -177,6 +177,9 @@
             <!-- 상단 헤더 -->
             <header class="top-header">
                 <div class="header-actions">
+                    <div class="header-greeting">
+                        <span class="greeting-text">김한화사원</span>
+                    </div>
                     <button class="notification-button" onclick="showNotifications()" aria-label="알림">
                         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <path d="M14 2C10.686 2 8 4.686 8 8C8 11.314 8 15 6 17H22C20 15 20 11.314 20 8C20 4.686 17.314 2 14 2Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -244,7 +247,6 @@
     <!-- JavaScript 파일들 -->
     <script src="js/storage-manager.js"></script>
     <script src="js/chat-manager.js"></script>
-    <script src="js/hanwha-app.js"></script>
     <script src="js/calendar.js"></script>
     <script>
         // 캘린더 페이지 전용 함수들
@@ -260,6 +262,149 @@
         function showSettings() {
             alert('설정 기능은 준비중입니다.');
         }
+        
+        function showNotifications() {
+            alert('알림 기능은 준비중입니다.');
+        }
+        
+        // 모바일 사이드바 토글
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.mobile-sidebar-overlay');
+            
+            if (sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar();
+            } else {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.mobile-sidebar-overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // 채팅 히스토리 로드 - 간단한 버전
+        function loadChatHistory() {
+            const chatHistoryList = document.getElementById('chatHistoryList');
+            if (!chatHistoryList) return;
+            
+            // 현재 사용자 ID 가져오기
+            let currentUserId = null;
+            try {
+                if (typeof storageManager !== 'undefined') {
+                    currentUserId = storageManager.getCurrentUserId();
+                } else {
+                    currentUserId = localStorage.getItem('hanwha_current_user');
+                    if (currentUserId && currentUserId.startsWith('"')) {
+                        currentUserId = JSON.parse(currentUserId);
+                    }
+                }
+            } catch (e) {
+                console.error('현재 사용자 ID 조회 실패:', e);
+            }
+            
+            // 기본 사용자 설정
+            if (!currentUserId && typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users) {
+                currentUserId = SAMPLE_USERS_DATA.users[0].id;
+            }
+            
+            // 채팅 히스토리 데이터 가져오기
+            let chatHistoryData = [];
+            try {
+                if (typeof storageManager !== 'undefined') {
+                    const allChatHistory = storageManager.getChatHistory();
+                    // 사용자별 구조인지 확인
+                    if (allChatHistory && typeof allChatHistory === 'object' && !Array.isArray(allChatHistory)) {
+                        // 사용자별 구조인 경우, 현재 사용자의 채팅만 가져오기
+                        if (currentUserId && allChatHistory[currentUserId]) {
+                            chatHistoryData = allChatHistory[currentUserId];
+                        }
+                    } else if (Array.isArray(allChatHistory)) {
+                        // 배열 구조인 경우 그대로 사용
+                        chatHistoryData = allChatHistory;
+                    }
+                } else {
+                    // localStorage에서 직접 읽기
+                    const stored = localStorage.getItem('hanwha_chat_history');
+                    if (stored) {
+                        const parsedData = JSON.parse(stored);
+                        if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+                            // 사용자별 구조인 경우
+                            if (currentUserId && parsedData[currentUserId]) {
+                                chatHistoryData = parsedData[currentUserId];
+                            }
+                        } else if (Array.isArray(parsedData)) {
+                            // 배열 구조인 경우
+                            chatHistoryData = parsedData;
+                        }
+                    }
+                }
+                
+                // 최종적으로 배열이 아니면 빈 배열로 초기화
+                if (!Array.isArray(chatHistoryData)) {
+                    console.warn('채팅 히스토리 데이터가 배열이 아닙니다:', typeof chatHistoryData, chatHistoryData);
+                    chatHistoryData = [];
+                }
+            } catch (e) {
+                console.error('채팅 히스토리 로드 실패:', e);
+                chatHistoryData = [];
+            }
+            
+            if (!chatHistoryData || chatHistoryData.length === 0) {
+                chatHistoryList.innerHTML = `
+                    <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
+                        대화 기록이 없습니다
+                    </div>
+                `;
+                return;
+            }
+            
+            // 최근 10개 대화만 표시
+            const recentChats = chatHistoryData.slice(-10).reverse();
+            chatHistoryList.innerHTML = recentChats.map(chat => `
+                <div class="chat-history-item" onclick="goToChat('${chat.id}')" style="
+                    padding: 12px 16px;
+                    border-bottom: 1px solid #f0f0f0;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                " onmouseover="this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.backgroundColor=''">
+                    <div style="font-size: 14px; color: #333; margin-bottom: 4px;">
+                        ${chat.title || '새 대화'}
+                    </div>
+                    <div style="font-size: 12px; color: #999;">
+                        ${formatDate(chat.createdAt || chat.lastUpdated || chat.startTime)}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 채팅으로 이동
+        function goToChat(chatId) {
+            // 채팅 ID를 세션 스토리지에 저장하고 메인 페이지로 이동
+            sessionStorage.setItem('loadChatId', chatId);
+            window.location.href = 'index.html';
+        }
+        
+        // 날짜 포맷팅
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return '방금 전';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}분 전`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}시간 전`;
+            
+            return date.toLocaleDateString('ko-KR');
+        }
 
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', () => {
@@ -269,21 +414,84 @@
             }
             
             // 채팅 히스토리 로드
-            if (typeof loadChatHistory === 'function') {
-                loadChatHistory();
-            }
+            loadChatHistory();
             
-            // 사용자 이름 로드
-            const userData = localStorage.getItem('currentUser');
-            if (userData) {
-                try {
-                    const user = JSON.parse(userData);
-                    const userNameEl = document.querySelector('.user-name');
-                    if (userNameEl && user.name) {
-                        userNameEl.textContent = user.name;
+            // 사용자 정보 로드
+            try {
+                let currentUserId = null;
+                
+                // storageManager가 있으면 사용, 없으면 localStorage 직접 접근
+                if (typeof storageManager !== 'undefined') {
+                    currentUserId = storageManager.getCurrentUserId();
+                } else {
+                    currentUserId = localStorage.getItem('hanwha_current_user');
+                    if (currentUserId && currentUserId.startsWith('"')) {
+                        currentUserId = JSON.parse(currentUserId);
                     }
-                } catch (e) {
-                    console.log('사용자 정보 로드 실패');
+                }
+                
+                // 사용자 정보 찾기
+                if (currentUserId && typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users) {
+                    const user = SAMPLE_USERS_DATA.users.find(u => u.id === currentUserId);
+                    if (user) {
+                        const userNameEl = document.querySelector('.user-name');
+                        const userAvatarEl = document.querySelector('.user-avatar');
+                        if (userNameEl) {
+                            userNameEl.textContent = user.name;
+                        }
+                        if (userAvatarEl) {
+                            userAvatarEl.textContent = user.name[0];
+                            userAvatarEl.style.display = 'flex';
+                            userAvatarEl.style.alignItems = 'center';
+                            userAvatarEl.style.justifyContent = 'center';
+                            userAvatarEl.style.background = '#FA6600';
+                            userAvatarEl.style.color = 'white';
+                            userAvatarEl.style.fontWeight = '600';
+                        }
+                    } else {
+                        // 사용자를 찾지 못한 경우 첫 번째 사용자 사용
+                        const firstUser = SAMPLE_USERS_DATA.users[0];
+                        if (firstUser) {
+                            const userNameEl = document.querySelector('.user-name');
+                            const userAvatarEl = document.querySelector('.user-avatar');
+                            if (userNameEl) {
+                                userNameEl.textContent = firstUser.name;
+                            }
+                            if (userAvatarEl) {
+                                userAvatarEl.textContent = firstUser.name[0];
+                                userAvatarEl.style.display = 'flex';
+                                userAvatarEl.style.alignItems = 'center';
+                                userAvatarEl.style.justifyContent = 'center';
+                                userAvatarEl.style.background = '#FA6600';
+                                userAvatarEl.style.color = 'white';
+                                userAvatarEl.style.fontWeight = '600';
+                            }
+                        }
+                    }
+                } else if (typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users && SAMPLE_USERS_DATA.users.length > 0) {
+                    // currentUserId가 없는 경우 첫 번째 사용자 사용
+                    const firstUser = SAMPLE_USERS_DATA.users[0];
+                    const userNameEl = document.querySelector('.user-name');
+                    const userAvatarEl = document.querySelector('.user-avatar');
+                    if (userNameEl) {
+                        userNameEl.textContent = firstUser.name;
+                    }
+                    if (userAvatarEl) {
+                        userAvatarEl.textContent = firstUser.name[0];
+                        userAvatarEl.style.display = 'flex';
+                        userAvatarEl.style.alignItems = 'center';
+                        userAvatarEl.style.justifyContent = 'center';
+                        userAvatarEl.style.background = '#FA6600';
+                        userAvatarEl.style.color = 'white';
+                        userAvatarEl.style.fontWeight = '600';
+                    }
+                }
+            } catch (e) {
+                console.error('사용자 정보 로드 실패:', e);
+                // 기본값 설정
+                const userNameEl = document.querySelector('.user-name');
+                if (userNameEl) {
+                    userNameEl.textContent = '게스트';
                 }
             }
             

@@ -66,23 +66,43 @@
 }
 
 .report-template-preview.empty {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    margin: 10px;
 }
 
 .add-report-icon {
     width: 48px;
     height: 48px;
-    border: 2px dashed #6c757d;
+    border: 2px dashed #94a3b8;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6c757d;
+    color: #64748b;
     font-size: 24px;
     font-weight: 300;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.report-template-card:hover .add-report-icon {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(250, 102, 0, 0.05);
+}
+
+.empty .template-add-text {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
 }
 
 .report-template-info {
@@ -99,29 +119,203 @@
     text-align: center;
 }
 
-/* 템플릿 이미지 스타일 */
+/* 보고서 템플릿 미리보기 스타일 - 피그마 디자인 정확히 반영 */
+
+/* Transforming Customer Relations - 파란색 비즈니스 보고서 */
 .template-transforming {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+VHJhbnNmb3JtaW5nPC90ZXh0Pgo8ZGVmcz4KPGF+ZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzMzNjZGRiIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2NjY2RkYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: linear-gradient(135deg, #3366FF 0%, #6666FF 100%);
+    position: relative;
+    overflow: hidden;
+    color: white;
 }
 
+.template-transforming::before {
+    content: 'Transforming\ACustomer\ARelations';
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.2;
+    white-space: pre-line;
+    color: white;
+    z-index: 2;
+}
+
+.template-transforming::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 마케팅 전략 2025 - 차트와 데이터가 있는 화이트 보고서 */
 .template-marketing {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+TWFya2V0aW5nPC90ZXh0Pgo8ZGVmcz4KPGF+ZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzMzOTlGRiIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2NkNDRkYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
 }
 
+.template-marketing::before {
+    content: 'マーケティング戦略 2025';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #1a202c;
+    z-index: 2;
+}
+
+.template-marketing::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    height: 80px;
+    background: linear-gradient(90deg, #3399FF 0%, #66CCFF 100%);
+    border-radius: 8px;
+    opacity: 0.8;
+}
+
+/* ROI 분석 지표 - 여성 인물 이미지가 포함된 분홍색 보고서 */
 .template-roi {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+Uk9JIEFuYWx5c2lzPC90ZXh0Pgo8ZGVmcz4KPGF+ZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0ZGNjY5OSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRjk5Q0MiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: linear-gradient(135deg, #FF6699 0%, #FF99CC 100%);
+    position: relative;
+    overflow: hidden;
 }
 
+.template-roi::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 60px;
+    height: 80px;
+    background: radial-gradient(ellipse, #fff 30%, #FF99CC 70%);
+    border-radius: 8px;
+    opacity: 0.9;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.template-roi::after {
+    content: 'STOCK PICKING\AFROM WALL ST\AALEXANDRA CHEN';
+    position: absolute;
+    top: 25px;
+    left: 20px;
+    right: 80px;
+    color: white;
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: bold;
+    white-space: pre-line;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Smart Home Market Insights 2025 - 깔끔한 흰색 레포트 */
 .template-insights {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+SW5zaWdodHM8L3RleHQ+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzMzRkY5OSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2NkZGQ0MiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    position: relative;
+    overflow: hidden;
 }
 
+.template-insights::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, #06b6d4 0%, #3b82f6 100%);
+    border-radius: 2px;
+}
+
+.template-insights::after {
+    content: 'Smart Home Market\AInsights 2025\A\AMarket Size: $80.21B\A\A• IoT Device Growth\A• Consumer Adoption\A• Technology Trends\A• Future Projections';
+    position: absolute;
+    top: 35px;
+    left: 30px;
+    right: 30px;
+    color: #1f2937;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 600;
+    white-space: pre-line;
+}
+
+/* 비즈니스 전략 보고서 - 전문적인 레이아웃 */
 .template-business {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+QnVzaW5lc3M8L3RleHQ+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0ZGMzM2NiIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRjY2OTkiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    position: relative;
+    overflow: hidden;
 }
 
+.template-business::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.1) 100%);
+}
+
+.template-business::after {
+    content: '비즈니스 전략\A보고서\A\A2025년 핵심 전략\A\A• 시장 확장 계획\A• 디지털 혁신\A• 고객 경험 개선';
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    color: #475569;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 600;
+    white-space: pre-line;
+}
+
+/* Global Brand Adaptation - 어두운 배경에 컬러풀한 도트들 */
 .template-global {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+R2xvYmFsIEJyYW5kPC90ZXh0Pgo8ZGVmcz4KPGF+ZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMF8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSIxODAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzMzMzMzMyIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM2NjY2NjYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K');
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.template-global::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 
+        15px 10px 0 #f59e0b,
+        30px 5px 0 #10b981,
+        45px 15px 0 #3b82f6,
+        20px 25px 0 #8b5cf6,
+        35px 30px 0 #ec4899;
+}
+
+.template-global::after {
+    content: 'Global Brand\AAdaptation\A\AMulticultural Strategy\A\A• Local Market Analysis\A• Cultural Adaptation\A• Brand Consistency\A• Regional Performance';
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 70px;
+    color: #f1f5f9;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 500;
+    white-space: pre-line;
 }
 
 /* 반응형 디자인 */
