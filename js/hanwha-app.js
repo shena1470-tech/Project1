@@ -366,7 +366,7 @@ function sendMessage() {
 
     // 입력 필드 초기화
     input.value = '';
-    
+
     // 모드 선택 해제 (필요한 경우)
     if (currentMode && typeof clearSelectedMode === 'function') {
         clearSelectedMode();
@@ -410,8 +410,8 @@ function initiateChatMode() {
 function addUserMessage(text, mode = null) {
     renderUserMessage(text, mode);
 
-    const messageData = { 
-        type: 'user', 
+    const messageData = {
+        type: 'user',
         text: text,
         mode: mode ? { id: mode.id, name: mode.name, icon: mode.icon } : null
     };
@@ -432,7 +432,7 @@ function renderUserMessage(text, mode = null) {
             <span>${mode.name}</span>
         </div>
     ` : '';
-    
+
     const messageHtml = `
         <div class="message-container user-message" style="justify-content: flex-end;">
             <div class="message-bubble" style="background: linear-gradient(135deg, #fa6600, #ff8833); color: white; padding: 12px 20px; border-radius: 18px; max-width: 70%;">
@@ -776,7 +776,7 @@ function handleResponsibleNameClick(personIdentifier, event) {
     console.log('담당자 이름 클릭:', personIdentifier);
     console.log('SAMPLE_USERS_DATA available:', !!window.SAMPLE_USERS_DATA);
     console.log('ORGANIZATION_DATA available:', !!window.ORGANIZATION_DATA);
-    
+
     // 이벤트 전파 중지
     if (event) {
         event.preventDefault();
@@ -809,7 +809,7 @@ function handleResponsibleNameClick(personIdentifier, event) {
     // 담당자 상세정보 패널 표시
     console.log('contactDetailManager 확인:', window.contactDetailManager);
     console.log('최종 contactId:', contactId);
-    
+
     if (window.contactDetailManager) {
         window.contactDetailManager.showContactDetail(contactId);
     } else {
@@ -875,19 +875,19 @@ function startChatWithPerson(personIdentifier) {
 
     // 담당자와의 채팅 시작 메시지 추가
     const chatMessage = `${userData.name} ${userData.position}님과의 문의를 시작합니다.`;
-    
+
     setTimeout(() => {
         if (typeof addUserMessage === 'function') {
             addUserMessage(chatMessage);
         }
-        
+
         // AI 응답 (담당자 정보 기반)
         setTimeout(() => {
             const orgDetails = window.ORGANIZATION_DATA?.contactDetails?.[contactId];
             const responsibilities = orgDetails?.responsibilities?.slice(0, 3) || ['업무 정보를 불러오는 중입니다...'];
-            
+
             const aiResponse = `안녕하세요! ${userData.name} ${userData.position}입니다. 무엇을 도와드릴까요? 😊\n\n제가 담당하고 있는 업무는 다음과 같습니다:\n${responsibilities.map(r => `• ${r}`).join('\n')}`;
-            
+
             if (typeof addAIResponse === 'function') {
                 addAIResponse(aiResponse);
             }
@@ -1131,7 +1131,7 @@ function generateMeetingOptions(attendees, floorRestriction, duration, originalM
             <div class="meeting-options-grid">
                 ${optionCards}
             </div>
-            <button class="confirm-meeting-btn" onclick="confirmMeetingOption()">선택한 옵션으로 예약하기</button>
+            <button class="confirm-meeting-btn" onclick="confirmMeetingOption()">예약하기</button>
         </div>
     `;
 
@@ -1160,11 +1160,11 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration, userMe
 
     // "오늘" 키워드 확인
     const includesToday = userMessage.toLowerCase().includes('오늘');
-    
+
     // 검색 시작일 설정 (오늘 포함 또는 내일부터)
     const startOffset = includesToday ? 0 : 1;
     const endOffset = includesToday ? 7 : 7; // 총 7일간 검색
-    
+
     // 지정된 기간 동안 검색
     for (let dayOffset = startOffset; dayOffset <= endOffset; dayOffset++) {
         const targetDate = new Date(today);
@@ -1185,13 +1185,13 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration, userMe
                     const now = new Date();
                     const currentHour = now.getHours();
                     const slotHour = parseInt(slot.timeRaw.split(':')[0]);
-                    
+
                     // 현재 시간보다 이른 시간대는 제외
                     if (slotHour <= currentHour) {
                         continue;
                     }
                 }
-                
+
                 // 회의실 충돌 검사
                 if (isRoomConflict(room, dateString, slot.timeRaw, duration)) {
                     continue;
@@ -2596,5 +2596,15 @@ function openMeetingModal() {
     // MeetingModal 인스턴스 생성 및 열기
     const modal = new MeetingModal();
     modal.open();
+}
+
+// 가이드 화면 표시 함수
+function showGuide() {
+    alert('가이드 기능은 준비중입니다.');
+}
+
+// 설정 화면 표시 함수
+function showSettings() {
+    alert('설정 기능은 준비중입니다.');
 }
 
