@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캘린더 - 한화생명 AI 어시스턴트</title>
+    <link rel="stylesheet" href="css/hanwha-design-system.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <style>
+        /* 캘린더 페이지 전용 오버라이드 스타일 */
+        .calendar-page-content {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow: auto;
+            background: #f9fafb;
+        }
+        
+        .calendar-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: var(--spacing-xl);
+            min-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid #e5e5e5;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        /* 일정 추가 버튼 스타일 오버라이드 */
+        .add-schedule-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #FA6600;
+            color: white;
+            border: 2px solid #FA6600;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .add-schedule-btn:hover {
+            background: #e55a00;
+            border-color: #e55a00;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(250, 102, 0, 0.3);
+        }
+        
+        .add-schedule-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            stroke-width: 2;
+        }
+        
+        /* 뷰 토글 버튼 스타일 */
+        .calendar-view-toggle {
+            display: flex;
+            gap: 4px;
+            background: #f5f5f5;
+            padding: 4px;
+            border-radius: 8px;
+        }
+        
+        .view-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .view-btn:hover {
+            color: #333;
+        }
+        
+        .view-btn.active {
+            background: white;
+            color: #FA6600;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-page-content {
+                padding: var(--spacing-md);
+            }
+            
+            .calendar-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--spacing-sm);
+            }
+            
+            .calendar-controls {
+                justify-content: center;
+            }
+            
+            .calendar-view-toggle {
+                justify-content: center;
+            }
+            
+            .add-schedule-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 모바일 메뉴 토글 -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 12H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 6H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 18H21" stroke="#403f3e" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+
+    <!-- 모바일 사이드바 오버레이 -->
+    <div class="mobile-sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="hanwha-logo">
+                    <img src="assets/hanwha_logo(pc).png" alt="한화생명" />
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="recent-chat-header">
+                    <span class="section-title">최근 대화</span>
+                    <button class="new-chat-button" onclick="startNewChat()">
+                        <span class="plus-icon"></span>
+                        새 대화
+                    </button>
+                </div>
+                <div class="chat-history-section">
+                    <div id="chatHistoryList" class="chat-history-list">
+                        <!-- 대화 히스토리가 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 상단 헤더 -->
+            <header class="top-header">
+                <div class="header-tabs">
+                    <button class="tab-button" onclick="window.location.href='index.html'">AI 비서</button>
+                    <button class="tab-button" onclick="openReportBuilder()">보고서 제작</button>
+                    <button class="tab-button" onclick="openBoard()">게시판</button>
+                    <button class="tab-button active">캘린더</button>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-button" onclick="showNotifications()" aria-label="알림">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <path d="M14 2C10.686 2 8 4.686 8 8C8 11.314 8 15 6 17H22C20 15 20 11.314 20 8C20 4.686 17.314 2 14 2Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16.5 21C16.5 22.381 15.381 23.5 14 23.5C12.619 23.5 11.5 22.381 11.5 21" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar"></div>
+                        <span class="user-name">로딩중...</span>
+                        <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 캘린더 페이지 콘텐츠 -->
+            <div class="calendar-page-content">
+                <div class="calendar-container">
+                    <!-- 캘린더 헤더 -->
+                    <div class="calendar-header">
+                        <div class="calendar-controls">
+                            <button class="calendar-nav-btn" onclick="previousPeriod()">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"/>
+                                </svg>
+                            </button>
+                            <div id="calendarTitle" class="calendar-title">2025년 9월</div>
+                            <button class="calendar-nav-btn" onclick="nextPeriod()">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="calendar-view-toggle">
+                            <button class="view-btn active" data-view="month" onclick="changeView('month')">월</button>
+                            <button class="view-btn" data-view="week" onclick="changeView('week')">주</button>
+                            <button class="view-btn" data-view="day" onclick="changeView('day')">일</button>
+                        </div>
+                        
+                        <button class="add-schedule-btn" onclick="openScheduleModal()">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 3v10M3 8h10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            일정 추가
+                        </button>
+                    </div>
+                    
+                    <!-- 캘린더 컨텐츠 -->
+                    <div id="calendarContent" class="calendar-content">
+                        <!-- 캘린더 뷰가 여기에 렌더링됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 샘플 데이터 파일들 -->
+    <script src="data/sample-data.js"></script>
+    <script src="data/sample-sampleData.js"></script>
+    <script src="data/sample-users.js"></script>
+    <script src="data/sample-chat-history.js"></script>
+    
+    <!-- JavaScript 파일들 -->
+    <script src="js/storage-manager.js"></script>
+    <script src="js/chat-manager.js"></script>
+    <script src="js/hanwha-app.js"></script>
+    <script src="js/calendar.js"></script>
+    <script>
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 캘린더 초기화
+            if (typeof initCalendar === 'function') {
+                initCalendar();
+            }
+            
+            // 채팅 히스토리 로드
+            if (typeof loadChatHistory === 'function') {
+                loadChatHistory();
+            }
+            
+            // 사용자 이름 로드
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    const userNameEl = document.querySelector('.user-name');
+                    if (userNameEl && user.name) {
+                        userNameEl.textContent = user.name;
+                    }
+                } catch (e) {
+                    console.log('사용자 정보 로드 실패');
+                }
+            }
+            
+            // 테마 로드
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+        
+    </script>
+</body>
+</html>
