@@ -10,21 +10,37 @@ class MeetingModal {
         this.isVoteMode = false; // false: 바로 예약, true: 투표 모드
         this.meetingOptions = []; // 필터링된 회의 옵션들
         
-        // 8층 회의실 목록
-        this.floorEightRooms = [
-            '8층 - E1 - 중회의실',
-            '8층 - E2 - 소회의실', 
-            '8층 - E3 - 대회의실',
-            '8층 - W1 - 중회의실',
-            '8층 - W2 - 소회의실'
-        ];
+        // MEETING_ROOMS 데이터에서 회의실 목록 가져오기
+        this.floorEightRooms = [];
+        this.otherRooms = [];
         
-        // 기타 층 회의실
-        this.otherRooms = [
-            '12층 - 대회의실',
-            '10층 - 중회의실',
-            '5층 - 소회의실'
-        ];
+        // MEETING_ROOMS가 정의되어 있으면 사용
+        if (typeof MEETING_ROOMS !== 'undefined') {
+            // 8층 회의실
+            this.floorEightRooms = MEETING_ROOMS
+                .filter(room => room.floor === 8)
+                .map(room => room.name);
+            
+            // 기타 층 회의실 (8층 제외)
+            this.otherRooms = MEETING_ROOMS
+                .filter(room => room.floor !== 8)
+                .map(room => room.name);
+        } else {
+            // 백업 데이터 (MEETING_ROOMS가 없는 경우)
+            this.floorEightRooms = [
+                '8층 - E1 - 중회의실',
+                '8층 - E2 - 소회의실', 
+                '8층 - E3 - 대회의실',
+                '8층 - W1 - 중회의실',
+                '8층 - W2 - 소회의실'
+            ];
+            
+            this.otherRooms = [
+                '12층 - 대회의실',
+                '10층 - 중회의실',
+                '5층 - 소회의실'
+            ];
+        }
         
         // 전체 회의실 목록
         this.rooms = [...this.floorEightRooms, ...this.otherRooms];
@@ -481,8 +497,37 @@ class MeetingModal {
                 window.calendarManager.render();
             }
             
-            // 예약 성공 메시지
-            alert('회의실이 예약되었습니다.');
+            // 토스트 알림 표시
+            try {
+                console.log('Attempting to show toast...');
+                if (typeof showMeetingSuccessToast === 'function') {
+                    console.log('showMeetingSuccessToast function found, calling...');
+                    showMeetingSuccessToast({
+                        room: this.selectedRoom,
+                        date: this.selectedDate,
+                        time: this.selectedTime,
+                        attendees: this.selectedAttendees
+                    });
+                    console.log('showMeetingSuccessToast called successfully');
+                } else {
+                    console.error('showMeetingSuccessToast function not found!');
+                    console.log('Available functions:', window.showMeetingSuccessToast);
+                    
+                    // 백업 토스트 표시 방법
+                    if (window.toastManager) {
+                        console.log('Using toastManager as backup...');
+                        window.toastManager.showMeetingSuccess();
+                    } else {
+                        console.error('No toast manager available');
+                        // 최후의 수단으로 간단한 토스트 생성
+                        this.showFallbackToast();
+                    }
+                }
+            } catch (error) {
+                console.error('Error showing toast:', error);
+                this.showFallbackToast();
+            }
+            
             console.log('Reservation data:', reservationData);
             
             // 모달 닫기

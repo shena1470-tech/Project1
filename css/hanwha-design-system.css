@@ -1130,6 +1130,7 @@ body {
 @media (max-width: 480px) {
     .welcome-container {
         padding: 0 16px;
+        min-height: calc(100vh - 60px);
     }
 
     .welcome-title {

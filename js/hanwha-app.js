@@ -51,10 +51,10 @@ async function loadUsers() {
             },
             {
                 id: 'user-002',
-                name: '이서연',
+                name: '이정은',
                 position: '대리',
-                department: '마케팅본부',
-                email: 'seoyeon.lee@hanwhalife.com'
+                department: '디지털프로덕트팀',
+                email: 'jungeun.lee@hanwhalife.com'
             },
             {
                 id: 'user-003',
@@ -312,9 +312,6 @@ function startNewChat() {
     chatManager.currentChatId = null;
 
     // UI 초기화
-    if (welcomeScreen) {
-        welcomeScreen.style.display = 'block';
-    }
     if (chatMessages) {
         chatMessages.style.display = 'none';
         chatMessages.innerHTML = '';
@@ -1794,7 +1791,7 @@ function handleStatusCardRequest(userMessage) {
     }
 
     // 특정 사람 관련 카드 검색
-    const memberNames = ['김동준', '정준하', '박명수', '이서연', '박준혁', '이정은', '하동훈', '이상태', '정보험', '김철회', '박보험금'];
+    const memberNames = ['김동준', '정준하', '박명수', '이정은', '박준혁', '하동훈', '이상태', '정보험', '김철회', '박보험금'];
     const mentionedMember = memberNames.find(name => userMessage.includes(name));
     if (mentionedMember && filteredCards.length > 1) {
         filteredCards = getStatusCardsByMember(mentionedMember);
@@ -2073,7 +2070,7 @@ function getCalendarData() {
                 title: '주간 팀 회의',
                 type: 'meeting',
                 location: '회의실 A',
-                attendees: ['김동준', '이서연', '박준혁'],
+                attendees: ['김동준', '이정은', '박준혁'],
                 description: '주간 업무 보고 및 이슈 공유'
             },
             {
@@ -2084,7 +2081,7 @@ function getCalendarData() {
                 title: '마케팅 전략 회의',
                 type: 'meeting',
                 location: '회의실 B',
-                attendees: ['이서연', '최민지', '정우성'],
+                attendees: ['이정은', '최민지', '정우성'],
                 description: '2024년 상반기 마케팅 전략 논의'
             },
             {

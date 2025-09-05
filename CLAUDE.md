@@ -219,7 +219,7 @@ Users have the following structure:
   title: '주간 팀 회의',
   type: 'meeting',           // or 'personal', 'task'
   location: '회의실 A',
-  attendees: ['김동준', '이서연'],
+  attendees: ['김동준', '이정은'],
   description: '주간 업무 보고'
 }
 ```

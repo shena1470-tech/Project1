@@ -79,7 +79,7 @@ const vacationData = {
         },
         'user-002': {
             userId: 'user-002',
-            name: '이서연',
+            name: '이정은',
             year: 2025,
             annualLeave: {
                 total: 18,

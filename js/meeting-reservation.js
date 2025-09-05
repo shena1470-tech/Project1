@@ -245,6 +245,15 @@ class MeetingReservation {
         // 예약 내역을 별도로 저장
         this.saveReservationHistory();
         
+        // 토스트 알림 표시
+        if (typeof showMeetingSuccessToast === 'function') {
+            const room = this.availableRooms.find(r => r.id === this.currentReservation.selectedRoom);
+            showMeetingSuccessToast({
+                room: room ? room.name : this.currentReservation.selectedRoom,
+                participants: this.currentReservation.participants
+            });
+        }
+        
         return this.getReservationSummary();
     }
     
