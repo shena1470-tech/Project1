@@ -74,6 +74,35 @@ Three parallel data management systems:
 2. **Persistent Storage** (`storage-manager.js`): Centralized localStorage API
 3. **Chat History** (`chat-manager.js`): Multi-user chat session persistence
 
+## AI Assistant Response Guidelines
+
+### 담당자 카드 표시 원칙
+모든 AI 응답에는 관련 담당자 정보를 카드 형식으로 표시해야 합니다:
+- **담당자 카드 구성**: 이름, 직책, 부서, 연락처, 프로필 이미지
+- **표시 위치**: AI 응답 메시지 하단 또는 관련 정보 카드 내부
+- **스타일**: 간결하고 명확한 카드 UI로 구현
+- **용도별 담당자**:
+  - 휴가/근태: HR팀 담당자
+  - 회의실 예약: 시설관리팀
+  - IT 지원: IT서비스팀
+  - 프로젝트: 각 프로젝트 매니저
+
+### Response Patterns
+- **휴가 조회**: 남은 휴가 일수, 사용 내역, 예정된 휴가를 카드 형식으로 표시 + HR팀 담당자 카드
+- **회의 예약**: 회의실 옵션과 시설 담당자 정보 함께 표시
+- **프로젝트 상태**: 프로젝트 카드와 PM 정보 포함
+- **일반 질문**: 기본 응답과 함께 IT서비스팀 담당자 카드 표시
+
+### Vacation Feature
+The application now supports vacation inquiry functionality:
+- **Vacation Data**: Stored in `data/sample-vacation.js` with annual leave, sick leave, congratulations leave, and family care leave
+- **Detection Keywords**: '휴가', '연차', '병가', '경조사', '가족돌봄', '남은 휴가', '휴가 내역'
+- **Display Format**: Purple gradient vacation card showing:
+  - Total remaining days prominently displayed
+  - Breakdown by leave type (annual, sick, congratulations, family care)
+  - Recent vacation history (last 3 approved entries)
+  - Always includes HR responsible person card below
+
 ## Important Integrations
 
 ### Figma Design Integration

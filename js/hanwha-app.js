@@ -400,6 +400,27 @@ function renderUserMessage(text) {
 
 // AI 응답 추가
 function addAIResponse(userMessage) {
+    // 상태카드 관련 요청 처리
+    const statusCardResponse = handleStatusCardRequest(userMessage);
+    if (statusCardResponse) {
+        renderStatusCards(statusCardResponse);
+        return;
+    }
+    
+    // 휴가 관련 요청 처리
+    const vacationResponse = handleVacationRequest(userMessage);
+    if (vacationResponse) {
+        renderAIMessageWithCard(vacationResponse.message, vacationResponse.vacationData, vacationResponse.responsiblePerson);
+        messages.push({ type: 'ai', text: vacationResponse.message });
+        
+        // ChatManager에 저장
+        if (currentUser && currentChatId) {
+            chatManager.addMessage(currentUser.id, currentChatId, 'ai', vacationResponse.message);
+            updateChatHistory();
+        }
+        return;
+    }
+    
     // 회의 관련 요청 처리
     const meetingResponse = handleMeetingRequest(userMessage);
     if (meetingResponse) {
@@ -435,6 +456,19 @@ function addAIResponse(userMessage) {
         } else if (meetingResponse.type === 'query') {
             // 회의 정보 조회 응답
             renderAIMessage(meetingResponse.message);
+            
+            // 회의실 담당자 카드 추가
+            const facilityPerson = {
+                name: '이정은',
+                position: '대리',
+                department: '총무팀',
+                email: 'jungeun.lee@hanwhalife.com',
+                phone: '02-789-3456',
+                extension: '3456'
+            };
+            const responsibleCard = createResponsibleCard(facilityPerson);
+            chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
+            
             messages.push({ type: 'ai', text: meetingResponse.message });
             
             // ChatManager에 저장
@@ -450,6 +484,18 @@ function addAIResponse(userMessage) {
     let response = generateAIResponse(userMessage);
     
     renderAIMessage(response);
+    
+    // 일반 질문에 대한 기본 담당자 (AI 비서 지원팀)
+    const defaultPerson = {
+        name: '김지원',
+        position: '과장',
+        department: 'IT서비스팀',
+        email: 'jiwon.kim@hanwhalife.com',
+        phone: '02-789-5678',
+        extension: '5678'
+    };
+    const responsibleCard = createResponsibleCard(defaultPerson);
+    chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
     
     messages.push({ type: 'ai', text: response });
     
@@ -472,7 +518,152 @@ function renderAIMessage(text) {
     `;
     
     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+    
+    // AI 응답 후 약간의 지연을 두고 스크롤 (DOM 렌더링 완료 대기)
+    setTimeout(() => {
+        scrollToBottom();
+    }, 100);
+}
+
+// AI 메시지와 카드를 함께 렌더링
+function renderAIMessageWithCard(text, vacationData, responsiblePerson) {
+    // AI 메시지 렌더링
+    renderAIMessage(text);
+    
+    // 휴가 카드 렌더링
+    if (vacationData) {
+        const vacationCard = createVacationCard(vacationData);
+        chatMessages.insertAdjacentHTML('beforeend', vacationCard);
+    }
+    
+    // 담당자 카드 렌더링
+    if (responsiblePerson) {
+        const responsibleCard = createResponsibleCard(responsiblePerson);
+        chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
+    }
+    
     scrollToBottom();
+}
+
+// 휴가 카드 생성 - 컴팩트 버전
+function createVacationCard(vacationData) {
+    const totalRemaining = vacationData.annualLeave.remaining + 
+                           vacationData.specialLeave.sick.remaining + 
+                           vacationData.specialLeave.congratulations.remaining + 
+                           vacationData.specialLeave.family.remaining;
+    
+    return `
+        <div class="message-container">
+            <div class="ai-avatar"></div>
+            <div class="vacation-card">
+                <div class="vacation-header">
+                    <div class="vacation-title">${vacationData.name}님의 휴가 현황</div>
+                    <div class="vacation-year">${vacationData.year}년</div>
+                </div>
+                
+                <div class="vacation-summary">
+                    <div class="vacation-item">
+                        <div class="vacation-label">총 남은 휴가</div>
+                        <div class="vacation-number">${totalRemaining}</div>
+                        <div class="vacation-unit">일</div>
+                    </div>
+                    <div class="vacation-item">
+                        <div class="vacation-label">연차</div>
+                        <div class="vacation-number">${vacationData.annualLeave.remaining}</div>
+                        <div class="vacation-unit">일</div>
+                    </div>
+                    <div class="vacation-item">
+                        <div class="vacation-label">사용</div>
+                        <div class="vacation-number">${vacationData.annualLeave.used}</div>
+                        <div class="vacation-unit">일</div>
+                    </div>
+                    <div class="vacation-item">
+                        <div class="vacation-label">예정</div>
+                        <div class="vacation-number">${vacationData.annualLeave.scheduled}</div>
+                        <div class="vacation-unit">일</div>
+                    </div>
+                </div>
+                
+                <div class="vacation-details">
+                    <div class="vacation-detail-title">상세 휴가 현황</div>
+                    <div class="vacation-breakdown">
+                        <div class="vacation-type">
+                            <span class="vacation-type-name">연차</span>
+                            <div class="vacation-type-days">
+                                <span class="vacation-used">${vacationData.annualLeave.used}/${vacationData.annualLeave.total}일 사용</span>
+                                <span class="vacation-remaining">${vacationData.annualLeave.remaining}일 남음</span>
+                            </div>
+                        </div>
+                        <div class="vacation-type">
+                            <span class="vacation-type-name">병가</span>
+                            <div class="vacation-type-days">
+                                <span class="vacation-used">${vacationData.specialLeave.sick.used}/${vacationData.specialLeave.sick.total}일 사용</span>
+                                <span class="vacation-remaining">${vacationData.specialLeave.sick.remaining}일 남음</span>
+                            </div>
+                        </div>
+                        <div class="vacation-type">
+                            <span class="vacation-type-name">경조사</span>
+                            <div class="vacation-type-days">
+                                <span class="vacation-used">${vacationData.specialLeave.congratulations.used}/${vacationData.specialLeave.congratulations.total}일 사용</span>
+                                <span class="vacation-remaining">${vacationData.specialLeave.congratulations.remaining}일 남음</span>
+                            </div>
+                        </div>
+                        <div class="vacation-type">
+                            <span class="vacation-type-name">가족돌봄</span>
+                            <div class="vacation-type-days">
+                                <span class="vacation-used">${vacationData.specialLeave.family.used}/${vacationData.specialLeave.family.total}일 사용</span>
+                                <span class="vacation-remaining">${vacationData.specialLeave.family.remaining}일 남음</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${recentHistory.length > 0 ? `
+                <div class="vacation-history">
+                    <div class="vacation-history-title">최근 휴가 사용 내역</div>
+                    <div class="vacation-history-list">
+                        ${recentHistory.map(h => `
+                            <div class="vacation-history-item">
+                                <span class="vacation-history-date">${h.startDate}</span>
+                                <span class="vacation-history-type">${VacationManager.getVacationTypeName(h.type)}</span>
+                                <span class="vacation-history-days">${h.days}일</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+// 담당자 카드 생성
+function createResponsibleCard(person) {
+    // 이름의 첫 글자로 아바타 이니셜 생성
+    const initial = person.name.charAt(0);
+    
+    return `
+        <div class="message-container">
+            <div class="ai-avatar"></div>
+            <div class="responsible-card">
+                <div class="responsible-avatar">${initial}</div>
+                <div class="responsible-info">
+                    <div class="responsible-header">
+                        <span class="responsible-name">${person.name}</span>
+                        <span class="responsible-position">${person.position}</span>
+                    </div>
+                    <div class="responsible-department">${person.department}</div>
+                    <div class="responsible-contact">
+                        <span class="responsible-email">${person.email}</span>
+                        <span class="responsible-phone">내선 ${person.extension}</span>
+                    </div>
+                </div>
+                <button class="responsible-action" onclick="window.location.href='mailto:${person.email}'">
+                    문의하기
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 // 회의 관련 요청 처리
@@ -731,7 +922,10 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
         attendees: attendees,
         room: rooms[0],
         date: formatDateKorean(option1Date),
+        dateRaw: option1Date.toISOString().split('T')[0],
         time: '오전 9시',
+        timeRaw: '09:00',
+        duration: duration || '1시간',
         available: true
     });
     
@@ -742,9 +936,15 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
         attendees: attendees,
         room: rooms[1] || rooms[0],
         date: formatDateKorean(option2Date),
+        dateRaw: option2Date.toISOString().split('T')[0],
         time: '오후 2시',
+        timeRaw: '14:00',
+        duration: duration || '1시간',
         available: true
     });
+    
+    // 전역 변수에 저장 (confirmMeetingOption에서 사용)
+    window.lastGeneratedMeetingOptions = options;
     
     return options;
 }
@@ -759,15 +959,610 @@ function formatDateKorean(date) {
     return `${year}. ${month}. ${day}. (${dayOfWeek})`;
 }
 
+// 휴가 관련 요청 처리
+function handleVacationRequest(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // 휴가 관련 키워드 체크
+    const vacationKeywords = ['휴가', '연차', '병가', '경조사', '가족돌봄', '남은 휴가', '휴가 내역', '휴가 현황'];
+    const hasVacationKeyword = vacationKeywords.some(keyword => lowerMessage.includes(keyword));
+    
+    if (!hasVacationKeyword) {
+        return null;
+    }
+    
+    // 현재 사용자의 휴가 정보 가져오기
+    if (!currentUser || !VacationManager) {
+        return {
+            message: '사용자 정보를 확인할 수 없습니다. 먼저 로그인해주세요.',
+            vacationData: null,
+            responsiblePerson: null
+        };
+    }
+    
+    const vacationData = VacationManager.getUserVacation(currentUser.id);
+    if (!vacationData) {
+        return {
+            message: '휴가 정보를 찾을 수 없습니다. 인사팀에 문의해주세요.',
+            vacationData: null,
+            responsiblePerson: VacationManager.getResponsiblePerson()
+        };
+    }
+    
+    // 남은 휴가 계산
+    const totalRemaining = VacationManager.getTotalRemaining(currentUser.id);
+    
+    // 응답 메시지 생성
+    let responseMessage = '';
+    
+    if (lowerMessage.includes('남은') || lowerMessage.includes('잔여') || lowerMessage.includes('현황')) {
+        responseMessage = `${currentUser.name}님의 2025년 남은 휴가는 총 ${totalRemaining}일입니다.\n\n` +
+                         `연차 ${vacationData.annualLeave.remaining}일, 병가 ${vacationData.specialLeave.sick.remaining}일, ` +
+                         `경조사 ${vacationData.specialLeave.congratulations.remaining}일, 가족돌봄 ${vacationData.specialLeave.family.remaining}일이 남아있습니다.`;
+        
+        if (vacationData.annualLeave.scheduled > 0) {
+            responseMessage += `\n\n예정된 휴가가 ${vacationData.annualLeave.scheduled}일 있습니다.`;
+        }
+    } else if (lowerMessage.includes('사용') || lowerMessage.includes('내역')) {
+        const usedTotal = vacationData.annualLeave.used + 
+                         vacationData.specialLeave.sick.used + 
+                         vacationData.specialLeave.congratulations.used +
+                         vacationData.specialLeave.family.used;
+        responseMessage = `${currentUser.name}님은 2025년에 총 ${usedTotal}일의 휴가를 사용하셨습니다.\n\n` +
+                         `연차 ${vacationData.annualLeave.used}일, 병가 ${vacationData.specialLeave.sick.used}일, ` +
+                         `경조사 ${vacationData.specialLeave.congratulations.used}일, 가족돌봄 ${vacationData.specialLeave.family.used}일을 사용하셨습니다.`;
+    } else {
+        // 기본 응답
+        responseMessage = `${currentUser.name}님의 휴가 정보를 확인했습니다.\n` +
+                         `2025년 기준 총 ${totalRemaining}일의 휴가가 남아있습니다.`;
+    }
+    
+    return {
+        message: responseMessage,
+        vacationData: vacationData,
+        responsiblePerson: VacationManager.getResponsiblePerson()
+    };
+}
+
 // 회의 옵션 선택 확인
 function confirmMeetingOption() {
     const selectedCard = document.querySelector('.meeting-option-card.selected');
-    if (selectedCard) {
-        const optionIndex = selectedCard.getAttribute('data-option-index');
-        alert(`회의 옵션 ${parseInt(optionIndex) + 1}이 선택되었습니다. 예약을 진행합니다.`);
-        // 실제 예약 로직 구현
-    } else {
+    if (!selectedCard) {
         alert('먼저 회의 옵션을 선택해주세요.');
+        return;
+    }
+    
+    const optionIndex = parseInt(selectedCard.getAttribute('data-option-index'));
+    
+    // 저장된 회의 옵션 데이터 가져오기 (findAvailableMeetingSlots에서 생성된 데이터)
+    const lastMeetingOptions = window.lastGeneratedMeetingOptions;
+    if (!lastMeetingOptions || !lastMeetingOptions[optionIndex]) {
+        alert('회의 옵션 데이터를 찾을 수 없습니다. 다시 시도해주세요.');
+        return;
+    }
+    
+    const selectedOption = lastMeetingOptions[optionIndex];
+    
+    // 회의 데이터 생성
+    const meetingData = {
+        id: 'mtg-' + Date.now(),
+        title: '팀 회의',
+        date: selectedOption.dateRaw || new Date().toISOString().split('T')[0],
+        startTime: selectedOption.timeRaw || selectedOption.time,
+        endTime: calculateEndTime(selectedOption.timeRaw || selectedOption.time, selectedOption.duration || '1시간'),
+        room: selectedOption.room,
+        attendees: selectedOption.attendees.map(a => ({
+            id: a.id,
+            name: a.name,
+            position: a.position
+        })),
+        createdBy: currentUser ? currentUser.id : 'unknown',
+        createdAt: new Date().toISOString(),
+        type: 'meeting',
+        status: 'confirmed',
+        description: '회의 예약 시스템을 통해 생성된 회의'
+    };
+    
+    // 1. 캘린더에 회의 일정 저장
+    saveMeetingToCalendar(meetingData);
+    
+    // 2. 회의실 예약 정보 저장
+    saveRoomReservation(meetingData);
+    
+    // 3. 각 참석자의 개인 캘린더에 추가
+    saveToAttendeesCalendar(meetingData);
+    
+    // 성공 메시지 생성
+    const successMessage = `
+✅ 회의 예약이 완료되었습니다!
+
+📅 날짜: ${selectedOption.date}
+⏰ 시간: ${selectedOption.time}
+📍 장소: ${selectedOption.room}
+👥 참석자: ${selectedOption.attendees.map(a => `${a.name} ${a.position}`).join(', ')}
+
+각 참석자의 캘린더에 일정이 추가되었습니다.
+회의실 예약도 완료되었습니다.`;
+
+    // UI 업데이트
+    renderAIMessage(successMessage);
+    
+    // 옵션 카드 제거
+    const optionsContainer = document.querySelector('.meeting-options-container');
+    if (optionsContainer) {
+        optionsContainer.remove();
+    }
+    
+    // ChatManager에 저장
+    if (currentUser && currentChatId) {
+        chatManager.addMessage(currentUser.id, currentChatId, 'ai', successMessage);
+        updateChatHistory();
+    }
+    
+    console.log('회의 예약 완료:', meetingData);
+}
+
+// 종료 시간 계산 함수
+function calculateEndTime(startTime, duration) {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    let endHours = hours;
+    let endMinutes = minutes;
+    
+    if (duration === '30분') {
+        endMinutes += 30;
+    } else if (duration === '1시간') {
+        endHours += 1;
+    } else if (duration === '1시간 30분') {
+        endHours += 1;
+        endMinutes += 30;
+    } else if (duration === '2시간') {
+        endHours += 2;
+    } else {
+        endHours += 1; // 기본값 1시간
+    }
+    
+    // 분이 60을 넘으면 시간으로 변환
+    if (endMinutes >= 60) {
+        endHours += Math.floor(endMinutes / 60);
+        endMinutes = endMinutes % 60;
+    }
+    
+    return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+}
+
+// 캘린더에 회의 저장
+function saveMeetingToCalendar(meetingData) {
+    // 기존 캘린더 데이터 가져오기
+    let calendarEvents = [];
+    const storedData = localStorage.getItem('calendarEvents');
+    if (storedData) {
+        try {
+            calendarEvents = JSON.parse(storedData);
+        } catch (e) {
+            console.error('캘린더 데이터 파싱 오류:', e);
+            calendarEvents = [];
+        }
+    }
+    
+    // 새 회의 추가
+    const calendarEvent = {
+        id: meetingData.id,
+        date: meetingData.date,
+        startTime: meetingData.startTime,
+        endTime: meetingData.endTime,
+        title: meetingData.title,
+        type: 'meeting',
+        location: meetingData.room,
+        attendees: meetingData.attendees.map(a => a.name),
+        description: meetingData.description,
+        createdBy: meetingData.createdBy,
+        createdAt: meetingData.createdAt
+    };
+    
+    calendarEvents.push(calendarEvent);
+    
+    // localStorage에 저장
+    localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
+    console.log('캘린더에 회의 저장됨:', calendarEvent);
+}
+
+// 회의실 예약 정보 저장
+function saveRoomReservation(meetingData) {
+    // 회의실 예약 데이터 가져오기
+    let roomReservations = [];
+    const storedData = localStorage.getItem('roomReservations');
+    if (storedData) {
+        try {
+            roomReservations = JSON.parse(storedData);
+        } catch (e) {
+            console.error('회의실 예약 데이터 파싱 오류:', e);
+            roomReservations = [];
+        }
+    }
+    
+    // 새 예약 추가
+    const reservation = {
+        id: 'res-' + Date.now(),
+        meetingId: meetingData.id,
+        room: meetingData.room,
+        date: meetingData.date,
+        startTime: meetingData.startTime,
+        endTime: meetingData.endTime,
+        reservedBy: meetingData.createdBy,
+        reservedAt: meetingData.createdAt,
+        attendees: meetingData.attendees,
+        status: 'confirmed'
+    };
+    
+    roomReservations.push(reservation);
+    
+    // localStorage에 저장
+    localStorage.setItem('roomReservations', JSON.stringify(roomReservations));
+    console.log('회의실 예약 저장됨:', reservation);
+}
+
+// 참석자별 캘린더에 저장
+function saveToAttendeesCalendar(meetingData) {
+    // 각 참석자의 개인 캘린더 데이터 저장
+    meetingData.attendees.forEach(attendee => {
+        const storageKey = `calendar_${attendee.id}`;
+        let personalCalendar = [];
+        
+        // 기존 개인 캘린더 데이터 가져오기
+        const storedData = localStorage.getItem(storageKey);
+        if (storedData) {
+            try {
+                personalCalendar = JSON.parse(storedData);
+            } catch (e) {
+                console.error(`${attendee.name}의 캘린더 데이터 파싱 오류:`, e);
+                personalCalendar = [];
+            }
+        }
+        
+        // 개인 캘린더 이벤트 추가
+        const personalEvent = {
+            id: meetingData.id,
+            date: meetingData.date,
+            startTime: meetingData.startTime,
+            endTime: meetingData.endTime,
+            title: meetingData.title,
+            type: 'meeting',
+            location: meetingData.room,
+            attendees: meetingData.attendees.map(a => a.name),
+            description: meetingData.description,
+            addedAt: new Date().toISOString()
+        };
+        
+        personalCalendar.push(personalEvent);
+        
+        // 개인 캘린더에 저장
+        localStorage.setItem(storageKey, JSON.stringify(personalCalendar));
+        console.log(`${attendee.name}의 캘린더에 저장됨:`, personalEvent);
+    });
+    
+    // 참석 알림 데이터 생성 (선택적)
+    const notifications = meetingData.attendees.map(attendee => ({
+        userId: attendee.id,
+        type: 'meeting_invitation',
+        title: '새로운 회의 일정',
+        message: `${meetingData.date} ${meetingData.startTime}에 ${meetingData.room}에서 회의가 있습니다.`,
+        meetingId: meetingData.id,
+        createdAt: new Date().toISOString(),
+        read: false
+    }));
+    
+    // 알림 저장
+    let allNotifications = [];
+    const storedNotifications = localStorage.getItem('notifications');
+    if (storedNotifications) {
+        try {
+            allNotifications = JSON.parse(storedNotifications);
+        } catch (e) {
+            console.error('알림 데이터 파싱 오류:', e);
+            allNotifications = [];
+        }
+    }
+    
+    allNotifications.push(...notifications);
+    localStorage.setItem('notifications', JSON.stringify(allNotifications));
+    console.log('참석자 알림 생성됨:', notifications);
+}
+
+// 상태카드 요청 처리
+function handleStatusCardRequest(userMessage) {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // 상태카드 관련 키워드 - 특정 프로젝트명 추가
+    const statusKeywords = ['상태카드', '프로젝트', '진행상황', '업무 상황', '프로젝트 상태', '업무 진행', '진행 상태'];
+    const specificProjects = ['나의 보험 계약', '청약철회', '사고보험금 대리청구', '사고보험금'];
+    
+    const hasStatusKeyword = statusKeywords.some(keyword => lowerMessage.includes(keyword));
+    const hasSpecificProject = specificProjects.some(project => lowerMessage.includes(project));
+    
+    if (!hasStatusKeyword && !hasSpecificProject) {
+        return null;
+    }
+    
+    // 특정 조건 파싱
+    let filteredCards = STATUS_CARDS;
+    let responseMessage = '현재 진행 중인 프로젝트 상태카드를 보여드리겠습니다.';
+    
+    // 특정 프로젝트명으로 검색
+    if (lowerMessage.includes('상태카드') && !lowerMessage.includes('모든')) {
+        // '상태카드' 프로젝트를 구체적으로 찾기
+        const statusCardProject = STATUS_CARDS.find(card => card.title === '상태카드');
+        if (statusCardProject) {
+            filteredCards = [statusCardProject];
+            responseMessage = '상태카드 프로젝트 정보입니다.';
+        }
+    } else if (lowerMessage.includes('나의 보험 계약') || lowerMessage.includes('나의보험계약')) {
+        const insuranceProject = STATUS_CARDS.find(card => card.title === '나의 보험 계약');
+        if (insuranceProject) {
+            filteredCards = [insuranceProject];
+            responseMessage = '나의 보험 계약 프로젝트 정보입니다.';
+        }
+    } else if (lowerMessage.includes('청약철회') || lowerMessage.includes('청약 철회')) {
+        const withdrawProject = STATUS_CARDS.find(card => card.title === '청약철회');
+        if (withdrawProject) {
+            filteredCards = [withdrawProject];
+            responseMessage = '청약철회 프로젝트 정보입니다.';
+        }
+    } else if (lowerMessage.includes('사고보험금') || lowerMessage.includes('대리청구')) {
+        const claimProject = STATUS_CARDS.find(card => card.title === '사고보험금 대리청구');
+        if (claimProject) {
+            filteredCards = [claimProject];
+            responseMessage = '사고보험금 대리청구 프로젝트 정보입니다.';
+        }
+    }
+    
+    // 특정 사람 관련 카드 검색
+    const memberNames = ['김동준', '정준하', '박명수', '이서연', '박준혁', '이정은', '하동훈', '이상태', '정보험', '김철회', '박보험금'];
+    const mentionedMember = memberNames.find(name => userMessage.includes(name));
+    if (mentionedMember && filteredCards.length > 1) {
+        filteredCards = getStatusCardsByMember(mentionedMember);
+        responseMessage = `${mentionedMember}님이 참여하고 있는 프로젝트 상태카드입니다.`;
+    }
+    
+    // 상태별 필터링
+    if (lowerMessage.includes('완료') || lowerMessage.includes('끝난')) {
+        filteredCards = getStatusCardsByStatus('완료');
+        responseMessage = '완료된 프로젝트 상태카드입니다.';
+    } else if (lowerMessage.includes('긴급') || lowerMessage.includes('급한')) {
+        filteredCards = getStatusCardsByStatus('긴급');
+        responseMessage = '긴급한 프로젝트 상태카드입니다.';
+    } else if (lowerMessage.includes('대기')) {
+        filteredCards = getStatusCardsByStatus('대기');
+        responseMessage = '대기 중인 프로젝트 상태카드입니다.';
+    } else if (lowerMessage.includes('진행')) {
+        filteredCards = getStatusCardsByStatus('진행중');
+        responseMessage = '현재 진행 중인 프로젝트 상태카드입니다.';
+    }
+    
+    return {
+        message: responseMessage,
+        cards: filteredCards.slice(0, 5) // 최대 5개까지만 표시
+    };
+}
+
+// 상태카드 렌더링
+function renderStatusCards(response) {
+    if (response.cards.length === 0) {
+        renderAIMessage('해당하는 프로젝트를 찾을 수 없습니다.');
+        // 담당자 카드 추가 (프로젝트 관련)
+        const pmPerson = {
+            name: '박준혁',
+            position: '부장',
+            department: '프로젝트관리팀',
+            email: 'junhyuk.park@hanwhalife.com',
+            phone: '02-789-1234',
+            extension: '1234'
+        };
+        const responsibleCard = createResponsibleCard(pmPerson);
+        chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
+        return;
+    }
+    
+    // 텍스트 형태로 프로젝트 정보 생성
+    let detailedInfo = response.message + '\n\n';
+    
+    response.cards.forEach(card => {
+        detailedInfo += `📋 **${card.title}**\n`;
+        detailedInfo += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+        
+        detailedInfo += `📌 기본 정보\n`;
+        detailedInfo += `• 상태: ${card.status} (진행률: ${card.progress}%)\n`;
+        detailedInfo += `• 기간: ${card.startDate} ~ ${card.endDate}\n`;
+        detailedInfo += `• 부서: ${card.department}\n`;
+        detailedInfo += `• 최종 업데이트: ${card.lastUpdated}\n\n`;
+        
+        detailedInfo += `📝 프로젝트 설명\n`;
+        detailedInfo += `${card.description}\n\n`;
+        
+        detailedInfo += `👥 프로젝트 팀\n`;
+        detailedInfo += `• 책임자: ${card.manager.name} ${card.manager.position} (${card.manager.email})\n`;
+        detailedInfo += `• 팀원:\n`;
+        card.members.forEach(member => {
+            detailedInfo += `  - ${member.name} ${member.position}: ${member.role}\n`;
+        });
+        detailedInfo += `\n`;
+        
+        detailedInfo += `✅ 주요 업무 현황\n`;
+        card.keyTasks.forEach(task => {
+            let statusIcon = task.status === 'completed' ? '✓' : 
+                           task.status === 'in-progress' ? '●' : '○';
+            let statusText = task.status === 'completed' ? '완료' : 
+                           task.status === 'in-progress' ? '진행중' : '대기';
+            detailedInfo += `${statusIcon} ${task.task} [${statusText}]\n`;
+        });
+        detailedInfo += `\n`;
+        
+        if (card.nextMilestone) {
+            detailedInfo += `🎯 다음 마일스톤\n`;
+            detailedInfo += `${card.nextMilestone}\n\n`;
+        }
+        
+        detailedInfo += `\n`;
+    });
+    
+    // 텍스트를 HTML로 변환하여 렌더링
+    const formattedMessage = detailedInfo
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/━+/g, '<hr style="border: none; border-top: 1px solid #e0e0e0; margin: 10px 0;">')
+        .replace(/\n/g, '<br>')
+        .replace(/•/g, '&bull;')
+        .replace(/✓/g, '<span style="color: #4CAF50;">✓</span>')
+        .replace(/●/g, '<span style="color: #FA6600;">●</span>')
+        .replace(/○/g, '<span style="color: #999;">○</span>')
+        .replace(/📋/g, '<span style="font-size: 1.2em;">📋</span>')
+        .replace(/📌/g, '<span style="color: #FA6600;">📌</span>')
+        .replace(/📝/g, '<span style="color: #2196F3;">📝</span>')
+        .replace(/👥/g, '<span style="color: #9C27B0;">👥</span>')
+        .replace(/✅/g, '<span style="color: #4CAF50;">✅</span>')
+        .replace(/🎯/g, '<span style="color: #FF5722;">🎯</span>');
+    
+    renderAIMessage(formattedMessage);
+    
+    // 프로젝트 담당자 카드 추가
+    const pmPerson = {
+        name: '박준혁',
+        position: '부장',
+        department: '프로젝트관리팀',
+        email: 'junhyuk.park@hanwhalife.com',
+        phone: '02-789-1234',
+        extension: '1234'
+    };
+    const responsibleCard = createResponsibleCard(pmPerson);
+    if (chatMessages) {
+        chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
+    }
+    
+    // 모든 콘텐츠 렌더링 후 스크롤
+    setTimeout(() => {
+        scrollToBottom();
+    }, 300);
+    
+    // ChatManager에 저장
+    if (currentUser && currentChatId) {
+        chatManager.addMessage(currentUser.id, currentChatId, 'ai', response.message);
+        updateChatHistory();
+    }
+}
+
+// 상태카드 HTML 생성
+function createStatusCardHTML(card) {
+    const statusClass = card.statusType === 'in-progress' ? 'status-in-progress' :
+                       card.statusType === 'completed' ? 'status-completed' :
+                       card.statusType === 'urgent' ? 'status-urgent' :
+                       'status-pending';
+    
+    const statusText = card.status === '진행중' ? '진행중' :
+                      card.status === '완료' ? '완료' :
+                      card.status === '긴급' ? '긴급' :
+                      '대기';
+    
+    const badgeClass = card.statusType;
+    
+    // 주요 업무 중 최대 3개만 표시
+    const displayTasks = card.keyTasks.slice(0, 3);
+    
+    return `
+        <div class="status-card ${statusClass}" onclick="showStatusCardDetail('${card.id}')">
+            <div class="status-card-header">
+                <div>
+                    <h3 class="status-card-title">${card.title}</h3>
+                    <div class="status-card-meta">
+                        <span class="status-card-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M7 2v5l3 3" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="7" cy="7" r="5" stroke="#666" stroke-width="1.5"/>
+                            </svg>
+                            ${card.startDate} ~ ${card.endDate}
+                        </span>
+                        <span class="status-card-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <rect x="2" y="4" width="10" height="8" rx="1" stroke="#666" stroke-width="1.5"/>
+                                <path d="M5 2v2M9 2v2" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            ${card.department}
+                        </span>
+                    </div>
+                </div>
+                <span class="status-badge ${badgeClass}">${statusText}</span>
+            </div>
+            
+            <p class="status-card-description">${card.description}</p>
+            
+            <div class="status-progress-container">
+                <div class="status-progress-label">
+                    <span>진행률</span>
+                    <span>${card.progress}%</span>
+                </div>
+                <div class="status-progress-bar">
+                    <div class="status-progress-fill" style="width: ${card.progress}%"></div>
+                </div>
+            </div>
+            
+            <div class="status-card-members">
+                <div class="status-card-section-title">프로젝트 관리자 및 팀원</div>
+                <div class="status-members-list">
+                    <span class="status-member-chip manager">${card.manager.name} ${card.manager.position}</span>
+                    ${card.members.slice(0, 3).map(member => 
+                        `<span class="status-member-chip">${member.name} ${member.position}</span>`
+                    ).join('')}
+                    ${card.members.length > 3 ? `<span class="status-member-chip">+${card.members.length - 3}명</span>` : ''}
+                </div>
+            </div>
+            
+            <div class="status-card-tasks">
+                <div class="status-card-section-title">주요 업무</div>
+                <div class="status-task-list">
+                    ${displayTasks.map(task => `
+                        <div class="status-task-item">
+                            <span class="status-task-icon ${task.status}"></span>
+                            <span>${task.task}</span>
+                        </div>
+                    `).join('')}
+                    ${card.keyTasks.length > 3 ? 
+                        `<div class="status-task-item" style="color: #999; font-size: 12px;">
+                            ... 외 ${card.keyTasks.length - 3}개 업무
+                        </div>` : ''}
+                </div>
+            </div>
+            
+            <div class="status-card-footer">
+                <span class="status-milestone">다음 마일스톤: ${card.nextMilestone}</span>
+                <span class="status-last-updated">최종 업데이트: ${card.lastUpdated}</span>
+            </div>
+        </div>
+    `;
+}
+
+// 상태카드 상세 보기
+function showStatusCardDetail(cardId) {
+    const card = STATUS_CARDS.find(c => c.id === cardId);
+    if (card) {
+        renderAIMessage(`${card.title} 프로젝트의 상세 정보를 보여드리겠습니다.`);
+        
+        const detailMessage = `
+📋 프로젝트명: ${card.title}
+📅 기간: ${card.startDate} ~ ${card.endDate}
+🏢 담당부서: ${card.department}
+👤 관리자: ${card.manager.name} ${card.manager.position}
+📊 진행률: ${card.progress}%
+
+📝 프로젝트 설명:
+${card.description}
+
+👥 참여 인원:
+${card.members.map(m => `- ${m.name} ${m.position} (${m.role})`).join('\n')}
+
+✅ 주요 업무 현황:
+${card.keyTasks.map(t => `- ${t.task}: ${t.status === 'completed' ? '✅ 완료' : t.status === 'in-progress' ? '🔄 진행중' : '⏳ 대기'}`).join('\n')}
+
+🎯 다음 마일스톤: ${card.nextMilestone}
+`;
+        
+        renderAIMessage(detailMessage);
     }
 }
 
@@ -846,7 +1641,18 @@ function handleEnter(event) {
 
 // 스크롤 하단 이동
 function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // 채팅 메시지 영역이 표시된 경우에만 스크롤
+    if (chatMessages && chatMessages.style.display !== 'none') {
+        // scrollHeight를 정확히 얻기 위해 약간의 지연 추가
+        requestAnimationFrame(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 스크롤이 제대로 되지 않은 경우를 위한 추가 시도
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
+        });
+    }
 }
 
 // HTML 이스케이프

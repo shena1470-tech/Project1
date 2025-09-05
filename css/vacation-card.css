@@ -1,0 +1,200 @@
+/* 휴가 카드 스타일 - 기존 시스템과 통일 */
+.vacation-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.vacation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.vacation-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.vacation-year {
+    font-size: 12px;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.vacation-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.vacation-item {
+    text-align: center;
+}
+
+.vacation-label {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.vacation-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FA6600;
+    margin-bottom: 2px;
+}
+
+.vacation-unit {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.vacation-details {
+    display: none; /* 컴팩트한 디자인을 위해 상세 내역 숨김 */
+}
+
+/* 휴가 히스토리 - 컴팩트 버전 */
+.vacation-history {
+    display: none; /* 간단한 표시를 위해 히스토리 숨김 */
+}
+
+/* 담당자 카드 스타일 */
+.responsible-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.responsible-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FA6600 0%, #ff8c42 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.responsible-info {
+    flex: 1;
+}
+
+.responsible-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.responsible-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.responsible-position {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.responsible-department {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-bottom: 8px;
+}
+
+.responsible-contact {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.responsible-email,
+.responsible-phone {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #6b7280;
+}
+
+.responsible-email::before {
+    content: "✉️";
+}
+
+.responsible-phone::before {
+    content: "📞";
+}
+
+.responsible-action {
+    background: #FA6600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.responsible-action:hover {
+    background: #e55a00;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .vacation-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .responsible-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .responsible-contact {
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
+/* 스크롤바 스타일링 */
+.vacation-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.vacation-history-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.vacation-history-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.vacation-history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}

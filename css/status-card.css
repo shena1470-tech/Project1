@@ -1,0 +1,300 @@
+/* 상태카드 스타일 */
+.status-cards-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.status-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    border-left: 4px solid #FA6600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.status-card.status-completed {
+    border-left-color: #4CAF50;
+}
+
+.status-card.status-urgent {
+    border-left-color: #F44336;
+}
+
+.status-card.status-pending {
+    border-left-color: #9E9E9E;
+}
+
+.status-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.status-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-badge.in-progress {
+    background: #FFF3E0;
+    color: #FA6600;
+}
+
+.status-badge.completed {
+    background: #E8F5E9;
+    color: #4CAF50;
+}
+
+.status-badge.urgent {
+    background: #FFEBEE;
+    color: #F44336;
+}
+
+.status-badge.pending {
+    background: #F5F5F5;
+    color: #9E9E9E;
+}
+
+.status-card-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.status-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-card-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.status-progress-container {
+    margin-bottom: 16px;
+}
+
+.status-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.status-progress-bar {
+    height: 8px;
+    background: #F0F0F0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.status-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FA6600, #FF8800);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.status-card-members {
+    margin-bottom: 16px;
+}
+
+.status-card-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.status-members-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.status-member-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: #F5F5F5;
+    border-radius: 16px;
+    font-size: 12px;
+    color: #333;
+}
+
+.status-member-chip.manager {
+    background: #FFF3E0;
+    color: #FA6600;
+    font-weight: 500;
+}
+
+.status-card-tasks {
+    margin-bottom: 16px;
+}
+
+.status-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.status-task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
+}
+
+.status-task-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-task-icon.completed {
+    background: #4CAF50;
+}
+
+.status-task-icon.completed::after {
+    content: '✓';
+    color: white;
+    font-size: 10px;
+}
+
+.status-task-icon.in-progress {
+    background: #FA6600;
+}
+
+.status-task-icon.in-progress::after {
+    content: '•';
+    color: white;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.status-task-icon.pending {
+    background: #E0E0E0;
+}
+
+.status-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #F0F0F0;
+}
+
+.status-milestone {
+    font-size: 13px;
+    color: #FA6600;
+    font-weight: 500;
+}
+
+.status-last-updated {
+    font-size: 12px;
+    color: #999;
+}
+
+/* 상태카드 그리드 레이아웃 */
+.status-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* 상태카드 요약 헤더 */
+.status-summary {
+    background: linear-gradient(135deg, #FA6600, #FF8800);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.status-summary-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.status-summary-stats {
+    display: flex;
+    gap: 24px;
+}
+
+.status-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.status-stat-label {
+    font-size: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .status-cards-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+    
+    .status-card {
+        padding: 16px;
+    }
+    
+    .status-card-title {
+        font-size: 16px;
+    }
+    
+    .status-card-meta {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .status-summary-stats {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+}
