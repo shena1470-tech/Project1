@@ -1,0 +1,18 @@
+# 가이드 이미지 다운로드 방법
+
+각 가이드 이미지는 피그마에서 내보내기 하여 저장해야 합니다.
+
+## 이미지 파일명과 피그마 노드 ID
+1. meeting-guide.png - 피그마 노드 107-52173의 내용 부분 (field group 107-52174)
+2. history-guide.png - 피그마 노드 107-52211의 내용 부분 (field group 107-52212)  
+3. vacation-guide.png - 피그마 노드 107-52242의 내용 부분 (field group 107-52243)
+4. report-guide.png - 피그마 노드 107-52273의 내용 부분 (field group 107-52274)
+5. usertest-guide.png - 피그마 노드 107-52303의 내용 부분 (field group 107-52304)
+
+## 피그마에서 내보내기 방법
+1. 피그마에서 해당 노드 선택
+2. 우측 패널에서 Export 클릭
+3. PNG 형식으로 Export
+4. /assets/guide/ 폴더에 위 파일명으로 저장
+
+참고: 현재는 임시로 로컬 경로를 사용중입니다.

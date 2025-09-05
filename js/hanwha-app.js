@@ -2663,10 +2663,10 @@ function openMeetingModal() {
     modal.open();
 }
 
-// 가이드 화면 표시 함수
-function showGuide() {
-    alert('가이드 기능은 준비중입니다.');
-}
+// 가이드 화면 표시 함수 - guide-modal.js에서 재정의됨
+// function showGuide() {
+//     alert('가이드 기능은 준비중입니다.');
+// }
 
 // 설정 화면 표시 함수
 function showSettings() {
