@@ -80,12 +80,7 @@ function updateUserDisplay() {
     // 헤더 유저 이름 업데이트 (오른쪽 상단)
     const headerUserName = document.querySelector('.header-actions .user-name');
     if (headerUserName) {
-        headerUserName.innerHTML = `
-            ${currentUser.name}
-            <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
-                <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        `;
+        headerUserName.textContent = currentUser.name;
     }
     
     // 유저 프로필 클릭 이벤트
@@ -493,12 +488,18 @@ function showMenu() {
 }
 
 function scheduleMeeting() {
-    if (!chatStarted) {
-        initiateChatMode();
+    // 새로운 모달 시스템 사용
+    if (typeof meetingModal !== 'undefined') {
+        meetingModal.open();
+    } else {
+        // 폴백: 기존 채팅 방식
+        if (!chatStarted) {
+            initiateChatMode();
+        }
+        const input = chatStarted ? bottomInputField : mainInput;
+        input.value = '회의 일정을 잡고 싶습니다.';
+        sendMessage();
     }
-    const input = chatStarted ? bottomInputField : mainInput;
-    input.value = '회의 일정을 잡고 싶습니다.';
-    sendMessage();
 }
 
 function showAttachments() {
