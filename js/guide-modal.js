@@ -6,27 +6,27 @@ class GuideModalManager {
             {
                 title: '회의 잡기',
                 // 피그마 노드 107-52173의 콘텐츠 이미지 (회의 잡기 가이드)
-                fullImage: '/assets/guide/meeting-guide.png'
+                fullImage: 'assets/guide/meeting-guide.png'
             },
             {
                 title: '업무 히스토리 문의',
                 // 피그마 노드 107-52211의 콘텐츠 이미지 (업무 히스토리 가이드)
-                fullImage: '/assets/guide/history-guide.png'
+                fullImage: 'assets/guide/history-guide.png'
             },
             {
                 title: '남은 연차 확인',
                 // 피그마 노드 107-52242의 콘텐츠 이미지 (연차 확인 가이드)
-                fullImage: '/assets/guide/vacation-guide.png'
+                fullImage: 'assets/guide/vacation-guide.png'
             },
             {
                 title: '보고서 모드',
                 // 피그마 노드 107-52273의 콘텐츠 이미지 (보고서 모드 가이드)
-                fullImage: '/assets/guide/report-guide.png'
+                fullImage: 'assets/guide/report-guide.png'
             },
             {
                 title: 'User Test 모드',
                 // 피그마 노드 107-52303의 콘텐츠 이미지 (User Test 모드 가이드)
-                fullImage: '/assets/guide/usertest-guide.png'
+                fullImage: 'assets/guide/usertest-guide.png'
             }
         ];
         
