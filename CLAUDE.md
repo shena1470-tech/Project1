@@ -6,7 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 한화생명 사내 AI 어시스턴트 - AI 기반 통합 업무 지원 플랫폼
 
-This is a web-based AI assistant platform for Hanwha Life Insurance employees, providing integrated information search, intelligent report generation, and smart schedule management.
+This is a web-based AI assistant platform for Hanwha Life Insurance employees, providing:
+- **Integrated Information Search**: Unified access to company resources and data
+- **Intelligent Report Generation**: Automated document creation with company templates
+- **Smart Schedule Management**: Meeting coordination and room reservation system
+- **Conversational Interface**: Natural language processing for daily work queries
 
 ## Development Commands
 
@@ -35,27 +39,40 @@ npx http-server -p 8000  # If Node.js is available
 The application follows a state-driven pattern:
 1. **Initial State**: Welcome screen with central input (`index.html` + `hanwha-app.js`)
 2. **Chat Initiation**: User input triggers `initiateChatMode()` → UI transformation
-3. **Message Flow**: `sendMessage()` → `addUserMessage()` → `addAIResponse()` (simulated)
-4. **State Persistence**: Chat history and theme preferences stored in localStorage
+3. **Message Flow**: `sendMessage()` → `addUserMessage()` → `addAIResponse()`
+4. **Meeting Detection**: `handleMeetingRequest()` analyzes input for meeting-related keywords
+5. **State Persistence**: Chat history, user sessions, and calendar events stored in localStorage
+
+### Key JavaScript Modules
+- **`hanwha-app.js`**: Main application controller, chat interface, user management
+- **`chat-manager.js`**: Chat history persistence and multi-user session management
+- **`meeting-modal.js`**: New Figma-based meeting reservation modal component
+- **`meeting-reservation.js`**: Legacy meeting reservation logic and workflow
+- **`calendar.js`**: Calendar component for schedule management
+- **`storage-manager.js`**: Centralized localStorage management
 
 ### Key Technical Decisions
 - **No Framework**: Pure vanilla JavaScript for minimal dependencies and fast loading
 - **CSS Custom Properties**: Dynamic theming without JavaScript manipulation
 - **Mobile-First**: Base styles for mobile, progressive enhancement for larger screens
-- **DOM Caching**: Elements cached on load to avoid repeated queries (`hanwha-app.js:8-15`)
+- **DOM Caching**: Elements cached on load to avoid repeated queries
+- **Dual Meeting Systems**: New modal (`meetingModal`) with fallback to legacy system
 
 ### State Management Pattern
 ```javascript
-// Global state (hanwha-app.js:3-6)
+// Global state (hanwha-app.js)
 let chatStarted = false;     // Controls UI mode
 let messages = [];           // Chat history
-let currentTheme = 'light';  // Theme preference
+let currentUser = null;      // Active user object
+let usersData = [];         // All available users
+let currentChatId = null;    // Active chat session ID
 ```
 
 ### Data Layer Architecture
-Two parallel data management systems:
+Three parallel data management systems:
 1. **Session State** (`hanwha-app.js`): Runtime chat and UI state
-2. **Persistent Storage** (`app.js` via `DataManager`): LocalStorage for user data, stats, documents
+2. **Persistent Storage** (`storage-manager.js`): Centralized localStorage API
+3. **Chat History** (`chat-manager.js`): Multi-user chat session persistence
 
 ## Important Integrations
 
@@ -91,6 +108,14 @@ The design system (`hanwha-design-system.css`) uses CSS custom properties:
 
 ## Critical Implementation Notes
 
+### Meeting Request Handling
+The system detects meeting-related requests through keyword analysis:
+- **Reservation Keywords**: '회의실', '회의 잡', '미팅 잡', '예약', '회의 예약'
+- **Query Keywords**: '회의 알려', '회의가 있', '미팅 알려', '일정 알려', '스케줄'
+- **Response Types**:
+  - `type: 'reservation'` → Opens meeting modal or legacy UI
+  - `type: 'query'` → Returns calendar data with meeting details
+
 ### Mobile Navigation Pattern
 The mobile sidebar uses a three-part system:
 1. **Toggle Button** (`.mobile-menu-toggle`): Triggers `toggleMobileSidebar()`
@@ -103,11 +128,11 @@ Messages are rendered with distinct styling:
 - **AI Messages**: White background with border, left-aligned
 - HTML is escaped using `escapeHtml()` function for security
 
-### Theme Toggle Implementation
-Dark mode toggle modifies:
-1. Root `data-theme` attribute on `<html>`
-2. CSS variables cascade automatically
-3. Preference saved to localStorage
+### User Session Management
+- Multiple users supported via dropdown selector
+- Current user stored in localStorage with key `currentUserId`
+- User switching preserves individual chat histories
+- Each user has separate chat sessions and preferences
 
 ## Production Considerations
 
@@ -129,3 +154,41 @@ Dark mode toggle modifies:
 - **Always use relative paths** for all assets and links (e.g., `assets/icons/logo.svg`)
 - **Never use absolute URLs** like `http://localhost` or `https://localhost`
 - When downloading Figma assets via localhost URLs, save them locally first then reference with relative paths
+
+## Key Data Structures
+
+### Sample Users (from `sample-users.js`)
+Users have the following structure:
+```javascript
+{
+  id: 'user-001',
+  name: '김동준',
+  position: '과장',
+  department: '디지털프로덕트팀',
+  email: 'dongjun.kim@hanwhalife.com'
+}
+```
+
+### Calendar Events (stored in localStorage)
+```javascript
+{
+  id: 'evt-001',
+  date: '2024-01-01',        // ISO date format
+  startTime: '10:00',
+  endTime: '11:00',
+  title: '주간 팀 회의',
+  type: 'meeting',           // or 'personal', 'task'
+  location: '회의실 A',
+  attendees: ['김동준', '이서연'],
+  description: '주간 업무 보고'
+}
+```
+
+### Chat Messages
+```javascript
+{
+  type: 'user' | 'ai',
+  text: 'Message content',
+  timestamp: Date.now()
+}
+```
