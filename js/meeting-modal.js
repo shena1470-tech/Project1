@@ -484,36 +484,8 @@ class MeetingModal {
                 window.calendarManager.render();
             }
 
-            // 토스트 알림 표시
-            try {
-                console.log('Attempting to show toast...');
-                if (typeof showMeetingSuccessToast === 'function') {
-                    console.log('showMeetingSuccessToast function found, calling...');
-                    showMeetingSuccessToast({
-                        room: this.selectedRoom,
-                        date: this.selectedDate,
-                        time: this.selectedTime,
-                        attendees: this.selectedAttendees
-                    });
-                    console.log('showMeetingSuccessToast called successfully');
-                } else {
-                    console.error('showMeetingSuccessToast function not found!');
-                    console.log('Available functions:', window.showMeetingSuccessToast);
-
-                    // 백업 토스트 표시 방법
-                    if (window.toastManager) {
-                        console.log('Using toastManager as backup...');
-                        window.toastManager.showMeetingSuccess();
-                    } else {
-                        console.error('No toast manager available');
-                        // 최후의 수단으로 간단한 토스트 생성
-                        this.showFallbackToast();
-                    }
-                }
-            } catch (error) {
-                console.error('Error showing toast:', error);
-                this.showFallbackToast();
-            }
+            // 토스트 알림 표시 - 단순화된 로직
+            this.showToastNotification();
 
             console.log('Reservation data:', reservationData);
 
@@ -564,6 +536,46 @@ class MeetingModal {
         }
 
         return true;
+    }
+
+    // 토스트 알림 표시 메서드
+    showToastNotification() {
+        // 토스트 매니저 초기화 시도 (아직 초기화되지 않은 경우)
+        if (!window.toastManager && typeof initToastManager === 'function') {
+            console.log('Initializing toast manager...');
+            window.toastManager = initToastManager();
+        }
+
+        // 1순위: 전역 showMeetingSuccessToast 함수 사용
+        if (typeof window.showMeetingSuccessToast === 'function') {
+            console.log('Using window.showMeetingSuccessToast');
+            try {
+                window.showMeetingSuccessToast({
+                    room: this.selectedRoom,
+                    date: this.selectedDate,
+                    time: this.selectedTime,
+                    attendees: this.selectedAttendees
+                });
+                return;
+            } catch (error) {
+                console.error('Error with showMeetingSuccessToast:', error);
+            }
+        }
+
+        // 2순위: 토스트 매니저 사용
+        if (window.toastManager && typeof window.toastManager.showMeetingSuccess === 'function') {
+            console.log('Using toastManager.showMeetingSuccess');
+            try {
+                window.toastManager.showMeetingSuccess();
+                return;
+            } catch (error) {
+                console.error('Error with toastManager:', error);
+            }
+        }
+
+        // 3순위: 백업 토스트 사용
+        console.log('Using fallback toast');
+        this.showFallbackToast();
     }
 
     // 백업 토스트 표시 메서드

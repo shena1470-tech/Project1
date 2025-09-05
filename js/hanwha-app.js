@@ -320,6 +320,11 @@ function startNewChat() {
         bottomInput.style.display = 'none';
     }
 
+    // welcomeScreen 다시 표시
+    if (welcomeScreen) {
+        welcomeScreen.style.display = 'block';
+    }
+
     // 입력 필드 초기화
     if (mainInput) mainInput.value = '';
     if (bottomInputField) bottomInputField.value = '';
