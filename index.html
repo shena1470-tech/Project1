@@ -23,23 +23,19 @@
         <!-- 사이드바 -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-profile">
-                    <div class="logo-icon"></div>
-                    <div class="user-name">
-                        로딩중...
-                        <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
-                            <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
+                <div class="hanwha-logo">
+                    <img src="assets/hanwha_logo(pc).png" alt="한화생명" />
                 </div>
             </div>
             <nav class="sidebar-menu">
-                <button class="new-chat-button" onclick="startNewChat()">
-                    <span class="plus-icon"></span>
-                    새 대화 시작하기
-                </button>
+                <div class="recent-chat-header">
+                    <span class="section-title">최근 대화</span>
+                    <button class="new-chat-button" onclick="startNewChat()">
+                        <span class="plus-icon"></span>
+                        새 대화
+                    </button>
+                </div>
                 <div class="chat-history-section">
-                    <h3 class="section-title">최근 대화</h3>
                     <div id="chatHistoryList" class="chat-history-list">
                         <!-- 대화 히스토리가 동적으로 추가됩니다 -->
                     </div>
@@ -53,56 +49,27 @@
             <header class="top-header">
                 <div class="header-tabs">
                     <button class="tab-button active">AI 비서</button>
-                    <button class="tab-button" onclick="openReportBuilder()">
-                        <img src="assets/icons/document-pen-header.svg" alt="" class="tab-icon" />
-                        보고서 만들기
-                    </button>
+                    <button class="tab-button" onclick="openReportBuilder()">보고서 제작</button>
                     <button class="tab-button" onclick="openBoard()">게시판</button>
-                    <button class="tab-button" onclick="openCalendar()">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="tab-icon">
-                            <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                            <line x1="3" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="1.5"/>
-                            <line x1="7" y1="2" x2="7" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <line x1="13" y1="2" x2="13" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        캘린더
-                    </button>
+                    <button class="tab-button" onclick="window.location.href='calendar.html'">캘린더</button>
                 </div>
-                <div class="hanwha-logo">
-                    <img src="assets/icons/hanwha-logo.svg" alt="Hanwha Life" />
+                <div class="header-actions">
+                    <button class="notification-button" onclick="showNotifications()" aria-label="알림">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <path d="M14 2C10.686 2 8 4.686 8 8C8 11.314 8 15 6 17H22C20 15 20 11.314 20 8C20 4.686 17.314 2 14 2Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16.5 21C16.5 22.381 15.381 23.5 14 23.5C12.619 23.5 11.5 22.381 11.5 21" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar"></div>
+                        <span class="user-name">로딩중...</span>
+                        <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                 </div>
             </header>
 
-            <!-- 캘린더 영역 (숨김 상태) -->
-            <div class="calendar-container" id="calendarContainer" style="display: none;">
-                <div class="calendar-header">
-                    <div class="calendar-controls">
-                        <button class="calendar-nav-btn" onclick="previousPeriod()">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M12 14L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <h2 class="calendar-title" id="calendarTitle">2024년 3월</h2>
-                        <button class="calendar-nav-btn" onclick="nextPeriod()">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M8 14L12 10L8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="calendar-view-toggle">
-                        <button class="view-btn active" data-view="month" onclick="changeView('month')">월</button>
-                        <button class="view-btn" data-view="week" onclick="changeView('week')">주</button>
-                        <button class="view-btn" data-view="day" onclick="changeView('day')">일</button>
-                    </div>
-                    <button class="add-schedule-btn" onclick="openScheduleModal()">
-                        <span class="plus-icon"></span>
-                        일정 추가
-                    </button>
-                </div>
-                <div class="calendar-content" id="calendarContent">
-                    <!-- 캘린더 뷰가 동적으로 렌더링됩니다 -->
-                </div>
-            </div>
 
             <!-- 채팅 영역 - 초기 화면 -->
             <div class="chat-area" id="chatArea" style="display: block;">
@@ -191,22 +158,21 @@
 
     <!-- 회의실 예약 스타일 -->
     <link rel="stylesheet" href="css/meeting-reservation.css">
-    
+
     <!-- 캘린더 스타일 -->
     <link rel="stylesheet" href="css/calendar.css">
-    
+
     <!-- 샘플 데이터 파일들 -->
     <script src="data/sample-data.js"></script>
     <script src="data/sample-sampleData.js"></script>
     <script src="data/sample-users.js"></script>
     <script src="data/sample-chat-history.js"></script>
-    
+
     <!-- 애플리케이션 스크립트 -->
     <script src="js/storage-manager.js"></script>
     <script src="js/chat-manager.js"></script>
     <script src="js/meeting-reservation.js"></script>
     <script src="js/meeting-reservation-ui.js"></script>
-    <script src="js/calendar.js"></script>
     <script src="js/hanwha-app.js"></script>
 </body>
 </html>

@@ -78,16 +78,21 @@ function loadCurrentUser() {
 function updateUserDisplay() {
     if (!currentUser) return;
     
-    // 사이드바 유저 이름 업데이트
-    const userNameElement = document.querySelector('.user-name');
-    if (userNameElement) {
-        userNameElement.innerHTML = `
+    // 헤더 유저 이름 업데이트 (오른쪽 상단)
+    const headerUserName = document.querySelector('.header-actions .user-name');
+    if (headerUserName) {
+        headerUserName.innerHTML = `
             ${currentUser.name}
             <svg class="arrow-down" viewBox="0 0 20 20" fill="none">
                 <path d="M5 7.5L10 12.5L15 7.5" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
-        userNameElement.onclick = toggleUserDropdown;
+    }
+    
+    // 유저 프로필 클릭 이벤트
+    const userProfile = document.querySelector('.user-profile');
+    if (userProfile) {
+        userProfile.onclick = toggleUserDropdown;
     }
     
     // 웰컴 메시지 업데이트
@@ -111,13 +116,26 @@ function updateChatHistory() {
         return;
     }
     
-    historyList.innerHTML = recentChats.map(chat => `
-        <div class="chat-history-item ${chat.id === currentChatId ? 'active' : ''}" 
-             onclick="loadChat('${chat.id}')">
-            <div class="chat-title">${escapeHtml(chat.title)}</div>
-            <div class="chat-date">${formatDate(chat.lastUpdated)}</div>
-        </div>
-    `).join('');
+    historyList.innerHTML = recentChats.map(chat => {
+        // 마지막 메시지 가져오기
+        const lastMessage = chat.messages && chat.messages.length > 0 
+            ? chat.messages[chat.messages.length - 1].text 
+            : '대화를 시작하세요';
+            
+        return `
+            <div class="chat-history-item ${chat.id === currentChatId ? 'active' : ''}" 
+                 onclick="loadChat('${chat.id}')">
+                <div class="chat-title">${escapeHtml(chat.title)}</div>
+                <div class="chat-preview">${escapeHtml(lastMessage)}</div>
+                <div class="chat-time">${formatDate(chat.lastUpdated)}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 전역 함수로 노출 (다른 페이지에서도 사용 가능)
+function loadChatHistory() {
+    updateChatHistory();
 }
 
 // 날짜 포맷 함수
@@ -196,7 +214,11 @@ function toggleUserDropdown() {
     }
     
     dropdown = createUserDropdown();
-    document.querySelector('.sidebar-header').appendChild(dropdown);
+    // 오른쪽 상단 헤더의 user-profile 영역에 추가
+    const userProfile = document.querySelector('.user-profile');
+    if (userProfile) {
+        userProfile.appendChild(dropdown);
+    }
 }
 
 // 유저 드롭다운 생성
@@ -833,6 +855,69 @@ function closeMeetingReservation() {
     } else {
         renderAIMessage('회의실 예약이 취소되었습니다.');
     }
+}
+
+// 알림 표시 함수
+function showNotifications() {
+    // 알림 드롭다운이 이미 있으면 제거
+    let dropdown = document.getElementById('notificationDropdown');
+    if (dropdown) {
+        dropdown.remove();
+        return;
+    }
+    
+    // 알림 드롭다운 생성
+    dropdown = document.createElement('div');
+    dropdown.id = 'notificationDropdown';
+    dropdown.className = 'notification-dropdown';
+    dropdown.innerHTML = `
+        <div class="notification-header">
+            <h3>알림</h3>
+            <button onclick="document.getElementById('notificationDropdown').remove()">×</button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item">
+                <div class="notification-icon">📢</div>
+                <div class="notification-content">
+                    <div class="notification-title">팀 회의 일정 변경</div>
+                    <div class="notification-message">오늘 오후 3시 회의가 4시로 변경되었습니다.</div>
+                    <div class="notification-time">30분 전</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">📄</div>
+                <div class="notification-content">
+                    <div class="notification-title">보고서 승인 완료</div>
+                    <div class="notification-message">월간 실적 보고서가 승인되었습니다.</div>
+                    <div class="notification-time">2시간 전</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">🍚</div>
+                <div class="notification-content">
+                    <div class="notification-title">구내식당 메뉴 업데이트</div>
+                    <div class="notification-message">오늘의 특별 메뉴가 등록되었습니다.</div>
+                    <div class="notification-time">3시간 전</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 알림 버튼 근처에 드롭다운 위치시키기
+    const notificationButton = document.querySelector('.notification-button');
+    if (notificationButton) {
+        notificationButton.parentElement.appendChild(dropdown);
+    }
+    
+    // 외부 클릭시 닫기
+    setTimeout(() => {
+        document.addEventListener('click', function closeOnClickOutside(e) {
+            if (!dropdown.contains(e.target) && e.target !== notificationButton) {
+                dropdown.remove();
+                document.removeEventListener('click', closeOnClickOutside);
+            }
+        });
+    }, 100);
 }
 
 // 시스템 테마 변경 감지 (선택적 - 사용자가 수동으로 설정하지 않은 경우에만)
