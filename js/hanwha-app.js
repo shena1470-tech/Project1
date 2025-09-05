@@ -91,6 +91,12 @@ function updateUserDisplay() {
         headerUserName.textContent = currentUser.name;
     }
     
+    // 헤더 유저 아바타 업데이트 (첫 글자 표시)
+    const headerUserAvatar = document.querySelector('.user-profile .user-avatar');
+    if (headerUserAvatar) {
+        headerUserAvatar.textContent = currentUser.name ? currentUser.name[0] : '?';
+    }
+    
     // 유저 프로필 클릭 이벤트
     const userProfile = document.querySelector('.user-profile');
     if (userProfile) {
@@ -181,10 +187,12 @@ function loadChat(chatId) {
     currentChatId = chatId;
     chatManager.currentChatId = chatId;
     
-    // 메시지 로드
+    // 메시지 로드 (확장된 구조 지원)
     messages = chat.messages.map(msg => ({
         type: msg.type,
-        text: msg.text
+        text: msg.text,
+        htmlContent: msg.htmlContent,
+        metadata: msg.metadata
     }));
     
     // 채팅 화면 초기화 및 메시지 표시
@@ -198,7 +206,23 @@ function loadChat(chatId) {
         if (msg.type === 'user') {
             renderUserMessage(msg.text);
         } else {
-            renderAIMessage(msg.text);
+            // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기본 렌더링
+            if (msg.htmlContent) {
+                chatMessages.insertAdjacentHTML('beforeend', msg.htmlContent);
+                
+                // 메타데이터에 따라 이벤트 리스너 재연결
+                if (msg.metadata && msg.metadata.type === 'meeting-options') {
+                    // 회의 옵션 카드 클릭 이벤트 재연결
+                    document.querySelectorAll('.meeting-option-card').forEach(card => {
+                        card.addEventListener('click', function() {
+                            document.querySelectorAll('.meeting-option-card').forEach(c => c.classList.remove('selected'));
+                            this.classList.add('selected');
+                        });
+                    });
+                }
+            } else {
+                renderAIMessage(msg.text);
+            }
         }
     });
     
@@ -413,10 +437,22 @@ function addAIResponse(userMessage) {
         renderAIMessageWithCard(vacationResponse.message, vacationResponse.vacationData, vacationResponse.responsiblePerson);
         messages.push({ type: 'ai', text: vacationResponse.message });
         
-        // ChatManager에 저장
+        // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
         if (currentUser && currentChatId) {
-            chatManager.addMessage(currentUser.id, currentChatId, 'ai', vacationResponse.message);
-            updateChatHistory();
+            // 렌더링된 HTML을 캡처하여 저장
+            setTimeout(() => {
+                const lastMessageElements = chatMessages.children;
+                const lastMessageHTML = lastMessageElements[lastMessageElements.length - 1].outerHTML;
+                
+                const metadata = {
+                    type: 'vacation',
+                    vacationData: vacationResponse.vacationData,
+                    responsiblePerson: vacationResponse.responsiblePerson
+                };
+                
+                chatManager.addMessage(currentUser.id, currentChatId, 'ai', vacationResponse.message, lastMessageHTML, metadata);
+                updateChatHistory();
+            }, 100);
         }
         return;
     }
@@ -443,10 +479,24 @@ function addAIResponse(userMessage) {
             
             messages.push({ type: 'ai', text: aiMessageText });
             
-            // ChatManager에 저장
+            // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
             if (currentUser && currentChatId) {
-                chatManager.addMessage(currentUser.id, currentChatId, 'ai', aiMessageText);
-                updateChatHistory();
+                setTimeout(() => {
+                    const lastMessageElements = chatMessages.children;
+                    // AI 메시지와 옵션 카드들을 모두 포함
+                    let combinedHTML = '';
+                    for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
+                        combinedHTML += lastMessageElements[i].outerHTML;
+                    }
+                    
+                    const metadata = {
+                        type: 'meeting-options',
+                        meetingData: meetingResponse.data
+                    };
+                    
+                    chatManager.addMessage(currentUser.id, currentChatId, 'ai', aiMessageText, combinedHTML, metadata);
+                    updateChatHistory();
+                }, 100);
             }
             return;
         } else if (meetingResponse.type === 'reservation') {
@@ -471,10 +521,24 @@ function addAIResponse(userMessage) {
             
             messages.push({ type: 'ai', text: meetingResponse.message });
             
-            // ChatManager에 저장
+            // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
             if (currentUser && currentChatId) {
-                chatManager.addMessage(currentUser.id, currentChatId, 'ai', meetingResponse.message);
-                updateChatHistory();
+                setTimeout(() => {
+                    const lastMessageElements = chatMessages.children;
+                    // AI 메시지와 담당자 카드를 모두 포함
+                    let combinedHTML = '';
+                    for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
+                        combinedHTML += lastMessageElements[i].outerHTML;
+                    }
+                    
+                    const metadata = {
+                        type: 'meeting-query',
+                        responsiblePerson: facilityPerson
+                    };
+                    
+                    chatManager.addMessage(currentUser.id, currentChatId, 'ai', meetingResponse.message, combinedHTML, metadata);
+                    updateChatHistory();
+                }, 100);
             }
             return;
         }
@@ -499,10 +563,24 @@ function addAIResponse(userMessage) {
     
     messages.push({ type: 'ai', text: response });
     
-    // ChatManager에 저장
+    // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
     if (currentUser && currentChatId) {
-        chatManager.addMessage(currentUser.id, currentChatId, 'ai', response);
-        updateChatHistory();
+        setTimeout(() => {
+            const lastMessageElements = chatMessages.children;
+            // AI 메시지와 담당자 카드를 모두 포함
+            let combinedHTML = '';
+            for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
+                combinedHTML += lastMessageElements[i].outerHTML;
+            }
+            
+            const metadata = {
+                type: 'general',
+                responsiblePerson: defaultPerson
+            };
+            
+            chatManager.addMessage(currentUser.id, currentChatId, 'ai', response, combinedHTML, metadata);
+            updateChatHistory();
+        }, 100);
     }
 }
 

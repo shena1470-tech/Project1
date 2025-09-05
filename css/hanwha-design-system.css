@@ -560,9 +560,15 @@ body {
 .user-profile .user-avatar {
     width: 32px;
     height: 32px;
-    background-color: var(--color-neutral-100);
+    background: linear-gradient(135deg, var(--color-primary), #ff8833);
+    color: white;
     border: 1px solid var(--color-border-medium);
-    border-radius: var(--radius-sm);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .user-profile .user-name {
@@ -612,6 +618,8 @@ body {
     background-color: white;
     position: relative;
     width: 100%;
+    overflow-y: auto;
+    height: calc(100vh - 60px); /* 헤더 높이를 제외한 전체 높이 */
 }
 
 /* Welcome Container */
@@ -841,12 +849,15 @@ body {
 /* Chat Messages Area */
 .chat-messages {
     flex: 1;
-    padding: 40px 84px 120px 84px;
+    padding: 40px 84px 140px 84px; /* 하단 패딩 증가 */
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 32px;
     background-color: white;
+    scroll-behavior: smooth; /* 부드러운 스크롤 애니메이션 */
+    min-height: 0; /* flexbox 스크롤 문제 해결 */
 }
 
 /* Bottom Input Area */
