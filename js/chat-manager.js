@@ -83,8 +83,8 @@ class ChatManager {
         return chatId;
     }
 
-    // 메시지 추가
-    addMessage(userId, chatId, type, text) {
+    // 메시지 추가 (확장된 구조)
+    addMessage(userId, chatId, type, text, htmlContent = null, metadata = null) {
         if (!userId || !chatId) return null;
 
         const userChats = this.chatHistory[userId];
@@ -98,6 +98,8 @@ class ChatManager {
             id: messageId,
             type: type, // 'user' or 'ai'
             text: text,
+            htmlContent: htmlContent, // 전체 HTML 콘텐츠 (카드, 담당자 정보 포함)
+            metadata: metadata, // 추가 메타데이터 (카드 타입, 담당자 정보 등)
             timestamp: new Date().toISOString()
         };
 

@@ -22,26 +22,58 @@ const SAMPLE_CHAT_HISTORY = {
                         id: "msg-002",
                         type: "ai",
                         text: "네, 월간 실적 보고서 작성을 도와드리겠습니다. 어떤 부서의 실적 보고서인가요?",
+                        htmlContent: '<div class="message-container ai-message"><div class="message-bubble"><p class="message-text">네, 월간 실적 보고서 작성을 도와드리겠습니다. 어떤 부서의 실적 보고서인가요?</p></div></div><div class="responsible-card"><div class="responsible-avatar"><img src="assets/avatar-placeholder.png" alt="담당자"></div><div class="responsible-info"><div class="responsible-name">김지원</div><div class="responsible-position">과장 · IT서비스팀</div><div class="responsible-contact">📞 02-789-5678 📧 jiwon.kim@hanwhalife.com</div></div></div>',
+                        metadata: {
+                            type: "general",
+                            responsiblePerson: {
+                                name: "김지원",
+                                position: "과장",
+                                department: "IT서비스팀",
+                                email: "jiwon.kim@hanwhalife.com",
+                                phone: "02-789-5678",
+                                extension: "5678"
+                            }
+                        },
                         timestamp: "2024-01-15T09:30:05.000Z"
                     }
                 ]
             },
             {
                 id: "chat-002",
-                title: "회의 일정 조율",
+                title: "휴가 조회",
                 createdAt: "2024-01-14T14:00:00.000Z",
                 lastUpdated: "2024-01-14T14:30:00.000Z",
                 messages: [
                     {
                         id: "msg-003",
                         type: "user",
-                        text: "내일 오후 2시에 회의실 예약 가능한가요?",
+                        text: "이번 달 남은 휴가 일수 확인해주세요",
                         timestamp: "2024-01-14T14:00:00.000Z"
                     },
                     {
                         id: "msg-004",
                         type: "ai",
-                        text: "확인해보겠습니다. 참석 인원과 회의 목적을 알려주시겠어요?",
+                        text: "김동준님의 연차 현황을 조회해드렸습니다.",
+                        htmlContent: '<div class="message-container ai-message"><div class="message-bubble"><p class="message-text">김동준님의 연차 현황을 조회해드렸습니다.</p></div></div><div class="vacation-card"><h3 class="vacation-title">휴가 현황 📅</h3><div class="vacation-remaining"><div class="remaining-number">12</div><div class="remaining-text">일 남음</div></div><div class="vacation-breakdown"><div class="breakdown-item"><span class="breakdown-label">연차</span><span class="breakdown-value">10일</span></div><div class="breakdown-item"><span class="breakdown-label">병가</span><span class="breakdown-value">2일</span></div><div class="breakdown-item"><span class="breakdown-label">경조사</span><span class="breakdown-value">0일</span></div><div class="breakdown-item"><span class="breakdown-label">가족돌봄</span><span class="breakdown-value">0일</span></div></div></div><div class="responsible-card"><div class="responsible-avatar"><img src="assets/avatar-placeholder.png" alt="담당자"></div><div class="responsible-info"><div class="responsible-name">이민주</div><div class="responsible-position">대리 · 인사팀</div><div class="responsible-contact">📞 02-789-1234 📧 minju.lee@hanwhalife.com</div></div></div>',
+                        metadata: {
+                            type: "vacation",
+                            vacationData: {
+                                totalRemaining: 12,
+                                annual: 10,
+                                sick: 2,
+                                congratulatory: 0,
+                                familyCare: 0,
+                                recentVacations: []
+                            },
+                            responsiblePerson: {
+                                name: "이민주",
+                                position: "대리",
+                                department: "인사팀",
+                                email: "minju.lee@hanwhalife.com",
+                                phone: "02-789-1234",
+                                extension: "1234"
+                            }
+                        },
                         timestamp: "2024-01-14T14:00:03.000Z"
                     }
                 ]

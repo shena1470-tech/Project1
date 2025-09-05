@@ -610,7 +610,8 @@ function renderAIMessageWithCard(text, vacationData, responsiblePerson) {
     
     // 휴가 카드 렌더링
     if (vacationData) {
-        const vacationCard = createVacationCard(vacationData);
+        const recentHistory = vacationData.recentVacations || [];
+        const vacationCard = createVacationCard(vacationData, recentHistory);
         chatMessages.insertAdjacentHTML('beforeend', vacationCard);
     }
     
@@ -624,7 +625,7 @@ function renderAIMessageWithCard(text, vacationData, responsiblePerson) {
 }
 
 // 휴가 카드 생성 - 컴팩트 버전
-function createVacationCard(vacationData) {
+function createVacationCard(vacationData, recentHistory = []) {
     const totalRemaining = vacationData.annualLeave.remaining + 
                            vacationData.specialLeave.sick.remaining + 
                            vacationData.specialLeave.congratulations.remaining + 
@@ -761,7 +762,8 @@ function handleMeetingRequest(userMessage) {
     const reservationKeywords = ['회의실', '회의 잡', '미팅 잡', '회의 예약', '미팅 예약', '회의실 예약', '회의 하나만'];
     // '예약' 단독 사용 시 회의실 예약으로 처리하지 않음
     const hasReservationKeyword = reservationKeywords.some(keyword => lowerMessage.includes(keyword)) ||
-                                  (lowerMessage.includes('회의') && lowerMessage.includes('잡'));
+                                  (lowerMessage.includes('회의') && lowerMessage.includes('잡')) ||
+                                  (lowerMessage.includes('미팅') && lowerMessage.includes('잡'));
     
     // 전역 회의실 목록이 있으면 사용 (meeting-rooms-data.js 로드 확인)
     if (typeof MEETING_ROOMS !== 'undefined' && typeof MEETING_ROOM_NAMES !== 'undefined') {
@@ -776,7 +778,12 @@ function handleMeetingRequest(userMessage) {
     const hasMeetingKeyword = lowerMessage.includes('회의') || lowerMessage.includes('미팅');
     
     // 회의 예약 요청 분석
-    if (hasReservationKeyword || (hasMeetingKeyword && (lowerMessage.includes('잡') || lowerMessage.includes('예약')))) {
+    // "미팅할거야", "회의할거야" 같은 패턴도 포함
+    const hasMeetingPlan = lowerMessage.includes('미팅할') || lowerMessage.includes('회의할');
+    
+    if (hasReservationKeyword || 
+        (hasMeetingKeyword && (lowerMessage.includes('잡') || lowerMessage.includes('예약'))) ||
+        hasMeetingPlan) {
         // 참석자 파싱
         const attendees = parseAttendees(userMessage);
         // 층수 제한 파싱 (예: "8층 회의실")
@@ -983,43 +990,101 @@ function generateMeetingOptions(attendees, floorRestriction, duration, originalM
 
 // 가능한 회의 시간 찾기
 function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
-    // 현재 시간 기준으로 가능한 슬롯 생성
     const options = [];
     const today = new Date();
     
-    // 8층 회의실 우선 배정
+    // 회의실 목록 설정
     const rooms = floorRestriction === 8 ? 
         ['8층 - E1 - 중회의실', '8층 - E2 - 소회의실', '8층 - W1 - 중회의실'] :
         ['8층 - E1 - 중회의실', '12층 - 대회의실', '10층 - 중회의실'];
     
-    // 샘플 옵션 생성 (실제로는 캘린더 데이터와 연동해야 함)
-    // 옵션 1: 오늘 오전
-    const option1Date = new Date(today);
-    option1Date.setDate(option1Date.getDate() + 1); // 내일
-    options.push({
-        attendees: attendees,
-        room: rooms[0],
-        date: formatDateKorean(option1Date),
-        dateRaw: option1Date.toISOString().split('T')[0],
-        time: '오전 9시',
-        timeRaw: '09:00',
-        duration: duration || '1시간',
-        available: true
-    });
+    // 시간 슬롯 후보 생성 (다음 7일 동안)
+    const timeSlots = [
+        { time: '오전 9시', timeRaw: '09:00' },
+        { time: '오전 10시', timeRaw: '10:00' },
+        { time: '오전 11시', timeRaw: '11:00' },
+        { time: '오후 2시', timeRaw: '14:00' },
+        { time: '오후 3시', timeRaw: '15:00' },
+        { time: '오후 4시', timeRaw: '16:00' }
+    ];
     
-    // 옵션 2: 다음주 월요일
-    const option2Date = new Date(today);
-    option2Date.setDate(option2Date.getDate() + (8 - option2Date.getDay()) % 7 || 7);
-    options.push({
-        attendees: attendees,
-        room: rooms[1] || rooms[0],
-        date: formatDateKorean(option2Date),
-        dateRaw: option2Date.toISOString().split('T')[0],
-        time: '오후 2시',
-        timeRaw: '14:00',
-        duration: duration || '1시간',
-        available: true
-    });
+    // 다음 7일간 검색
+    for (let dayOffset = 1; dayOffset <= 7; dayOffset++) {
+        const targetDate = new Date(today);
+        targetDate.setDate(targetDate.getDate() + dayOffset);
+        const dateString = targetDate.toISOString().split('T')[0];
+        
+        // 주말 제외
+        if (targetDate.getDay() === 0 || targetDate.getDay() === 6) {
+            continue;
+        }
+        
+        for (const room of rooms) {
+            for (const slot of timeSlots) {
+                // 회의실 충돌 검사
+                if (isRoomConflict(room, dateString, slot.timeRaw, duration)) {
+                    continue;
+                }
+                
+                // 참석자 일정 충돌 검사
+                if (hasAttendeeConflict(attendees, dateString, slot.timeRaw, duration)) {
+                    continue;
+                }
+                
+                // 가능한 옵션 추가
+                options.push({
+                    attendees: attendees,
+                    room: room,
+                    date: formatDateKorean(targetDate),
+                    dateRaw: dateString,
+                    time: slot.time,
+                    timeRaw: slot.timeRaw,
+                    duration: duration || '1시간',
+                    available: true
+                });
+                
+                // 최대 5개 옵션만 생성
+                if (options.length >= 5) {
+                    break;
+                }
+            }
+            if (options.length >= 5) break;
+        }
+        if (options.length >= 5) break;
+    }
+    
+    // 옵션이 없으면 샘플 옵션 생성 (충돌 무시)
+    if (options.length === 0) {
+        console.warn('사용 가능한 회의 시간을 찾을 수 없어 샘플 옵션을 제공합니다.');
+        
+        const option1Date = new Date(today);
+        option1Date.setDate(option1Date.getDate() + 1);
+        options.push({
+            attendees: attendees,
+            room: rooms[0],
+            date: formatDateKorean(option1Date),
+            dateRaw: option1Date.toISOString().split('T')[0],
+            time: '오전 9시',
+            timeRaw: '09:00',
+            duration: duration || '1시간',
+            available: true,
+            warning: '일정 충돌 가능성 있음'
+        });
+        
+        const option2Date = new Date(today);
+        option2Date.setDate(option2Date.getDate() + 2);
+        options.push({
+            attendees: attendees,
+            room: rooms[1] || rooms[0],
+            date: formatDateKorean(option2Date),
+            dateRaw: option2Date.toISOString().split('T')[0],
+            time: '오후 2시',
+            timeRaw: '14:00',
+            duration: duration || '1시간',
+            available: true,
+            warning: '일정 충돌 가능성 있음'
+        });
+    }
     
     // 전역 변수에 저장 (confirmMeetingOption에서 사용)
     window.lastGeneratedMeetingOptions = options;
@@ -1277,6 +1342,95 @@ function saveRoomReservation(meetingData) {
     // localStorage에 저장
     localStorage.setItem('roomReservations', JSON.stringify(roomReservations));
     console.log('회의실 예약 저장됨:', reservation);
+}
+
+// 회의실 충돌 검사
+function isRoomConflict(room, date, startTime, duration) {
+    try {
+        // 회의실 예약 데이터 가져오기
+        const roomReservations = JSON.parse(localStorage.getItem('roomReservations') || '[]');
+        
+        // 새 회의의 종료 시간 계산
+        const newEndTime = calculateEndTime(startTime, duration);
+        
+        // 같은 날짜, 같은 회의실 예약들과 비교
+        for (const reservation of roomReservations) {
+            if (reservation.room === room && reservation.date === date && reservation.status === 'confirmed') {
+                // 시간 겹침 검사
+                if (isTimeOverlap(startTime, newEndTime, reservation.startTime, reservation.endTime)) {
+                    console.log(`회의실 충돌 감지: ${room}, ${date} ${startTime}-${newEndTime} vs ${reservation.startTime}-${reservation.endTime}`);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    } catch (e) {
+        console.error('회의실 충돌 검사 오류:', e);
+        return false; // 오류 시 충돌 없음으로 간주
+    }
+}
+
+// 참석자 일정 충돌 검사
+function hasAttendeeConflict(attendees, date, startTime, duration) {
+    try {
+        // 새 회의의 종료 시간 계산
+        const newEndTime = calculateEndTime(startTime, duration);
+        
+        // 전체 캘린더 데이터 가져오기
+        const calendarData = getCalendarData();
+        
+        // 각 참석자별로 일정 충돌 검사
+        for (const attendee of attendees) {
+            // 해당 날짜의 모든 회의 찾기
+            const conflictMeetings = calendarData.filter(event => 
+                event.date === date && 
+                event.type === 'meeting' &&
+                event.attendees.includes(attendee.name)
+            );
+            
+            // 시간 겹침 검사
+            for (const meeting of conflictMeetings) {
+                if (isTimeOverlap(startTime, newEndTime, meeting.startTime, meeting.endTime)) {
+                    console.log(`참석자 일정 충돌 감지: ${attendee.name}, ${date} ${startTime}-${newEndTime} vs ${meeting.startTime}-${meeting.endTime} (${meeting.title})`);
+                    return true;
+                }
+            }
+            
+            // 개인 캘린더 데이터도 확인
+            const personalCalendar = JSON.parse(localStorage.getItem(`calendar_${attendee.id}`) || '[]');
+            for (const event of personalCalendar) {
+                if (event.date === date && event.type === 'meeting') {
+                    if (isTimeOverlap(startTime, newEndTime, event.startTime, event.endTime)) {
+                        console.log(`참석자 개인 일정 충돌 감지: ${attendee.name}, ${date} ${startTime}-${newEndTime} vs ${event.startTime}-${event.endTime} (${event.title})`);
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    } catch (e) {
+        console.error('참석자 일정 충돌 검사 오류:', e);
+        return false; // 오류 시 충돌 없음으로 간주
+    }
+}
+
+// 시간 겹침 검사
+function isTimeOverlap(start1, end1, start2, end2) {
+    // 시간 문자열을 분으로 변환
+    const toMinutes = (timeStr) => {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+    
+    const start1Min = toMinutes(start1);
+    const end1Min = toMinutes(end1);
+    const start2Min = toMinutes(start2);
+    const end2Min = toMinutes(end2);
+    
+    // 겹침 검사: 한 회의의 시작이 다른 회의의 끝보다 이전이고, 끝이 다른 회의의 시작보다 이후면 겹침
+    return start1Min < end2Min && end1Min > start2Min;
 }
 
 // 참석자별 캘린더에 저장
@@ -1648,47 +1802,68 @@ ${card.keyTasks.map(t => `- ${t.task}: ${t.status === 'completed' ? '✅ 완료'
 function getCalendarData() {
     // localStorage에서 캘린더 데이터 가져오기
     const storedData = localStorage.getItem('calendarEvents');
+    let calendarEvents = [];
+    
     if (storedData) {
-        return JSON.parse(storedData);
+        try {
+            calendarEvents = JSON.parse(storedData);
+        } catch (e) {
+            console.error('캘린더 데이터 파싱 오류:', e);
+            calendarEvents = [];
+        }
     }
     
-    // 샘플 데이터 반환
-    const today = new Date().toISOString().split('T')[0];
-    return [
-        {
-            id: 'evt-001',
-            date: today,
-            startTime: '10:00',
-            endTime: '11:00',
-            title: '주간 팀 회의',
-            type: 'meeting',
-            location: '회의실 A',
-            attendees: ['김동준', '이서연', '박준혁'],
-            description: '주간 업무 보고 및 이슈 공유'
-        },
-        {
-            id: 'evt-002',
-            date: today,
-            startTime: '14:00',
-            endTime: '15:00',
-            title: '마케팅 전략 회의',
-            type: 'meeting',
-            location: '회의실 B',
-            attendees: ['이서연', '최민지', '정우성'],
-            description: '2024년 상반기 마케팅 전략 논의'
-        },
-        {
-            id: 'evt-003',
-            date: today,
-            startTime: '16:00',
-            endTime: '16:30',
-            title: '프로젝트 진행상황 점검',
-            type: 'meeting',
-            location: '화상회의',
-            attendees: ['박준혁', '김동준'],
-            description: 'AI 비서 프로젝트 진행 현황 점검'
+    // 저장된 데이터가 없으면 샘플 데이터로 초기화 (한 번만)
+    if (calendarEvents.length === 0) {
+        const today = new Date().toISOString().split('T')[0];
+        const sampleData = [
+            {
+                id: 'evt-001',
+                date: today,
+                startTime: '10:00',
+                endTime: '11:00',
+                title: '주간 팀 회의',
+                type: 'meeting',
+                location: '회의실 A',
+                attendees: ['김동준', '이서연', '박준혁'],
+                description: '주간 업무 보고 및 이슈 공유'
+            },
+            {
+                id: 'evt-002',
+                date: today,
+                startTime: '14:00',
+                endTime: '15:00',
+                title: '마케팅 전략 회의',
+                type: 'meeting',
+                location: '회의실 B',
+                attendees: ['이서연', '최민지', '정우성'],
+                description: '2024년 상반기 마케팅 전략 논의'
+            },
+            {
+                id: 'evt-003',
+                date: today,
+                startTime: '16:00',
+                endTime: '16:30',
+                title: '프로젝트 진행상황 점검',
+                type: 'meeting',
+                location: '화상회의',
+                attendees: ['박준혁', '김동준'],
+                description: 'AI 비서 프로젝트 진행 현황 점검'
+            }
+        ];
+        
+        // 샘플 데이터를 localStorage에 저장 (첫 번째 로드 시에만)
+        try {
+            localStorage.setItem('calendarEvents', JSON.stringify(sampleData));
+            calendarEvents = sampleData;
+            console.log('샘플 캘린더 데이터 초기화됨');
+        } catch (e) {
+            console.error('샘플 데이터 저장 실패:', e);
+            calendarEvents = sampleData;
         }
-    ];
+    }
+    
+    return calendarEvents;
 }
 
 // AI 응답 생성 (시뮬레이션)
