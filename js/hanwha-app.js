@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     mainInput = document.getElementById('mainInput');
     bottomInputField = document.getElementById('bottomInputField');
     chatArea = document.getElementById('chatArea');
-    
+
     await loadUsers();
     loadCurrentUser();
     updateUserDisplay();
@@ -75,7 +75,7 @@ function loadCurrentUser() {
     } else if (usersData.length > 0) {
         currentUser = usersData[0];
     }
-    
+
     if (currentUser) {
         storageManager.setCurrentUserId(currentUser.id);
     }
@@ -84,25 +84,25 @@ function loadCurrentUser() {
 // 유저 정보 표시 업데이트
 function updateUserDisplay() {
     if (!currentUser) return;
-    
+
     // 헤더 유저 이름 업데이트 (오른쪽 상단)
     const headerUserName = document.querySelector('.header-actions .user-name');
     if (headerUserName) {
         headerUserName.textContent = currentUser.name;
     }
-    
+
     // 헤더 유저 아바타 업데이트 (첫 글자 표시)
     const headerUserAvatar = document.querySelector('.user-profile .user-avatar');
     if (headerUserAvatar) {
         headerUserAvatar.textContent = currentUser.name ? currentUser.name[0] : '?';
     }
-    
+
     // 유저 프로필 클릭 이벤트
     const userProfile = document.querySelector('.user-profile');
     if (userProfile) {
         userProfile.onclick = toggleUserDropdown;
     }
-    
+
     // 웰컴 메시지 업데이트
     const welcomeTitle = document.querySelector('.welcome-title');
     if (welcomeTitle) {
@@ -113,23 +113,23 @@ function updateUserDisplay() {
 // 대화 히스토리 업데이트
 function updateChatHistory() {
     if (!currentUser) return;
-    
+
     const historyList = document.getElementById('chatHistoryList');
     if (!historyList) return;
-    
+
     const recentChats = chatManager.getRecentChats(currentUser.id, 20);
-    
+
     if (recentChats.length === 0) {
         historyList.innerHTML = '<div class="empty-history">대화 내역이 없습니다</div>';
         return;
     }
-    
+
     historyList.innerHTML = recentChats.map(chat => {
         // 마지막 메시지 가져오기
-        const lastMessage = chat.messages && chat.messages.length > 0 
-            ? chat.messages[chat.messages.length - 1].text 
+        const lastMessage = chat.messages && chat.messages.length > 0
+            ? chat.messages[chat.messages.length - 1].text
             : '대화를 시작하세요';
-            
+
         return `
             <div class="chat-history-item ${chat.id === currentChatId ? 'active' : ''}" 
                  onclick="loadChat('${chat.id}')">
@@ -151,7 +151,7 @@ function formatDate(isoString) {
     const date = new Date(isoString);
     const now = new Date();
     const diff = now - date;
-    
+
     // 1분 미만
     if (diff < 60000) {
         return '방금 전';
@@ -171,7 +171,7 @@ function formatDate(isoString) {
         const days = Math.floor(diff / 86400000);
         return `${days}일 전`;
     }
-    
+
     // 그 외
     return date.toLocaleDateString('ko-KR');
 }
@@ -179,14 +179,14 @@ function formatDate(isoString) {
 // 채팅 로드
 function loadChat(chatId) {
     if (!currentUser) return;
-    
+
     const chat = chatManager.getChat(currentUser.id, chatId);
     if (!chat) return;
-    
+
     // 현재 채팅 ID 설정
     currentChatId = chatId;
     chatManager.currentChatId = chatId;
-    
+
     // 메시지 로드 (확장된 구조 지원)
     messages = chat.messages.map(msg => ({
         type: msg.type,
@@ -194,12 +194,12 @@ function loadChat(chatId) {
         htmlContent: msg.htmlContent,
         metadata: msg.metadata
     }));
-    
+
     // 채팅 화면 초기화 및 메시지 표시
     if (!chatStarted) {
         initiateChatMode();
     }
-    
+
     // 기존 메시지 클리어 후 다시 렌더링
     chatMessages.innerHTML = '';
     messages.forEach(msg => {
@@ -209,7 +209,7 @@ function loadChat(chatId) {
             // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기본 렌더링
             if (msg.htmlContent) {
                 chatMessages.insertAdjacentHTML('beforeend', msg.htmlContent);
-                
+
                 // 메타데이터에 따라 이벤트 리스너 재연결
                 if (msg.metadata && msg.metadata.type === 'meeting-options') {
                     // 회의 옵션 카드 클릭 이벤트 재연결
@@ -225,7 +225,7 @@ function loadChat(chatId) {
             }
         }
     });
-    
+
     scrollToBottom();
     updateChatHistory();
 }
@@ -233,12 +233,12 @@ function loadChat(chatId) {
 // 유저 드롭다운 토글
 function toggleUserDropdown() {
     let dropdown = document.getElementById('userDropdown');
-    
+
     if (dropdown) {
         dropdown.remove();
         return;
     }
-    
+
     dropdown = createUserDropdown();
     // 오른쪽 상단 헤더의 user-profile 영역에 추가
     const userProfile = document.querySelector('.user-profile');
@@ -251,7 +251,7 @@ function toggleUserDropdown() {
 function createUserDropdown() {
     console.log('Creating dropdown with users:', usersData);
     console.log('Current user:', currentUser);
-    
+
     const dropdown = document.createElement('div');
     dropdown.id = 'userDropdown';
     dropdown.className = 'user-dropdown';
@@ -274,7 +274,7 @@ function createUserDropdown() {
             `).join('') : '<div class="user-item">사용자 데이터를 불러오는 중...</div>'}
         </div>
     `;
-    
+
     return dropdown;
 }
 
@@ -286,10 +286,10 @@ function selectUser(userId) {
         storageManager.setCurrentUserId(userId);
         updateUserDisplay();
         closeUserDropdown();
-        
+
         // 새로운 유저로 전환 시 채팅 초기화
         startNewChat();
-        
+
         // 해당 유저의 대화 히스토리 업데이트
         updateChatHistory();
     }
@@ -310,7 +310,7 @@ function startNewChat() {
     chatStarted = false;
     currentChatId = null;
     chatManager.currentChatId = null;
-    
+
     // UI 초기화
     if (welcomeScreen) {
         welcomeScreen.style.display = 'block';
@@ -322,17 +322,17 @@ function startNewChat() {
     if (bottomInput) {
         bottomInput.style.display = 'none';
     }
-    
+
     // 입력 필드 초기화
     if (mainInput) mainInput.value = '';
     if (bottomInputField) bottomInputField.value = '';
-    
+
     // 채팅 영역 스타일 초기화
     if (chatArea) {
         chatArea.style.justifyContent = 'center';
         chatArea.style.alignItems = 'center';
     }
-    
+
     // 대화 히스토리 업데이트
     updateChatHistory();
 }
@@ -341,26 +341,26 @@ function startNewChat() {
 function sendMessage() {
     const input = chatStarted ? bottomInputField : mainInput;
     const message = input.value.trim();
-    
+
     if (!message) return;
-    
+
     // 새 채팅이면 ChatManager에 새 세션 생성
     if (!currentChatId && currentUser) {
         currentChatId = chatManager.createNewChat(currentUser.id);
         chatManager.currentChatId = currentChatId;
     }
-    
+
     // 첫 메시지인 경우 채팅 화면으로 전환
     if (!chatStarted) {
         initiateChatMode();
     }
-    
+
     // 사용자 메시지 추가
     addUserMessage(message);
-    
+
     // 입력 필드 초기화
     input.value = '';
-    
+
     // AI 응답 시뮬레이션
     setTimeout(() => {
         addAIResponse(message);
@@ -370,22 +370,22 @@ function sendMessage() {
 // 채팅 모드 초기화
 function initiateChatMode() {
     chatStarted = true;
-    
+
     // 웰컴 화면 숨김
     if (welcomeScreen) {
         welcomeScreen.style.display = 'none';
     }
-    
+
     // 채팅 메시지 영역 표시
     if (chatMessages) {
         chatMessages.style.display = 'flex';
     }
-    
+
     // 하단 입력 영역 표시
     if (bottomInput) {
         bottomInput.style.display = 'flex';
     }
-    
+
     // 채팅 영역 스타일 변경
     if (chatArea) {
         chatArea.style.justifyContent = 'flex-start';
@@ -398,9 +398,9 @@ function initiateChatMode() {
 // 사용자 메시지 추가
 function addUserMessage(text) {
     renderUserMessage(text);
-    
+
     messages.push({ type: 'user', text: text });
-    
+
     // ChatManager에 저장
     if (currentUser && currentChatId) {
         chatManager.addMessage(currentUser.id, currentChatId, 'user', text);
@@ -417,7 +417,7 @@ function renderUserMessage(text) {
             </div>
         </div>
     `;
-    
+
     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
     scrollToBottom();
 }
@@ -430,33 +430,33 @@ function addAIResponse(userMessage) {
         renderStatusCards(statusCardResponse);
         return;
     }
-    
+
     // 휴가 관련 요청 처리
     const vacationResponse = handleVacationRequest(userMessage);
     if (vacationResponse) {
         renderAIMessageWithCard(vacationResponse.message, vacationResponse.vacationData, vacationResponse.responsiblePerson);
         messages.push({ type: 'ai', text: vacationResponse.message });
-        
+
         // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
         if (currentUser && currentChatId) {
             // 렌더링된 HTML을 캡처하여 저장
             setTimeout(() => {
                 const lastMessageElements = chatMessages.children;
                 const lastMessageHTML = lastMessageElements[lastMessageElements.length - 1].outerHTML;
-                
+
                 const metadata = {
                     type: 'vacation',
                     vacationData: vacationResponse.vacationData,
                     responsiblePerson: vacationResponse.responsiblePerson
                 };
-                
+
                 chatManager.addMessage(currentUser.id, currentChatId, 'ai', vacationResponse.message, lastMessageHTML, metadata);
                 updateChatHistory();
             }, 100);
         }
         return;
     }
-    
+
     // 회의 관련 요청 처리
     const meetingResponse = handleMeetingRequest(userMessage);
     if (meetingResponse) {
@@ -464,11 +464,11 @@ function addAIResponse(userMessage) {
             // 피그마 디자인 스타일의 회의 옵션 표시
             const aiMessageText = '참석자 모두 가능한 날짜와 시간으로 잡았어요.\n2개 중 마음에 드는 것을 선택해 주세요.';
             renderAIMessage(aiMessageText);
-            
+
             // 회의 옵션 카드들을 별도로 렌더링
             const optionsHtml = meetingResponse.response;
             chatMessages.insertAdjacentHTML('beforeend', optionsHtml);
-            
+
             // 옵션 카드 클릭 이벤트 추가
             document.querySelectorAll('.meeting-option-card').forEach(card => {
                 card.addEventListener('click', function() {
@@ -476,9 +476,9 @@ function addAIResponse(userMessage) {
                     this.classList.add('selected');
                 });
             });
-            
+
             messages.push({ type: 'ai', text: aiMessageText });
-            
+
             // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
             if (currentUser && currentChatId) {
                 setTimeout(() => {
@@ -488,12 +488,12 @@ function addAIResponse(userMessage) {
                     for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
                         combinedHTML += lastMessageElements[i].outerHTML;
                     }
-                    
+
                     const metadata = {
                         type: 'meeting-options',
                         meetingData: meetingResponse.data
                     };
-                    
+
                     chatManager.addMessage(currentUser.id, currentChatId, 'ai', aiMessageText, combinedHTML, metadata);
                     updateChatHistory();
                 }, 100);
@@ -506,7 +506,7 @@ function addAIResponse(userMessage) {
         } else if (meetingResponse.type === 'query') {
             // 회의 정보 조회 응답
             renderAIMessage(meetingResponse.message);
-            
+
             // 회의실 담당자 카드 추가
             const facilityPerson = {
                 name: '이정은',
@@ -518,9 +518,9 @@ function addAIResponse(userMessage) {
             };
             const responsibleCard = createResponsibleCard(facilityPerson);
             chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
-            
+
             messages.push({ type: 'ai', text: meetingResponse.message });
-            
+
             // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
             if (currentUser && currentChatId) {
                 setTimeout(() => {
@@ -530,12 +530,12 @@ function addAIResponse(userMessage) {
                     for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
                         combinedHTML += lastMessageElements[i].outerHTML;
                     }
-                    
+
                     const metadata = {
                         type: 'meeting-query',
                         responsiblePerson: facilityPerson
                     };
-                    
+
                     chatManager.addMessage(currentUser.id, currentChatId, 'ai', meetingResponse.message, combinedHTML, metadata);
                     updateChatHistory();
                 }, 100);
@@ -543,12 +543,12 @@ function addAIResponse(userMessage) {
             return;
         }
     }
-    
+
     // 일반 AI 응답 로직
     let response = generateAIResponse(userMessage);
-    
+
     renderAIMessage(response);
-    
+
     // 일반 질문에 대한 기본 담당자 (AI 비서 지원팀)
     const defaultPerson = {
         name: '김지원',
@@ -560,9 +560,9 @@ function addAIResponse(userMessage) {
     };
     const responsibleCard = createResponsibleCard(defaultPerson);
     chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
-    
+
     messages.push({ type: 'ai', text: response });
-    
+
     // ChatManager에 저장 (HTML 콘텐츠와 메타데이터 포함)
     if (currentUser && currentChatId) {
         setTimeout(() => {
@@ -572,12 +572,12 @@ function addAIResponse(userMessage) {
             for (let i = Math.max(0, lastMessageElements.length - 2); i < lastMessageElements.length; i++) {
                 combinedHTML += lastMessageElements[i].outerHTML;
             }
-            
+
             const metadata = {
                 type: 'general',
                 responsiblePerson: defaultPerson
             };
-            
+
             chatManager.addMessage(currentUser.id, currentChatId, 'ai', response, combinedHTML, metadata);
             updateChatHistory();
         }, 100);
@@ -594,9 +594,9 @@ function renderAIMessage(text) {
             </div>
         </div>
     `;
-    
+
     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
-    
+
     // AI 응답 후 약간의 지연을 두고 스크롤 (DOM 렌더링 완료 대기)
     setTimeout(() => {
         scrollToBottom();
@@ -607,30 +607,30 @@ function renderAIMessage(text) {
 function renderAIMessageWithCard(text, vacationData, responsiblePerson) {
     // AI 메시지 렌더링
     renderAIMessage(text);
-    
+
     // 휴가 카드 렌더링
     if (vacationData) {
         const recentHistory = vacationData.recentVacations || [];
         const vacationCard = createVacationCard(vacationData, recentHistory);
         chatMessages.insertAdjacentHTML('beforeend', vacationCard);
     }
-    
+
     // 담당자 카드 렌더링
     if (responsiblePerson) {
         const responsibleCard = createResponsibleCard(responsiblePerson);
         chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
     }
-    
+
     scrollToBottom();
 }
 
 // 휴가 카드 생성 - 컴팩트 버전
 function createVacationCard(vacationData, recentHistory = []) {
-    const totalRemaining = vacationData.annualLeave.remaining + 
-                           vacationData.specialLeave.sick.remaining + 
-                           vacationData.specialLeave.congratulations.remaining + 
+    const totalRemaining = vacationData.annualLeave.remaining +
+                           vacationData.specialLeave.sick.remaining +
+                           vacationData.specialLeave.congratulations.remaining +
                            vacationData.specialLeave.family.remaining;
-    
+
     return `
         <div class="message-container">
             <div class="ai-avatar"></div>
@@ -720,15 +720,15 @@ function createVacationCard(vacationData, recentHistory = []) {
 function createResponsibleCard(person) {
     // 이름의 첫 글자로 아바타 이니셜 생성
     const initial = person.name.charAt(0);
-    
+
     return `
         <div class="message-container">
             <div class="ai-avatar"></div>
             <div class="responsible-card">
-                <div class="responsible-avatar">${initial}</div>
+                <div class="responsible-avatar" onclick="handleResponsibleNameClick('${person.id || person.name}')">${initial}</div>
                 <div class="responsible-info">
                     <div class="responsible-header">
-                        <span class="responsible-name">${person.name}</span>
+                        <span class="responsible-name" onclick="handleResponsibleNameClick('${person.id || person.name}')" style="cursor: pointer; text-decoration: underline; color: #fa6600;">${person.name}</span>
                         <span class="responsible-position">${person.position}</span>
                     </div>
                     <div class="responsible-department">${person.department}</div>
@@ -737,7 +737,7 @@ function createResponsibleCard(person) {
                         <span class="responsible-phone">내선 ${person.extension}</span>
                     </div>
                 </div>
-                <button class="responsible-action" onclick="window.location.href='mailto:${person.email}'">
+                <button class="responsible-action" onclick="handleResponsibleCardClick('${person.id || person.name}')">
                     문의하기
                 </button>
             </div>
@@ -745,43 +745,85 @@ function createResponsibleCard(person) {
     `;
 }
 
+// 담당자 이름 클릭 처리 - 상세정보 패널 표시
+function handleResponsibleNameClick(personIdentifier) {
+    console.log('담당자 이름 클릭:', personIdentifier);
+
+    // personIdentifier가 ID인지 이름인지 확인
+    let contactId = personIdentifier;
+
+    // 이름으로 전달된 경우 ID를 찾아야 함
+    if (personIdentifier && !personIdentifier.startsWith('user-')) {
+        // SAMPLE_USERS_DATA에서 이름으로 ID 찾기
+        const userData = window.SAMPLE_USERS_DATA?.users || [];
+        const user = userData.find(u => u.name === personIdentifier);
+        if (user) {
+            contactId = user.id;
+        } else {
+            // 매니저 데이터에서도 찾아보기
+            const managers = window.ORGANIZATION_DATA?.managers || {};
+            for (const [managerId, managerInfo] of Object.entries(managers)) {
+                if (managerInfo.name === personIdentifier) {
+                    contactId = managerId;
+                    break;
+                }
+            }
+        }
+    }
+
+    // 담당자 상세정보 패널 표시
+    if (window.contactDetailManager) {
+        window.contactDetailManager.showContactDetail(contactId);
+    } else {
+        console.error('ContactDetailManager를 찾을 수 없습니다.');
+    }
+}
+
+// 담당자 카드 문의하기 버튼 클릭 처리
+function handleResponsibleCardClick(personIdentifier) {
+    console.log('문의하기 버튼 클릭:', personIdentifier);
+
+    // 먼저 이름 클릭과 동일하게 상세정보 패널을 표시
+    handleResponsibleNameClick(personIdentifier);
+}
+
 // 회의 관련 요청 처리
 function handleMeetingRequest(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 점심, 식사 관련 키워드 제외
     const excludeKeywords = ['점심', '저녁', '식사', '밥', '먹', '구내식당', '메뉴', '음식', '식당', '카페테리아'];
     const hasExcludeKeyword = excludeKeywords.some(keyword => lowerMessage.includes(keyword));
-    
+
     // 점심/식사 관련 문장이면 회의 예약으로 처리하지 않음
     if (hasExcludeKeyword) {
         return null;
     }
-    
+
     // 회의실 예약 관련 키워드 - '예약'은 너무 일반적이므로 제외
     const reservationKeywords = ['회의실', '회의 잡', '미팅 잡', '회의 예약', '미팅 예약', '회의실 예약', '회의 하나만'];
     // '예약' 단독 사용 시 회의실 예약으로 처리하지 않음
     const hasReservationKeyword = reservationKeywords.some(keyword => lowerMessage.includes(keyword)) ||
                                   (lowerMessage.includes('회의') && lowerMessage.includes('잡')) ||
                                   (lowerMessage.includes('미팅') && lowerMessage.includes('잡'));
-    
+
     // 전역 회의실 목록이 있으면 사용 (meeting-rooms-data.js 로드 확인)
     if (typeof MEETING_ROOMS !== 'undefined' && typeof MEETING_ROOM_NAMES !== 'undefined') {
         console.log('전역 회의실 목록 로드됨:', MEETING_ROOM_NAMES.length + '개 회의실');
     }
-    
+
     // 회의 조회 관련 키워드
     const queryKeywords = ['회의 알려', '회의가 있', '미팅 알려', '일정 알려', '스케줄'];
     const hasQueryKeyword = queryKeywords.some(keyword => lowerMessage.includes(keyword));
-    
+
     // 회의 관련 키워드가 있는지 확인
     const hasMeetingKeyword = lowerMessage.includes('회의') || lowerMessage.includes('미팅');
-    
+
     // 회의 예약 요청 분석
     // "미팅할거야", "회의할거야" 같은 패턴도 포함
     const hasMeetingPlan = lowerMessage.includes('미팅할') || lowerMessage.includes('회의할');
-    
-    if (hasReservationKeyword || 
+
+    if (hasReservationKeyword ||
         (hasMeetingKeyword && (lowerMessage.includes('잡') || lowerMessage.includes('예약'))) ||
         hasMeetingPlan) {
         // 참석자 파싱
@@ -790,7 +832,7 @@ function handleMeetingRequest(userMessage) {
         const floorRestriction = parseFloorRestriction(userMessage);
         // 시간 파싱 (예: "1시간짜리")
         const duration = parseDuration(userMessage);
-        
+
         // 피그마 디자인 스타일로 옵션 제시
         if (attendees.length > 0) {
             return {
@@ -801,50 +843,50 @@ function handleMeetingRequest(userMessage) {
                 response: generateMeetingOptions(attendees, floorRestriction, duration, userMessage)
             };
         }
-        
+
         return { type: 'reservation' };
     }
-    
+
     if (hasQueryKeyword || (hasMeetingKeyword && lowerMessage.includes('알려'))) {
         // 캘린더 데이터 조회
         const meetings = getMeetingInfo(userMessage);
         return { type: 'query', message: meetings };
     }
-    
+
     return null;
 }
 
 // 회의 정보 조회
 function getMeetingInfo(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 캘린더 데이터 가져오기
     const calendarData = getCalendarData();
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
-    
+
     // 오늘 회의 필터링
-    const todayMeetings = calendarData.filter(event => 
+    const todayMeetings = calendarData.filter(event =>
         event.date === todayStr && event.type === 'meeting'
     );
-    
+
     // 특정 시간 요청 처리
     if (lowerMessage.includes('2시')) {
         const twoOclockMeetings = todayMeetings.filter(event => {
             const eventHour = parseInt(event.startTime.split(':')[0]);
             return eventHour === 14; // 오후 2시
         });
-        
+
         if (twoOclockMeetings.length > 0) {
             return `오늘 오후 2시에 예정된 회의입니다:\n\n` +
-                   twoOclockMeetings.map(m => 
+                   twoOclockMeetings.map(m =>
                        `📅 ${m.title}\n시간: ${m.startTime} - ${m.endTime}\n장소: ${m.location || '미정'}\n참석자: ${m.attendees?.join(', ') || '미정'}`
                    ).join('\n\n');
         } else {
             return '오늘 오후 2시에는 예정된 회의가 없습니다.';
         }
     }
-    
+
     // 가장 빠른 회의 요청
     if (lowerMessage.includes('가장 빠른') || lowerMessage.includes('다음')) {
         const now = today.getHours() * 60 + today.getMinutes();
@@ -853,7 +895,7 @@ function getMeetingInfo(userMessage) {
             const eventTime = hour * 60 + minute;
             return eventTime > now;
         }).sort((a, b) => a.startTime.localeCompare(b.startTime));
-        
+
         if (upcomingMeetings.length > 0) {
             const next = upcomingMeetings[0];
             return `가장 빠른 회의 일정입니다:\n\n` +
@@ -862,36 +904,36 @@ function getMeetingInfo(userMessage) {
             return '오늘 남은 회의 일정이 없습니다.';
         }
     }
-    
+
     // 마케팅 관련 회의
     if (lowerMessage.includes('마케팅')) {
-        const marketingMeetings = todayMeetings.filter(event => 
-            event.title.toLowerCase().includes('마케팅') || 
+        const marketingMeetings = todayMeetings.filter(event =>
+            event.title.toLowerCase().includes('마케팅') ||
             event.description?.toLowerCase().includes('마케팅')
         );
-        
+
         if (marketingMeetings.length > 0) {
             return `마케팅 관련 회의 일정입니다:\n\n` +
-                   marketingMeetings.map(m => 
+                   marketingMeetings.map(m =>
                        `📅 ${m.title}\n시간: ${m.startTime} - ${m.endTime}\n장소: ${m.location || '미정'}\n참석자: ${m.attendees?.join(', ') || '미정'}`
                    ).join('\n\n');
         } else {
             return '오늘 마케팅 관련 회의는 없습니다.';
         }
     }
-    
+
     // 오늘 전체 회의 요청
     if (lowerMessage.includes('오늘') || lowerMessage.includes('전체')) {
         if (todayMeetings.length > 0) {
             return `오늘의 회의 일정입니다 (총 ${todayMeetings.length}개):\n\n` +
-                   todayMeetings.map(m => 
+                   todayMeetings.map(m =>
                        `📅 ${m.title}\n시간: ${m.startTime} - ${m.endTime}\n장소: ${m.location || '미정'}`
                    ).join('\n\n');
         } else {
             return '오늘은 예정된 회의가 없습니다.';
         }
     }
-    
+
     // 기본 응답
     if (todayMeetings.length > 0) {
         return `오늘 예정된 회의가 ${todayMeetings.length}개 있습니다. 자세한 내용을 알려드릴까요?`;
@@ -910,13 +952,13 @@ function parseAttendees(message) {
         { name: '김동준', position: '과장', id: 'user-001' },
         { name: '하동훈', position: '사원', id: 'user-004' }
     ];
-    
+
     knownAttendees.forEach(person => {
         if (message.includes(person.name)) {
             attendees.push(person);
         }
     });
-    
+
     return attendees;
 }
 
@@ -940,12 +982,12 @@ function parseDuration(message) {
 
 // 회의 옵션 생성 (피그마 디자인 스타일)
 function generateMeetingOptions(attendees, floorRestriction, duration, originalMessage) {
-    const options = findAvailableMeetingSlots(attendees, floorRestriction, duration);
-    
+    const options = findAvailableMeetingSlots(attendees, floorRestriction, duration, originalMessage);
+
     if (options.length === 0) {
         return '죄송합니다. 참석자 모두가 가능한 시간을 찾을 수 없습니다. 다른 날짜나 참석자를 조정해 보시겠어요?';
     }
-    
+
     // 피그마 디자인처럼 옵션 카드 생성
     const optionCards = options.slice(0, 2).map((option, index) => `
         <div class="meeting-option-card" data-option-index="${index}">
@@ -975,7 +1017,7 @@ function generateMeetingOptions(attendees, floorRestriction, duration, originalM
             </div>
         </div>
     `).join('');
-    
+
     const responseHTML = `
         <div class="meeting-options-container">
             <div class="meeting-options-grid">
@@ -984,20 +1026,20 @@ function generateMeetingOptions(attendees, floorRestriction, duration, originalM
             <button class="confirm-meeting-btn" onclick="confirmMeetingOption()">선택한 옵션으로 예약하기</button>
         </div>
     `;
-    
+
     return responseHTML;
 }
 
 // 가능한 회의 시간 찾기
-function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
+function findAvailableMeetingSlots(attendees, floorRestriction, duration, userMessage = '') {
     const options = [];
     const today = new Date();
-    
+
     // 회의실 목록 설정
-    const rooms = floorRestriction === 8 ? 
+    const rooms = floorRestriction === 8 ?
         ['8층 - E1 - 중회의실', '8층 - E2 - 소회의실', '8층 - W1 - 중회의실'] :
         ['8층 - E1 - 중회의실', '12층 - 대회의실', '10층 - 중회의실'];
-    
+
     // 시간 슬롯 후보 생성 (다음 7일 동안)
     const timeSlots = [
         { time: '오전 9시', timeRaw: '09:00' },
@@ -1007,30 +1049,51 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
         { time: '오후 3시', timeRaw: '15:00' },
         { time: '오후 4시', timeRaw: '16:00' }
     ];
+
+    // "오늘" 키워드 확인
+    const includesToday = userMessage.toLowerCase().includes('오늘');
     
-    // 다음 7일간 검색
-    for (let dayOffset = 1; dayOffset <= 7; dayOffset++) {
+    // 검색 시작일 설정 (오늘 포함 또는 내일부터)
+    const startOffset = includesToday ? 0 : 1;
+    const endOffset = includesToday ? 7 : 7; // 총 7일간 검색
+    
+    // 지정된 기간 동안 검색
+    for (let dayOffset = startOffset; dayOffset <= endOffset; dayOffset++) {
         const targetDate = new Date(today);
         targetDate.setDate(targetDate.getDate() + dayOffset);
         const dateString = targetDate.toISOString().split('T')[0];
-        
-        // 주말 제외
+
+        // 주말 제외 (단, "오늘"이 주말이면 포함)
         if (targetDate.getDay() === 0 || targetDate.getDay() === 6) {
-            continue;
+            if (!(includesToday && dayOffset === 0)) {
+                continue;
+            }
         }
-        
+
         for (const room of rooms) {
             for (const slot of timeSlots) {
+                // 오늘인 경우 현재 시간 이후만 포함
+                if (dayOffset === 0) {
+                    const now = new Date();
+                    const currentHour = now.getHours();
+                    const slotHour = parseInt(slot.timeRaw.split(':')[0]);
+                    
+                    // 현재 시간보다 이른 시간대는 제외
+                    if (slotHour <= currentHour) {
+                        continue;
+                    }
+                }
+                
                 // 회의실 충돌 검사
                 if (isRoomConflict(room, dateString, slot.timeRaw, duration)) {
                     continue;
                 }
-                
+
                 // 참석자 일정 충돌 검사
                 if (hasAttendeeConflict(attendees, dateString, slot.timeRaw, duration)) {
                     continue;
                 }
-                
+
                 // 가능한 옵션 추가
                 options.push({
                     attendees: attendees,
@@ -1042,7 +1105,7 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
                     duration: duration || '1시간',
                     available: true
                 });
-                
+
                 // 최대 5개 옵션만 생성
                 if (options.length >= 5) {
                     break;
@@ -1052,11 +1115,11 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
         }
         if (options.length >= 5) break;
     }
-    
+
     // 옵션이 없으면 샘플 옵션 생성 (충돌 무시)
     if (options.length === 0) {
         console.warn('사용 가능한 회의 시간을 찾을 수 없어 샘플 옵션을 제공합니다.');
-        
+
         const option1Date = new Date(today);
         option1Date.setDate(option1Date.getDate() + 1);
         options.push({
@@ -1070,7 +1133,7 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
             available: true,
             warning: '일정 충돌 가능성 있음'
         });
-        
+
         const option2Date = new Date(today);
         option2Date.setDate(option2Date.getDate() + 2);
         options.push({
@@ -1085,11 +1148,69 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration) {
             warning: '일정 충돌 가능성 있음'
         });
     }
-    
+
     // 전역 변수에 저장 (confirmMeetingOption에서 사용)
     window.lastGeneratedMeetingOptions = options;
-    
+    window.lastMeetingTitle = parseMeetingTitle(userMessage);
+
     return options;
+}
+
+// 회의 제목 파싱
+function parseMeetingTitle(userMessage) {
+    const message = userMessage.toLowerCase();
+
+    // 명시적인 제목 패턴들
+    const titlePatterns = [
+        /(.+?)\s*(회의|미팅).*$/,           // "프로젝트 회의할거야" -> "프로젝트"
+        /(.+?)\s*에\s*대해\s*(회의|미팅)/,   // "신규 서비스에 대해 회의" -> "신규 서비스"
+        /(.+?)\s*관련\s*(회의|미팅)/,       // "예산 관련 회의" -> "예산"
+        /(.+?)\s*(회의실|미팅룸)/,          // "기획 회의실" -> "기획"
+        /(.+?)\s*논의/,                    // "일정 논의할거야" -> "일정"
+    ];
+
+    // 제외할 단어들 (일반적인 단어들)
+    const excludeWords = ['오늘', '내일', '모레', '이번', '다음', '주간', '월간',
+                         '긴급', '중요', '간단', '빠른', '짧은', '긴', '층에서',
+                         '에서', '에게', '와', '과', '랑', '이랑', '하고'];
+
+    for (const pattern of titlePatterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+            let title = match[1].trim();
+
+            // 제외 단어들 제거
+            const words = title.split(/\s+/);
+            const filteredWords = words.filter(word => !excludeWords.includes(word));
+
+            if (filteredWords.length > 0) {
+                title = filteredWords.join(' ');
+                // 첫 글자 대문자로 변환
+                return title.charAt(0).toUpperCase() + title.slice(1) + ' 회의';
+            }
+        }
+    }
+
+    // 특별한 키워드 기반 제목 생성
+    if (message.includes('프로젝트')) return '프로젝트 회의';
+    if (message.includes('기획')) return '기획 회의';
+    if (message.includes('개발')) return '개발 회의';
+    if (message.includes('마케팅')) return '마케팅 회의';
+    if (message.includes('영업')) return '영업 회의';
+    if (message.includes('예산')) return '예산 회의';
+    if (message.includes('전략')) return '전략 회의';
+    if (message.includes('리뷰')) return '리뷰 회의';
+    if (message.includes('점검')) return '점검 회의';
+    if (message.includes('보고')) return '보고 회의';
+
+    // 참석자가 있으면 참석자 기반 제목
+    const attendees = parseAttendees(userMessage);
+    if (attendees.length > 0) {
+        return `${attendees.map(a => a.name).join(', ')} 회의`;
+    }
+
+    // 기본 제목
+    return '팀 회의';
 }
 
 // 한국어 날짜 형식
@@ -1105,15 +1226,15 @@ function formatDateKorean(date) {
 // 휴가 관련 요청 처리
 function handleVacationRequest(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 휴가 관련 키워드 체크
     const vacationKeywords = ['휴가', '연차', '병가', '경조사', '가족돌봄', '남은 휴가', '휴가 내역', '휴가 현황'];
     const hasVacationKeyword = vacationKeywords.some(keyword => lowerMessage.includes(keyword));
-    
+
     if (!hasVacationKeyword) {
         return null;
     }
-    
+
     // 현재 사용자의 휴가 정보 가져오기
     if (!currentUser || !VacationManager) {
         return {
@@ -1122,7 +1243,7 @@ function handleVacationRequest(userMessage) {
             responsiblePerson: null
         };
     }
-    
+
     const vacationData = VacationManager.getUserVacation(currentUser.id);
     if (!vacationData) {
         return {
@@ -1131,24 +1252,24 @@ function handleVacationRequest(userMessage) {
             responsiblePerson: VacationManager.getResponsiblePerson()
         };
     }
-    
+
     // 남은 휴가 계산
     const totalRemaining = VacationManager.getTotalRemaining(currentUser.id);
-    
+
     // 응답 메시지 생성
     let responseMessage = '';
-    
+
     if (lowerMessage.includes('남은') || lowerMessage.includes('잔여') || lowerMessage.includes('현황')) {
         responseMessage = `${currentUser.name}님의 2025년 남은 휴가는 총 ${totalRemaining}일입니다.\n\n` +
                          `연차 ${vacationData.annualLeave.remaining}일, 병가 ${vacationData.specialLeave.sick.remaining}일, ` +
                          `경조사 ${vacationData.specialLeave.congratulations.remaining}일, 가족돌봄 ${vacationData.specialLeave.family.remaining}일이 남아있습니다.`;
-        
+
         if (vacationData.annualLeave.scheduled > 0) {
             responseMessage += `\n\n예정된 휴가가 ${vacationData.annualLeave.scheduled}일 있습니다.`;
         }
     } else if (lowerMessage.includes('사용') || lowerMessage.includes('내역')) {
-        const usedTotal = vacationData.annualLeave.used + 
-                         vacationData.specialLeave.sick.used + 
+        const usedTotal = vacationData.annualLeave.used +
+                         vacationData.specialLeave.sick.used +
                          vacationData.specialLeave.congratulations.used +
                          vacationData.specialLeave.family.used;
         responseMessage = `${currentUser.name}님은 2025년에 총 ${usedTotal}일의 휴가를 사용하셨습니다.\n\n` +
@@ -1159,7 +1280,7 @@ function handleVacationRequest(userMessage) {
         responseMessage = `${currentUser.name}님의 휴가 정보를 확인했습니다.\n` +
                          `2025년 기준 총 ${totalRemaining}일의 휴가가 남아있습니다.`;
     }
-    
+
     return {
         message: responseMessage,
         vacationData: vacationData,
@@ -1174,22 +1295,23 @@ function confirmMeetingOption() {
         alert('먼저 회의 옵션을 선택해주세요.');
         return;
     }
-    
+
     const optionIndex = parseInt(selectedCard.getAttribute('data-option-index'));
-    
+
     // 저장된 회의 옵션 데이터 가져오기 (findAvailableMeetingSlots에서 생성된 데이터)
     const lastMeetingOptions = window.lastGeneratedMeetingOptions;
     if (!lastMeetingOptions || !lastMeetingOptions[optionIndex]) {
         alert('회의 옵션 데이터를 찾을 수 없습니다. 다시 시도해주세요.');
         return;
     }
-    
+
     const selectedOption = lastMeetingOptions[optionIndex];
-    
+
     // 회의 데이터 생성
+    const meetingTitle = window.lastMeetingTitle || '팀 회의';
     const meetingData = {
         id: 'mtg-' + Date.now(),
-        title: '팀 회의',
+        title: meetingTitle,
         date: selectedOption.dateRaw || new Date().toISOString().split('T')[0],
         startTime: selectedOption.timeRaw || selectedOption.time,
         endTime: calculateEndTime(selectedOption.timeRaw || selectedOption.time, selectedOption.duration || '1시간'),
@@ -1205,16 +1327,16 @@ function confirmMeetingOption() {
         status: 'confirmed',
         description: '회의 예약 시스템을 통해 생성된 회의'
     };
-    
+
     // 1. 캘린더에 회의 일정 저장
     saveMeetingToCalendar(meetingData);
-    
+
     // 2. 회의실 예약 정보 저장
     saveRoomReservation(meetingData);
-    
+
     // 3. 각 참석자의 개인 캘린더에 추가
     saveToAttendeesCalendar(meetingData);
-    
+
     // 성공 메시지 생성
     const successMessage = `
 ✅ 회의 예약이 완료되었습니다!
@@ -1229,19 +1351,26 @@ function confirmMeetingOption() {
 
     // UI 업데이트
     renderAIMessage(successMessage);
-    
+
     // 옵션 카드 제거
     const optionsContainer = document.querySelector('.meeting-options-container');
     if (optionsContainer) {
         optionsContainer.remove();
     }
-    
+
     // ChatManager에 저장
     if (currentUser && currentChatId) {
         chatManager.addMessage(currentUser.id, currentChatId, 'ai', successMessage);
         updateChatHistory();
     }
-    
+
+    // 캘린더 새로고침
+    if (typeof calendarManager !== 'undefined' && calendarManager) {
+        calendarManager.loadSchedules();
+        calendarManager.render();
+        console.log('캘린더 새로고침 완료');
+    }
+
     console.log('회의 예약 완료:', meetingData);
 }
 
@@ -1250,7 +1379,7 @@ function calculateEndTime(startTime, duration) {
     const [hours, minutes] = startTime.split(':').map(Number);
     let endHours = hours;
     let endMinutes = minutes;
-    
+
     if (duration === '30분') {
         endMinutes += 30;
     } else if (duration === '1시간') {
@@ -1263,13 +1392,13 @@ function calculateEndTime(startTime, duration) {
     } else {
         endHours += 1; // 기본값 1시간
     }
-    
+
     // 분이 60을 넘으면 시간으로 변환
     if (endMinutes >= 60) {
         endHours += Math.floor(endMinutes / 60);
         endMinutes = endMinutes % 60;
     }
-    
+
     return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
 }
 
@@ -1286,7 +1415,7 @@ function saveMeetingToCalendar(meetingData) {
             calendarEvents = [];
         }
     }
-    
+
     // 새 회의 추가
     const calendarEvent = {
         id: meetingData.id,
@@ -1301,9 +1430,9 @@ function saveMeetingToCalendar(meetingData) {
         createdBy: meetingData.createdBy,
         createdAt: meetingData.createdAt
     };
-    
+
     calendarEvents.push(calendarEvent);
-    
+
     // localStorage에 저장
     localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
     console.log('캘린더에 회의 저장됨:', calendarEvent);
@@ -1322,7 +1451,7 @@ function saveRoomReservation(meetingData) {
             roomReservations = [];
         }
     }
-    
+
     // 새 예약 추가
     const reservation = {
         id: 'res-' + Date.now(),
@@ -1336,9 +1465,9 @@ function saveRoomReservation(meetingData) {
         attendees: meetingData.attendees,
         status: 'confirmed'
     };
-    
+
     roomReservations.push(reservation);
-    
+
     // localStorage에 저장
     localStorage.setItem('roomReservations', JSON.stringify(roomReservations));
     console.log('회의실 예약 저장됨:', reservation);
@@ -1349,10 +1478,10 @@ function isRoomConflict(room, date, startTime, duration) {
     try {
         // 회의실 예약 데이터 가져오기
         const roomReservations = JSON.parse(localStorage.getItem('roomReservations') || '[]');
-        
+
         // 새 회의의 종료 시간 계산
         const newEndTime = calculateEndTime(startTime, duration);
-        
+
         // 같은 날짜, 같은 회의실 예약들과 비교
         for (const reservation of roomReservations) {
             if (reservation.room === room && reservation.date === date && reservation.status === 'confirmed') {
@@ -1363,7 +1492,7 @@ function isRoomConflict(room, date, startTime, duration) {
                 }
             }
         }
-        
+
         return false;
     } catch (e) {
         console.error('회의실 충돌 검사 오류:', e);
@@ -1376,19 +1505,19 @@ function hasAttendeeConflict(attendees, date, startTime, duration) {
     try {
         // 새 회의의 종료 시간 계산
         const newEndTime = calculateEndTime(startTime, duration);
-        
+
         // 전체 캘린더 데이터 가져오기
         const calendarData = getCalendarData();
-        
+
         // 각 참석자별로 일정 충돌 검사
         for (const attendee of attendees) {
             // 해당 날짜의 모든 회의 찾기
-            const conflictMeetings = calendarData.filter(event => 
-                event.date === date && 
+            const conflictMeetings = calendarData.filter(event =>
+                event.date === date &&
                 event.type === 'meeting' &&
                 event.attendees.includes(attendee.name)
             );
-            
+
             // 시간 겹침 검사
             for (const meeting of conflictMeetings) {
                 if (isTimeOverlap(startTime, newEndTime, meeting.startTime, meeting.endTime)) {
@@ -1396,7 +1525,7 @@ function hasAttendeeConflict(attendees, date, startTime, duration) {
                     return true;
                 }
             }
-            
+
             // 개인 캘린더 데이터도 확인
             const personalCalendar = JSON.parse(localStorage.getItem(`calendar_${attendee.id}`) || '[]');
             for (const event of personalCalendar) {
@@ -1408,7 +1537,7 @@ function hasAttendeeConflict(attendees, date, startTime, duration) {
                 }
             }
         }
-        
+
         return false;
     } catch (e) {
         console.error('참석자 일정 충돌 검사 오류:', e);
@@ -1423,12 +1552,12 @@ function isTimeOverlap(start1, end1, start2, end2) {
         const [hours, minutes] = timeStr.split(':').map(Number);
         return hours * 60 + minutes;
     };
-    
+
     const start1Min = toMinutes(start1);
     const end1Min = toMinutes(end1);
     const start2Min = toMinutes(start2);
     const end2Min = toMinutes(end2);
-    
+
     // 겹침 검사: 한 회의의 시작이 다른 회의의 끝보다 이전이고, 끝이 다른 회의의 시작보다 이후면 겹침
     return start1Min < end2Min && end1Min > start2Min;
 }
@@ -1439,7 +1568,7 @@ function saveToAttendeesCalendar(meetingData) {
     meetingData.attendees.forEach(attendee => {
         const storageKey = `calendar_${attendee.id}`;
         let personalCalendar = [];
-        
+
         // 기존 개인 캘린더 데이터 가져오기
         const storedData = localStorage.getItem(storageKey);
         if (storedData) {
@@ -1450,7 +1579,7 @@ function saveToAttendeesCalendar(meetingData) {
                 personalCalendar = [];
             }
         }
-        
+
         // 개인 캘린더 이벤트 추가
         const personalEvent = {
             id: meetingData.id,
@@ -1464,14 +1593,14 @@ function saveToAttendeesCalendar(meetingData) {
             description: meetingData.description,
             addedAt: new Date().toISOString()
         };
-        
+
         personalCalendar.push(personalEvent);
-        
+
         // 개인 캘린더에 저장
         localStorage.setItem(storageKey, JSON.stringify(personalCalendar));
         console.log(`${attendee.name}의 캘린더에 저장됨:`, personalEvent);
     });
-    
+
     // 참석 알림 데이터 생성 (선택적)
     const notifications = meetingData.attendees.map(attendee => ({
         userId: attendee.id,
@@ -1482,7 +1611,7 @@ function saveToAttendeesCalendar(meetingData) {
         createdAt: new Date().toISOString(),
         read: false
     }));
-    
+
     // 알림 저장
     let allNotifications = [];
     const storedNotifications = localStorage.getItem('notifications');
@@ -1494,7 +1623,7 @@ function saveToAttendeesCalendar(meetingData) {
             allNotifications = [];
         }
     }
-    
+
     allNotifications.push(...notifications);
     localStorage.setItem('notifications', JSON.stringify(allNotifications));
     console.log('참석자 알림 생성됨:', notifications);
@@ -1503,22 +1632,22 @@ function saveToAttendeesCalendar(meetingData) {
 // 상태카드 요청 처리
 function handleStatusCardRequest(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 상태카드 관련 키워드 - 특정 프로젝트명 추가
     const statusKeywords = ['상태카드', '프로젝트', '진행상황', '업무 상황', '프로젝트 상태', '업무 진행', '진행 상태'];
     const specificProjects = ['나의 보험 계약', '청약철회', '사고보험금 대리청구', '사고보험금'];
-    
+
     const hasStatusKeyword = statusKeywords.some(keyword => lowerMessage.includes(keyword));
     const hasSpecificProject = specificProjects.some(project => lowerMessage.includes(project));
-    
+
     if (!hasStatusKeyword && !hasSpecificProject) {
         return null;
     }
-    
+
     // 특정 조건 파싱
     let filteredCards = STATUS_CARDS;
     let responseMessage = '현재 진행 중인 프로젝트 상태카드를 보여드리겠습니다.';
-    
+
     // 특정 프로젝트명으로 검색
     if (lowerMessage.includes('상태카드') && !lowerMessage.includes('모든')) {
         // '상태카드' 프로젝트를 구체적으로 찾기
@@ -1546,7 +1675,7 @@ function handleStatusCardRequest(userMessage) {
             responseMessage = '사고보험금 대리청구 프로젝트 정보입니다.';
         }
     }
-    
+
     // 특정 사람 관련 카드 검색
     const memberNames = ['김동준', '정준하', '박명수', '이서연', '박준혁', '이정은', '하동훈', '이상태', '정보험', '김철회', '박보험금'];
     const mentionedMember = memberNames.find(name => userMessage.includes(name));
@@ -1554,7 +1683,7 @@ function handleStatusCardRequest(userMessage) {
         filteredCards = getStatusCardsByMember(mentionedMember);
         responseMessage = `${mentionedMember}님이 참여하고 있는 프로젝트 상태카드입니다.`;
     }
-    
+
     // 상태별 필터링
     if (lowerMessage.includes('완료') || lowerMessage.includes('끝난')) {
         filteredCards = getStatusCardsByStatus('완료');
@@ -1569,7 +1698,7 @@ function handleStatusCardRequest(userMessage) {
         filteredCards = getStatusCardsByStatus('진행중');
         responseMessage = '현재 진행 중인 프로젝트 상태카드입니다.';
     }
-    
+
     return {
         message: responseMessage,
         cards: filteredCards.slice(0, 5) // 최대 5개까지만 표시
@@ -1593,23 +1722,23 @@ function renderStatusCards(response) {
         chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
         return;
     }
-    
+
     // 텍스트 형태로 프로젝트 정보 생성
     let detailedInfo = response.message + '\n\n';
-    
+
     response.cards.forEach(card => {
         detailedInfo += `📋 **${card.title}**\n`;
         detailedInfo += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
-        
+
         detailedInfo += `📌 기본 정보\n`;
         detailedInfo += `• 상태: ${card.status} (진행률: ${card.progress}%)\n`;
         detailedInfo += `• 기간: ${card.startDate} ~ ${card.endDate}\n`;
         detailedInfo += `• 부서: ${card.department}\n`;
         detailedInfo += `• 최종 업데이트: ${card.lastUpdated}\n\n`;
-        
+
         detailedInfo += `📝 프로젝트 설명\n`;
         detailedInfo += `${card.description}\n\n`;
-        
+
         detailedInfo += `👥 프로젝트 팀\n`;
         detailedInfo += `• 책임자: ${card.manager.name} ${card.manager.position} (${card.manager.email})\n`;
         detailedInfo += `• 팀원:\n`;
@@ -1617,25 +1746,25 @@ function renderStatusCards(response) {
             detailedInfo += `  - ${member.name} ${member.position}: ${member.role}\n`;
         });
         detailedInfo += `\n`;
-        
+
         detailedInfo += `✅ 주요 업무 현황\n`;
         card.keyTasks.forEach(task => {
-            let statusIcon = task.status === 'completed' ? '✓' : 
+            let statusIcon = task.status === 'completed' ? '✓' :
                            task.status === 'in-progress' ? '●' : '○';
-            let statusText = task.status === 'completed' ? '완료' : 
+            let statusText = task.status === 'completed' ? '완료' :
                            task.status === 'in-progress' ? '진행중' : '대기';
             detailedInfo += `${statusIcon} ${task.task} [${statusText}]\n`;
         });
         detailedInfo += `\n`;
-        
+
         if (card.nextMilestone) {
             detailedInfo += `🎯 다음 마일스톤\n`;
             detailedInfo += `${card.nextMilestone}\n\n`;
         }
-        
+
         detailedInfo += `\n`;
     });
-    
+
     // 텍스트를 HTML로 변환하여 렌더링
     const formattedMessage = detailedInfo
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -1651,9 +1780,9 @@ function renderStatusCards(response) {
         .replace(/👥/g, '<span style="color: #9C27B0;">👥</span>')
         .replace(/✅/g, '<span style="color: #4CAF50;">✅</span>')
         .replace(/🎯/g, '<span style="color: #FF5722;">🎯</span>');
-    
+
     renderAIMessage(formattedMessage);
-    
+
     // 프로젝트 담당자 카드 추가
     const pmPerson = {
         name: '박준혁',
@@ -1667,12 +1796,12 @@ function renderStatusCards(response) {
     if (chatMessages) {
         chatMessages.insertAdjacentHTML('beforeend', responsibleCard);
     }
-    
+
     // 모든 콘텐츠 렌더링 후 스크롤
     setTimeout(() => {
         scrollToBottom();
     }, 300);
-    
+
     // ChatManager에 저장
     if (currentUser && currentChatId) {
         chatManager.addMessage(currentUser.id, currentChatId, 'ai', response.message);
@@ -1686,17 +1815,17 @@ function createStatusCardHTML(card) {
                        card.statusType === 'completed' ? 'status-completed' :
                        card.statusType === 'urgent' ? 'status-urgent' :
                        'status-pending';
-    
+
     const statusText = card.status === '진행중' ? '진행중' :
                       card.status === '완료' ? '완료' :
                       card.status === '긴급' ? '긴급' :
                       '대기';
-    
+
     const badgeClass = card.statusType;
-    
+
     // 주요 업무 중 최대 3개만 표시
     const displayTasks = card.keyTasks.slice(0, 3);
-    
+
     return `
         <div class="status-card ${statusClass}" onclick="showStatusCardDetail('${card.id}')">
             <div class="status-card-header">
@@ -1774,7 +1903,7 @@ function showStatusCardDetail(cardId) {
     const card = STATUS_CARDS.find(c => c.id === cardId);
     if (card) {
         renderAIMessage(`${card.title} 프로젝트의 상세 정보를 보여드리겠습니다.`);
-        
+
         const detailMessage = `
 📋 프로젝트명: ${card.title}
 📅 기간: ${card.startDate} ~ ${card.endDate}
@@ -1793,7 +1922,7 @@ ${card.keyTasks.map(t => `- ${t.task}: ${t.status === 'completed' ? '✅ 완료'
 
 🎯 다음 마일스톤: ${card.nextMilestone}
 `;
-        
+
         renderAIMessage(detailMessage);
     }
 }
@@ -1803,7 +1932,7 @@ function getCalendarData() {
     // localStorage에서 캘린더 데이터 가져오기
     const storedData = localStorage.getItem('calendarEvents');
     let calendarEvents = [];
-    
+
     if (storedData) {
         try {
             calendarEvents = JSON.parse(storedData);
@@ -1812,7 +1941,7 @@ function getCalendarData() {
             calendarEvents = [];
         }
     }
-    
+
     // 저장된 데이터가 없으면 샘플 데이터로 초기화 (한 번만)
     if (calendarEvents.length === 0) {
         const today = new Date().toISOString().split('T')[0];
@@ -1851,7 +1980,7 @@ function getCalendarData() {
                 description: 'AI 비서 프로젝트 진행 현황 점검'
             }
         ];
-        
+
         // 샘플 데이터를 localStorage에 저장 (첫 번째 로드 시에만)
         try {
             localStorage.setItem('calendarEvents', JSON.stringify(sampleData));
@@ -1862,14 +1991,14 @@ function getCalendarData() {
             calendarEvents = sampleData;
         }
     }
-    
+
     return calendarEvents;
 }
 
 // AI 응답 생성 (시뮬레이션)
 function generateAIResponse(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 간단한 응답 매핑
     if (lowerMessage.includes('보고서') || lowerMessage.includes('문서')) {
         return '어떤 보고서를 작성하시겠습니까? 템플릿을 제공해드리거나 처음부터 작성을 도와드릴 수 있습니다.';
@@ -1899,7 +2028,7 @@ function scrollToBottom() {
         // scrollHeight를 정확히 얻기 위해 약간의 지연 추가
         requestAnimationFrame(() => {
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             // 스크롤이 제대로 되지 않은 경우를 위한 추가 시도
             setTimeout(() => {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1972,7 +2101,7 @@ function openBoard() {
 function toggleMobileSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.querySelector('.mobile-sidebar-overlay');
-    
+
     if (sidebar && overlay) {
         sidebar.classList.toggle('mobile-active');
         overlay.classList.toggle('active');
@@ -1982,7 +2111,7 @@ function toggleMobileSidebar() {
 function closeMobileSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.querySelector('.mobile-sidebar-overlay');
-    
+
     if (sidebar && overlay) {
         sidebar.classList.remove('mobile-active');
         overlay.classList.remove('active');
@@ -1993,37 +2122,37 @@ function closeMobileSidebar() {
 document.addEventListener('DOMContentLoaded', function() {
     // 초기 상태 설정
     startNewChat();
-    
+
     // 포커스 설정
     if (mainInput) {
         mainInput.focus();
     }
-    
+
     // 사이드바 메뉴 아이템 클릭 이벤트
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', function() {
             // 추후 구현: 대화 목록 표시 등
             console.log('Menu item clicked:', this.textContent);
-            
+
             // 모바일에서 메뉴 클릭 시 사이드바 닫기
             if (window.innerWidth <= 768) {
                 closeMobileSidebar();
             }
         });
     });
-    
+
     // 윈도우 리사이즈 처리
     window.addEventListener('resize', function() {
         if (chatStarted) {
             scrollToBottom();
         }
-        
+
         // 데스크톱 크기로 변경 시 모바일 사이드바 초기화
         if (window.innerWidth > 768) {
             closeMobileSidebar();
         }
     });
-    
+
     // ESC 키로 모바일 사이드바 닫기
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
@@ -2210,10 +2339,10 @@ function activateMeetingReservation() {
     // 새로운 회의실 예약 모달 열기
     if (typeof openMeetingModal === 'function') {
         openMeetingModal();
-        
+
         // AI 메시지 표시
         renderAIMessage('회의실 예약 모달을 열었습니다. 필요한 정보를 입력해주세요.');
-        
+
         // ChatManager에 저장
         if (currentUser && currentChatId) {
             chatManager.addMessage(currentUser.id, currentChatId, 'ai', '회의실 예약을 시작합니다.');
@@ -2223,16 +2352,16 @@ function activateMeetingReservation() {
         // 폴백: 기존 시스템 사용
         // 회의실 예약 시스템 초기화
         meetingReservation.initializeNewReservation();
-        
+
         // 현재 사용자를 첫 번째 참가자로 추가
         if (currentUser) {
             meetingReservation.addParticipant(currentUser);
             meetingReservation.currentReservation.createdBy = currentUser.id;
         }
-        
+
         // AI 메시지 표시
         renderAIMessage('회의실 예약을 시작합니다. 아래 화면에서 참가자를 추가해주세요.');
-        
+
         // 회의실 예약 UI를 별도의 컨테이너에 렌더링
         const reservationContainer = document.createElement('div');
         reservationContainer.id = 'meetingReservationContainer';
@@ -2243,16 +2372,16 @@ function activateMeetingReservation() {
                 <div id="meetingReservationContent"></div>
             </div>
         `;
-        
+
         // 채팅 메시지 영역에 추가
         chatMessages.appendChild(reservationContainer);
-        
+
         // 회의실 예약 UI 활성화
         const contentDiv = document.getElementById('meetingReservationContent');
         meetingReservationUI.activate(contentDiv);
-        
+
         messages.push({ type: 'ai', text: '회의실 예약 시스템이 활성화되었습니다.' });
-        
+
         // ChatManager에 저장
         if (currentUser && currentChatId) {
             chatManager.addMessage(currentUser.id, currentChatId, 'ai', '회의실 예약을 시작합니다.');
@@ -2267,7 +2396,7 @@ function closeMeetingReservation() {
     if (container) {
         container.remove();
     }
-    
+
     // 예약 완료 확인
     if (meetingReservation.currentStep === 'complete') {
         const summary = meetingReservation.getReservationSummary();
@@ -2277,9 +2406,9 @@ function closeMeetingReservation() {
                        `시간: ${summary.time}\n` +
                        `장소: ${summary.room.name}\n` +
                        `참석자: ${summary.participants.map(p => p.name).join(', ')}`;
-        
+
         renderAIMessage(message);
-        
+
         if (currentUser && currentChatId) {
             chatManager.addMessage(currentUser.id, currentChatId, 'ai', message);
             updateChatHistory();
@@ -2297,7 +2426,7 @@ function showNotifications() {
         dropdown.remove();
         return;
     }
-    
+
     // 알림 드롭다운 생성
     dropdown = document.createElement('div');
     dropdown.id = 'notificationDropdown';
@@ -2334,13 +2463,13 @@ function showNotifications() {
             </div>
         </div>
     `;
-    
+
     // 알림 버튼 근처에 드롭다운 위치시키기
     const notificationButton = document.querySelector('.notification-button');
     if (notificationButton) {
         notificationButton.parentElement.appendChild(dropdown);
     }
-    
+
     // 외부 클릭시 닫기
     setTimeout(() => {
         document.addEventListener('click', function closeOnClickOutside(e) {

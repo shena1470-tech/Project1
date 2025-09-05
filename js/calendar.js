@@ -31,8 +31,23 @@ class CalendarManager {
 
         // 회의실 예약 로드
         const meetingReservations = storageManager.getData('meeting_reservations') || [];
+        
+        // 캘린더 이벤트 로드 (회의 예약 시스템에서 생성된 데이터)
+        const calendarEvents = this.loadCalendarEvents() || [];
 
-        this.schedules = [...personalSchedules, ...meetingReservations];
+        this.schedules = [...personalSchedules, ...meetingReservations, ...calendarEvents];
+    }
+
+    loadCalendarEvents() {
+        try {
+            const storedData = localStorage.getItem('calendarEvents');
+            if (storedData) {
+                return JSON.parse(storedData);
+            }
+        } catch (e) {
+            console.error('캘린더 이벤트 로드 오류:', e);
+        }
+        return [];
     }
 
     loadMeetingRooms() {
