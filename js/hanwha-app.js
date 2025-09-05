@@ -97,6 +97,12 @@ function updateUserDisplay() {
         headerUserAvatar.textContent = currentUser.name ? currentUser.name[0] : '?';
     }
 
+    // 헤더 인사말 업데이트 (왼쪽 상단)
+    const greetingText = document.querySelector('.header-greeting .greeting-text');
+    if (greetingText) {
+        greetingText.textContent = `${currentUser.name}${currentUser.position}`;
+    }
+
     // 유저 프로필 클릭 이벤트
     const userProfile = document.querySelector('.user-profile');
     if (userProfile) {
@@ -1349,17 +1355,17 @@ function formatDateKorean(date) {
 // 보고서 작성 요청 처리 - Figma Design Integration
 function handleReportRequest(userMessage) {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     // 보고서 작성 관련 키워드 체크
     const reportKeywords = ['보고서', '보고서 작성', '리포트', '보고서 만들기', '보고서 생성', '문서 작성', '보고서 양식', '보고서 템플릿', '서비스 개선', '실적', '프로젝트 진행'];
-    
-    const hasReportKeyword = reportKeywords.some(keyword => 
+
+    const hasReportKeyword = reportKeywords.some(keyword =>
         lowerMessage.includes(keyword)
     );
-    
+
     if (hasReportKeyword) {
         console.log('보고서 작성 요청 감지');
-        
+
         // 보고서 모드 즉시 활성화 (Figma 디자인)
         if (typeof reportModeManager !== 'undefined' && reportModeManager) {
             // 사용자 요청 메시지 설정
@@ -1367,7 +1373,7 @@ function handleReportRequest(userMessage) {
                 reportModeManager.setUserRequest(userMessage);
             }
             reportModeManager.showReportMode();
-            
+
             // ChatManager에 저장
             if (currentUser && currentChatId) {
                 chatManager.addMessage(currentUser.id, currentChatId, 'user', userMessage);
@@ -1383,21 +1389,21 @@ function handleReportRequest(userMessage) {
                     <p>한화생명 스타일로 전문적인 보고서를 작성해 드립니다.</p>
                 </div>
             `;
-            
+
             renderAIMessage(aiResponse);
             messages.push({ type: 'ai', text: aiResponse });
-            
+
             if (currentUser && currentChatId) {
                 chatManager.addMessage(currentUser.id, currentChatId, 'ai', aiResponse);
                 updateChatHistory();
             }
-            
+
             console.warn('보고서 모드 관리자를 찾을 수 없습니다.');
         }
-        
+
         return true;
     }
-    
+
     return false;
 }
 
@@ -2397,11 +2403,6 @@ style.textContent = `
         height: 100%;
     }
     */
-    
-    /* 대화 히스토리 스타일 */
-    .chat-history-section {
-        padding: 16px;
-    }
     
     .section-title {
         font-size: 14px;

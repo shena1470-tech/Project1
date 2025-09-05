@@ -14,6 +14,7 @@
     background: #f5f5f5;
     padding: 20px 30px;
     border-bottom: 1px solid #e5e4e3;
+    flex-shrink: 0;
 }
 
 .user-test-title {
@@ -27,11 +28,14 @@
     font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
 }
 
-/* 컨텐츠 영역 */
+/* 컨텐츠 영역 - 채팅 영역 전체 활용 */
 .user-test-content {
+    flex: 1;
     padding: 30px;
     background: white;
-    min-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 /* AI 선택 화면 */
@@ -305,11 +309,12 @@
     background: #333;
 }
 
-/* 채팅 화면 */
+/* 채팅 화면 - 전체 높이 활용 */
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: 500px;
+    flex: 1;
+    min-height: 0;
 }
 
 .chat-header {
@@ -323,13 +328,20 @@
 .selected-ai-info {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #666;
+    gap: 12px;
+    font-size: 18px;
+    color: #fa6600;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    line-height: 1.5;
 }
 
 .ai-badge {
-    font-size: 10px;
+    width: 12px;
+    height: 12px;
+    background: #419576;
+    border-radius: 50%;
+    font-size: 0;
+    flex-shrink: 0;
 }
 
 .end-test-btn {
@@ -438,25 +450,27 @@
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    .user-test-main-container {
-        width: 90%;
-        right: 5%;
-        left: 5%;
-        transform: translateY(-50%);
+    .user-test-content {
+        padding: 20px;
     }
-    
+
     .ai-personas-container {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .settings-modal-container {
         width: 90%;
         padding: 20px;
+        margin: 0 20px;
     }
-    
+
     .option-buttons {
         justify-content: center;
+    }
+
+    .user-test-header {
+        padding: 15px 20px;
     }
 }
 

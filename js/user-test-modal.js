@@ -299,12 +299,24 @@ class UserTestModal {
 
     renderChatInterface() {
         const content = document.getElementById('userTestContent');
+        
+        // 선택된 AI에 따른 정확한 텍스트 생성
+        let testerDescription = '';
+        if (this.selectedAI.id === 'park-jinhye') {
+            testerDescription = '디지털 이해도가 낮은 54세 여성 박진혜님과 UT중';
+        } else if (this.selectedAI.id === 'lee-jungeun') {
+            testerDescription = '디지털 이해도가 높은 20세 여성 이정은님과 UT중';
+        } else {
+            // 커스텀 AI인 경우
+            testerDescription = `디지털 이해도가 ${this.selectedAI.digitalLevel === '상' ? '높은' : this.selectedAI.digitalLevel === '하' ? '낮은' : '보통인'} ${this.selectedAI.age} ${this.selectedAI.gender} 테스터와 UT중`;
+        }
+        
         content.innerHTML = `
             <div class="chat-container">
                 <div class="chat-header">
                     <div class="selected-ai-info">
-                        <span class="ai-badge">🟢</span>
-                        <span>${this.selectedAI.name} 테스터와 대화 중</span>
+                        <span class="ai-badge"></span>
+                        <span>${testerDescription}</span>
                     </div>
                     <button class="end-test-btn" onclick="userTestModal.endTest()">
                         테스트 종료
@@ -314,11 +326,11 @@ class UserTestModal {
                 <div class="chat-messages" id="testChatMessages">
                     <div class="ai-initial-message">
                         <div class="message-box">
-                            <p>안녕하세요. 저는 ${this.selectedAI.age} ${this.selectedAI.gender} 박진혜님과 UT중</p>
+                            <p>안녕하세요. 진혜님.</p>
                             <p>User Test 진행을 맡은 김동준입니다.</p>
                             <br>
-                            <p>평소 사용하시는대로 맘쏙해 주시면 됩니다.</p>
-                            <p>회면에서 고객센터를 한변 찾아주시겠어요?</p>
+                            <p>평소 사용하시는대로 말씀해 주시면 됩니다.</p>
+                            <p>화면에서 고객센터를 한번 찾아주시겠어요?</p>
                             <br>
                             <p>고객센터, ? 고객센터가 어딧죠?</p>
                             <p>아건가? 이거 그림이 무슨 뜻이에요? 상담사모양인가..</p>
