@@ -588,12 +588,27 @@ class CalendarManager {
                 if (startHourSelect) startHourSelect.value = hour;
                 if (startMinuteSelect) startMinuteSelect.value = minute;
                 
-                // 종료 시간을 시작 시간 + 1시간으로 설정
-                const endHour = parseInt(hour) + 1;
+                // 종료 시간을 시작 시간 + 30분으로 설정
+                let endHour = parseInt(hour);
+                let endMinute = minute === '00' ? '30' : '00';
+                
+                // 분이 30분이면 다음 시간으로
+                if (minute === '30') {
+                    endHour = parseInt(hour) + 1;
+                }
+                
                 const endHourSelect = form.querySelector('select[name="endHour"]');
                 const endMinuteSelect = form.querySelector('select[name="endMinute"]');
-                if (endHourSelect && endHour <= 22) endHourSelect.value = endHour.toString().padStart(2, '0');
-                if (endMinuteSelect) endMinuteSelect.value = minute;
+                
+                if (endHourSelect && endHour <= 22) {
+                    endHourSelect.value = endHour.toString().padStart(2, '0');
+                } else if (endHourSelect && endHour > 22) {
+                    // 22시를 넘어가면 22:30으로 설정
+                    endHourSelect.value = '22';
+                    endMinute = '30';
+                }
+                
+                if (endMinuteSelect) endMinuteSelect.value = endMinute;
             } else {
                 // 기본값: 현재 시간의 다음 30분 단위
                 const now = new Date();
@@ -609,6 +624,26 @@ class CalendarManager {
                     const startMinuteSelect = form.querySelector('select[name="startMinute"]');
                     if (startHourSelect) startHourSelect.value = startHour.toString().padStart(2, '0');
                     if (startMinuteSelect) startMinuteSelect.value = startMinute;
+                    
+                    // 종료 시간을 시작 시간 + 30분으로 설정
+                    let endHour = startHour;
+                    let endMinute = startMinute === '00' ? '30' : '00';
+                    
+                    if (startMinute === '30') {
+                        endHour = startHour + 1;
+                    }
+                    
+                    const endHourSelect = form.querySelector('select[name="endHour"]');
+                    const endMinuteSelect = form.querySelector('select[name="endMinute"]');
+                    
+                    if (endHourSelect && endHour <= 22) {
+                        endHourSelect.value = endHour.toString().padStart(2, '0');
+                    } else if (endHourSelect && endHour > 22) {
+                        endHourSelect.value = '22';
+                        endMinute = '30';
+                    }
+                    
+                    if (endMinuteSelect) endMinuteSelect.value = endMinute;
                 }
             }
         }
