@@ -29,7 +29,7 @@ const SAMPLE_USERS_DATA = {
             },
             manager: {
                 id: "user-005",
-                name: "유지영",
+                name: "정준하",
                 position: "차장"
             },
             permissions: {
@@ -88,8 +88,8 @@ const SAMPLE_USERS_DATA = {
                 seat: "B-42-08"
             },
             manager: {
-                id: "user-005",
-                name: "박상현",
+                id: "user-006",
+                name: "정형돈",
                 position: "부장"
             },
             permissions: {
@@ -128,9 +128,9 @@ const SAMPLE_USERS_DATA = {
         {
             id: "user-003",
             employeeId: "HW2019003",
-            name: "이서연",
-            nameEn: "Lee Seo Yeon",
-            email: "seoyeon.lee@hanwhalife.com",
+            name: "유재석",
+            nameEn: "Yoo Jae Suk",
+            email: "jaesuk.yoo@hanwhalife.com",
             phone: "010-2345-6789",
             department: "마케팅본부",
             team: "디지털마케팅팀",
@@ -139,7 +139,7 @@ const SAMPLE_USERS_DATA = {
             level: "L3",
             joinDate: "2019-07-01",
             birthDate: "1992-03-15",
-            avatar: "assets/avatars/lee-seoyeon.png",
+            avatar: "assets/avatars/yoo-jaesuk.png",
             status: "active",
             location: {
                 office: "본사",
@@ -188,9 +188,9 @@ const SAMPLE_USERS_DATA = {
         {
             id: "user-004",
             employeeId: "HW2020004",
-            name: "박준혁",
-            nameEn: "Park Jun Hyuk",
-            email: "junhyuk.park@hanwhalife.com",
+            name: "박명수",
+            nameEn: "Park Myung Soo",
+            email: "myungsoo.park@hanwhalife.com",
             phone: "010-3456-7890",
             department: "재무관리팀",
             team: "자산운용파트",
@@ -199,7 +199,7 @@ const SAMPLE_USERS_DATA = {
             level: "L5",
             joinDate: "2020-01-10",
             birthDate: "1985-11-08",
-            avatar: "assets/avatars/park-junhyuk.png",
+            avatar: "assets/avatars/park-myungsoo.png",
             status: "active",
             location: {
                 office: "본사",
@@ -248,9 +248,9 @@ const SAMPLE_USERS_DATA = {
         {
             id: "user-005",
             employeeId: "HW2022005",
-            name: "정민지",
-            nameEn: "Jung Min Ji",
-            email: "minji.jung@hanwhalife.com",
+            name: "정준하",
+            nameEn: "Jung Jun Ha",
+            email: "junha.jung@hanwhalife.com",
             phone: "010-4567-8901",
             department: "인사팀",
             team: "인재개발파트",
@@ -259,7 +259,7 @@ const SAMPLE_USERS_DATA = {
             level: "L2",
             joinDate: "2022-08-01",
             birthDate: "1996-05-30",
-            avatar: "assets/avatars/jung-minji.png",
+            avatar: "assets/avatars/jung-junha.png",
             status: "active",
             location: {
                 office: "본사",
@@ -308,9 +308,9 @@ const SAMPLE_USERS_DATA = {
         {
             id: "user-006",
             employeeId: "HW2018006",
-            name: "박상현",
-            nameEn: "Park Sang Hyun",
-            email: "sanghyun.park@hanwhalife.com",
+            name: "정형돈",
+            nameEn: "Jung Hyung Don",
+            email: "hyungdon.jung@hanwhalife.com",
             phone: "010-5678-9012",
             department: "디지털프로덕트팀",
             team: "AI개발파트",
@@ -319,7 +319,7 @@ const SAMPLE_USERS_DATA = {
             level: "L6",
             joinDate: "2018-04-01",
             birthDate: "1982-09-14",
-            avatar: "assets/avatars/park-sanghyun.png",
+            avatar: "assets/avatars/jung-hyungdon.png",
             status: "active",
             location: {
                 office: "본사",
@@ -368,9 +368,9 @@ const SAMPLE_USERS_DATA = {
         {
             id: "user-007",
             employeeId: "HW2017007",
-            name: "최지훈",
-            nameEn: "Choi Ji Hoon",
-            email: "jihoon.choi@hanwhalife.com",
+            name: "노홍철",
+            nameEn: "Noh Hong Chul",
+            email: "hongchul.noh@hanwhalife.com",
             phone: "010-6789-0123",
             department: "마케팅본부",
             team: "디지털마케팅팀",
@@ -379,7 +379,7 @@ const SAMPLE_USERS_DATA = {
             level: "L5",
             joinDate: "2017-02-15",
             birthDate: "1986-01-25",
-            avatar: "assets/avatars/choi-jihoon.png",
+            avatar: "assets/avatars/noh-hongchul.png",
             status: "active",
             location: {
                 office: "본사",
