@@ -461,9 +461,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 9999;
     align-items: center;
     justify-content: center;
@@ -478,131 +478,94 @@
 
 .modal-content {
     background: #ffffff;
-    border-radius: var(--radius-xl);
+    border-radius: 16px;
     width: 90%;
     max-width: 550px;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(250, 102, 0, 0.3);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     position: relative;
     animation: slideUp 0.4s ease;
 }
 
 .modal-header {
-    padding: var(--spacing-xl);
-    border-bottom: 2px solid #f3f4f6;
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid #f3f4f6;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(to bottom, #ffffff, #fafafa);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    background: #ffffff;
+    border-radius: 16px 16px 0 0;
 }
 
 .modal-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: #1f2937;
 }
 
 .modal-close {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #e5e7eb;
-    background: #ffffff;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     transition: all 0.2s ease;
-    font-size: 1.5rem;
-    color: #6b7280;
+    font-size: 1.25rem;
+    color: #9ca3af;
     font-weight: bold;
 }
 
+
 .modal-close:hover {
-    background: #FA6600;
-    color: #ffffff;
-    border-color: #FA6600;
-    transform: rotate(90deg);
+    background: #f3f4f6;
+    color: #6b7280;
 }
+
 
 .modal-header h3 {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 600;
     color: #1f2937;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.025em;
 }
 
-/* 다크 모드 모달 개선 */
-[data-theme="dark"] .modal-content {
-    background: #1f2937;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
-[data-theme="dark"] .modal-header,
-[data-theme="dark"] .modal-footer {
-    background: #111827;
-}
-
-[data-theme="dark"] .schedule-form input,
-[data-theme="dark"] .schedule-form select,
-[data-theme="dark"] .schedule-form textarea {
-    background: #1f2937;
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #f3f4f6;
-}
-
-[data-theme="dark"] .schedule-form input:focus,
-[data-theme="dark"] .schedule-form select:focus,
-[data-theme="dark"] .schedule-form textarea:focus {
-    border-color: var(--primary-color);
-    background: #111827;
-}
-
-[data-theme="dark"] .time-select {
-    background: #1f2937;
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #f3f4f6;
-}
-
-[data-theme="dark"] .time-select:focus {
-    border-color: var(--primary-color);
-    background: #111827;
-}
-
-[data-theme="dark"] .time-separator {
-    color: #9ca3af;
-}
 
 .modal-body {
-    padding: var(--spacing-xl);
+    padding: 24px;
+    background: #ffffff;
 }
 
+
 .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 20px;
 }
 
 .form-label {
     display: block;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 8px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: #6b7280;
 }
+
 
 .form-input,
 .form-select,
 .form-textarea {
     width: 100%;
-    padding: var(--spacing-md);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
     font-size: 0.875rem;
-    background: var(--bg-primary);
-    color: var(--text-primary);
+    background: #ffffff;
+    color: #1f2937;
     transition: border-color 0.2s ease;
 }
 
@@ -610,7 +573,8 @@
 .form-select:focus,
 .form-textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: #FA6600;
+    box-shadow: 0 0 0 3px rgba(250, 102, 0, 0.1);
 }
 
 .form-textarea {
@@ -645,18 +609,18 @@
 }
 
 .modal-footer {
-    padding: var(--spacing-xl);
-    border-top: 2px solid #f3f4f6;
+    padding: 20px 24px;
+    border-top: 1px solid #f3f4f6;
     display: flex;
-    gap: var(--spacing-md);
+    gap: 12px;
     justify-content: flex-end;
-    background: linear-gradient(to top, #ffffff, #fafafa);
+    background: #ffffff;
 }
 
 .btn-cancel,
 .btn-submit {
-    padding: var(--spacing-sm) var(--spacing-xl);
-    border-radius: var(--radius-md);
+    padding: 10px 24px;
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -664,87 +628,90 @@
 }
 
 .btn-cancel {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
 }
 
 .btn-cancel:hover {
-    background: var(--bg-hover);
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #4b5563;
 }
 
 .btn-submit {
-    background: var(--primary-color);
-    border: none;
+    background: #FA6600;
+    border: 1px solid #FA6600;
     color: white;
 }
 
 .btn-submit:hover {
-    background: var(--primary-dark);
+    background: #e55a00;
+    border-color: #e55a00;
+    box-shadow: 0 2px 4px rgba(250, 102, 0, 0.2);
 }
 
 .btn-primary,
 .btn-secondary {
-    padding: var(--spacing-md) var(--spacing-xl);
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-secondary {
     background: #ffffff;
-    border: 2px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
     color: #6b7280;
 }
 
 .btn-secondary:hover {
     background: #f9fafb;
-    border-color: #d1d5db;
+    border-color: #9ca3af;
     color: #4b5563;
 }
 
 .btn-primary {
     background: #FA6600;
-    border: 2px solid #FA6600;
+    border: 1px solid #FA6600;
     color: white;
-    box-shadow: 0 2px 4px rgba(250, 102, 0, 0.2);
 }
 
 .btn-primary:hover {
     background: #e55a00;
     border-color: #e55a00;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(250, 102, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(250, 102, 0, 0.2);
 }
 
 /* 일정 폼 스타일 */
 .schedule-form {
-    padding: var(--spacing-xl);
+    padding: 24px;
     background: #ffffff;
 }
 
+
 .schedule-form .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 20px;
 }
 
 .schedule-form label {
     display: block;
-    margin-bottom: var(--spacing-sm);
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #374151;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
 }
 
 .schedule-form input,
 .schedule-form select,
 .schedule-form textarea {
     width: 100%;
-    padding: var(--spacing-md);
-    border: 2px solid #e5e7eb;
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
     background: #ffffff;
     color: #1f2937;
     transition: all 0.2s ease;
@@ -755,8 +722,8 @@
 .schedule-form textarea:focus {
     outline: none;
     border-color: #FA6600;
-    box-shadow: 0 0 0 4px rgba(250, 102, 0, 0.15);
-    background: #fffbf7;
+    box-shadow: 0 0 0 3px rgba(250, 102, 0, 0.1);
+    background: #ffffff;
 }
 
 .form-row {
@@ -769,16 +736,16 @@
 .time-selector {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: 8px;
 }
 
 .time-select {
     flex: 1;
-    padding: var(--spacing-md);
-    border: 2px solid #e5e7eb;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    font-weight: 500;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 400;
     background: #ffffff;
     color: #1f2937;
     cursor: pointer;
@@ -788,13 +755,13 @@
 .time-select:focus {
     outline: none;
     border-color: #FA6600;
-    box-shadow: 0 0 0 4px rgba(250, 102, 0, 0.15);
-    background: #fffbf7;
+    box-shadow: 0 0 0 3px rgba(250, 102, 0, 0.1);
+    background: #ffffff;
 }
 
 .time-separator {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
     color: #6b7280;
     padding: 0 4px;
 }
