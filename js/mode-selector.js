@@ -15,6 +15,14 @@ const MODES = {
         icon: 'assets/icons/mobilescript.svg',
         description: '직접 설정한 사용자 조건을 기반으로 테스트를 진행해요.',
         color: '#3f9252'  // 초록색
+    },
+    mcpConnect: {
+        id: 'mcpConnect',
+        name: 'MCP 추가 연결',
+        icon: 'assets/icons/plug-connect.svg',
+        description: '다양한 MCP 서버와 연동하여 기능을 확장할 수 있어요',
+        color: '#7C3AED',  // 보라색
+        isExternal: true  // 외부 링크임을 표시
     }
 };
 
@@ -73,6 +81,15 @@ function selectMode(modeId) {
     selectedMode = MODES[modeId];
     if (selectedMode) {
         console.log('모드 선택됨:', selectedMode.name);
+        
+        // MCP 추가 연결인 경우 알림과 외부 사이트 이동
+        if (selectedMode.isExternal && selectedMode.id === 'mcpConnect') {
+            alert('다양한 MCP 연동이 가능해요');
+            window.open('https://mcpservers.org/', '_blank');
+            closeModeSelectorDropdown();
+            return;
+        }
+        
         updateInputWithMode(selectedMode);
         closeModeSelectorDropdown();
     }
