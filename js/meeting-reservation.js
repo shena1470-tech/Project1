@@ -3,13 +3,20 @@ class MeetingReservation {
     constructor() {
         this.currentReservation = null;
         this.currentStep = 'participants'; // participants, time, room, beverage, complete
-        this.availableRooms = [
-            { id: 'room-101', name: '101호 회의실', capacity: 10, floor: '10층', equipment: ['프로젝터', '화이트보드'] },
-            { id: 'room-201', name: '201호 회의실', capacity: 15, floor: '20층', equipment: ['화상회의', '프로젝터', '화이트보드'] },
-            { id: 'room-301', name: '301호 대회의실', capacity: 30, floor: '30층', equipment: ['마이크', '화상회의', '프로젝터'] },
-            { id: 'room-401', name: '401호 소회의실', capacity: 6, floor: '40층', equipment: ['화이트보드', 'TV'] },
-            { id: 'room-501', name: '501호 임원회의실', capacity: 20, floor: '50층', equipment: ['화상회의', '프로젝터', '마이크'] }
-        ];
+        
+        // 전역 회의실 목록 사용 (MEETING_ROOMS가 정의되어 있으면 사용)
+        if (typeof MEETING_ROOMS !== 'undefined') {
+            this.availableRooms = MEETING_ROOMS;
+        } else {
+            // 기본 회의실 목록 (폴백)
+            this.availableRooms = [
+                { id: 'room-101', name: '101호 회의실', capacity: 10, floor: '10층', equipment: ['프로젝터', '화이트보드'] },
+                { id: 'room-201', name: '201호 회의실', capacity: 15, floor: '20층', equipment: ['화상회의', '프로젝터', '화이트보드'] },
+                { id: 'room-301', name: '301호 대회의실', capacity: 30, floor: '30층', equipment: ['마이크', '화상회의', '프로젝터'] },
+                { id: 'room-401', name: '401호 소회의실', capacity: 6, floor: '40층', equipment: ['화이트보드', 'TV'] },
+                { id: 'room-501', name: '501호 임원회의실', capacity: 20, floor: '50층', equipment: ['화상회의', '프로젝터', '마이크'] }
+            ];
+        }
         
         this.timeSlots = this.generateTimeSlots();
         this.beverages = [
