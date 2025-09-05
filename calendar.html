@@ -158,6 +158,17 @@
                         <!-- 대화 히스토리가 동적으로 추가됩니다 -->
                     </div>
                 </div>
+                <div class="sidebar-bottom-menu">
+                    <button class="bottom-menu-item" onclick="showGuide()">
+                        가이드
+                    </button>
+                    <button class="bottom-menu-item" onclick="window.location.href='calendar.html'">
+                        내 캘린더
+                    </button>
+                    <button class="bottom-menu-item" onclick="showSettings()">
+                        설정
+                    </button>
+                </div>
             </nav>
         </aside>
         
@@ -165,12 +176,6 @@
         <main class="main-content">
             <!-- 상단 헤더 -->
             <header class="top-header">
-                <div class="header-tabs">
-                    <button class="tab-button" onclick="window.location.href='index.html'">AI 비서</button>
-                    <button class="tab-button" onclick="openReportBuilder()">보고서 제작</button>
-                    <button class="tab-button" onclick="openBoard()">게시판</button>
-                    <button class="tab-button active">캘린더</button>
-                </div>
                 <div class="header-actions">
                     <button class="notification-button" onclick="showNotifications()" aria-label="알림">
                         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -242,6 +247,20 @@
     <script src="js/hanwha-app.js"></script>
     <script src="js/calendar.js"></script>
     <script>
+        // 캘린더 페이지 전용 함수들
+        function startNewChat() {
+            // 새 대화 시작 - 메인 페이지로 이동
+            window.location.href = 'index.html';
+        }
+        
+        function showGuide() {
+            alert('가이드 기능은 준비중입니다.');
+        }
+
+        function showSettings() {
+            alert('설정 기능은 준비중입니다.');
+        }
+
         // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', () => {
             // 캘린더 초기화

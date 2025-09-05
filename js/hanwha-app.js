@@ -1143,10 +1143,19 @@ function findAvailableMeetingSlots(attendees, floorRestriction, duration, userMe
     const options = [];
     const today = new Date();
 
-    // 회의실 목록 설정
-    const rooms = floorRestriction === 8 ?
-        ['8층 - E1 - 중회의실', '8층 - E2 - 소회의실', '8층 - W1 - 중회의실'] :
-        ['8층 - E1 - 중회의실', '12층 - 대회의실', '10층 - 중회의실'];
+    // 회의실 목록 설정 - MEETING_ROOMS 전역 변수 사용
+    let rooms;
+    if (typeof MEETING_ROOMS !== 'undefined' && typeof MEETING_ROOM_NAMES !== 'undefined') {
+        // MEETING_ROOMS 전역 변수가 있으면 사용
+        rooms = floorRestriction === 8 ?
+            MEETING_ROOM_NAMES.filter(name => name.includes('8층')) :
+            MEETING_ROOM_NAMES;
+    } else {
+        // 기본값 사용
+        rooms = floorRestriction === 8 ?
+            ['8층 - E1 - 중회의실', '8층 - E2 - 소회의실', '8층 - W1 - 중회의실'] :
+            ['8층 - E1 - 중회의실', '12층 - 대회의실', '10층 - 중회의실'];
+    }
 
     // 시간 슬롯 후보 생성 (다음 7일 동안)
     const timeSlots = [
