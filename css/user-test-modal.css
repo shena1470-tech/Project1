@@ -1,17 +1,12 @@
 /* User Test Modal - Figma 디자인 기반 스타일 */
 
-/* 메인 컨테이너 */
-.user-test-main-container {
-    position: fixed;
-    top: 50%;
-    right: 50px;
-    transform: translateY(-50%);
-    width: 400px;
+/* User Test 컨테이너 - 채팅 영역에 통합 */
+.user-test-container {
+    width: 100%;
+    height: 100%;
     background: white;
-    border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 헤더 - 사용자 메시지 */

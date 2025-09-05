@@ -290,12 +290,12 @@
             document.body.style.overflow = '';
         }
         
-        // 채팅 히스토리 로드 - 간단한 버전
+        // 채팅 히스토리 로드 - chatManager 사용
         function loadChatHistory() {
             const chatHistoryList = document.getElementById('chatHistoryList');
             if (!chatHistoryList) return;
             
-            // 현재 사용자 ID 가져오기
+            // 현재 사용자 가져오기
             let currentUserId = null;
             try {
                 if (typeof storageManager !== 'undefined') {
@@ -315,74 +315,52 @@
                 currentUserId = SAMPLE_USERS_DATA.users[0].id;
             }
             
-            // 채팅 히스토리 데이터 가져오기
-            let chatHistoryData = [];
-            try {
-                if (typeof storageManager !== 'undefined') {
-                    const allChatHistory = storageManager.getChatHistory();
-                    // 사용자별 구조인지 확인
-                    if (allChatHistory && typeof allChatHistory === 'object' && !Array.isArray(allChatHistory)) {
-                        // 사용자별 구조인 경우, 현재 사용자의 채팅만 가져오기
-                        if (currentUserId && allChatHistory[currentUserId]) {
-                            chatHistoryData = allChatHistory[currentUserId];
-                        }
-                    } else if (Array.isArray(allChatHistory)) {
-                        // 배열 구조인 경우 그대로 사용
-                        chatHistoryData = allChatHistory;
-                    }
-                } else {
-                    // localStorage에서 직접 읽기
-                    const stored = localStorage.getItem('hanwha_chat_history');
-                    if (stored) {
-                        const parsedData = JSON.parse(stored);
-                        if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-                            // 사용자별 구조인 경우
-                            if (currentUserId && parsedData[currentUserId]) {
-                                chatHistoryData = parsedData[currentUserId];
-                            }
-                        } else if (Array.isArray(parsedData)) {
-                            // 배열 구조인 경우
-                            chatHistoryData = parsedData;
-                        }
-                    }
-                }
-                
-                // 최종적으로 배열이 아니면 빈 배열로 초기화
-                if (!Array.isArray(chatHistoryData)) {
-                    console.warn('채팅 히스토리 데이터가 배열이 아닙니다:', typeof chatHistoryData, chatHistoryData);
-                    chatHistoryData = [];
-                }
-            } catch (e) {
-                console.error('채팅 히스토리 로드 실패:', e);
-                chatHistoryData = [];
-            }
-            
-            if (!chatHistoryData || chatHistoryData.length === 0) {
+            if (!currentUserId) {
                 chatHistoryList.innerHTML = `
                     <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
-                        대화 기록이 없습니다
+                        사용자 정보를 찾을 수 없습니다
                     </div>
                 `;
                 return;
             }
             
-            // 최근 10개 대화만 표시
-            const recentChats = chatHistoryData.slice(-10).reverse();
-            chatHistoryList.innerHTML = recentChats.map(chat => `
-                <div class="chat-history-item" onclick="goToChat('${chat.id}')" style="
-                    padding: 12px 16px;
-                    border-bottom: 1px solid #f0f0f0;
-                    cursor: pointer;
-                    transition: background-color 0.2s;
-                " onmouseover="this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.backgroundColor=''">
-                    <div style="font-size: 14px; color: #333; margin-bottom: 4px;">
-                        ${chat.title || '새 대화'}
+            // chatManager를 사용해서 채팅 히스토리 로드
+            if (typeof chatManager !== 'undefined') {
+                const recentChats = chatManager.getRecentChats(currentUserId, 10);
+                
+                if (recentChats.length === 0) {
+                    chatHistoryList.innerHTML = `
+                        <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
+                            대화 기록이 없습니다
+                        </div>
+                    `;
+                    return;
+                }
+                
+                chatHistoryList.innerHTML = recentChats.map(chat => {
+                    // 마지막 메시지 가져오기
+                    const lastMessage = chat.messages && chat.messages.length > 0
+                        ? chat.messages[chat.messages.length - 1].text
+                        : '대화를 시작하세요';
+                    
+                    return `
+                        <div class="chat-history-item" onclick="goToChat('${chat.id}')">
+                            <div class="chat-title">${escapeHtml(chat.title)}</div>
+                            <div class="chat-preview">${escapeHtml(lastMessage)}</div>
+                            <div class="chat-time">${formatDate(chat.lastUpdated)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                // chatManager가 없는 경우 대체 로직
+                chatHistoryList.innerHTML = `
+                    <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
+                        채팅 관리자를 초기화하는 중...
                     </div>
-                    <div style="font-size: 12px; color: #999;">
-                        ${formatDate(chat.createdAt || chat.lastUpdated || chat.startTime)}
-                    </div>
-                </div>
-            `).join('');
+                `;
+                // 잠시 후 다시 시도
+                setTimeout(loadChatHistory, 500);
+            }
         }
         
         // 채팅으로 이동
@@ -392,18 +370,50 @@
             window.location.href = 'index.html';
         }
         
-        // 날짜 포맷팅
-        function formatDate(timestamp) {
-            if (!timestamp) return '';
-            const date = new Date(timestamp);
+        // HTML 이스케이프
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+        
+        // 날짜 포맷팅 (hanwha-app.js와 동일한 로직)
+        function formatDate(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
             const now = new Date();
             const diff = now - date;
             
-            if (diff < 60000) return '방금 전';
-            if (diff < 3600000) return `${Math.floor(diff / 60000)}분 전`;
-            if (diff < 86400000) return `${Math.floor(diff / 3600000)}시간 전`;
-            
-            return date.toLocaleDateString('ko-KR');
+            // 1분 미만
+            if (diff < 60000) {
+                return '방금 전';
+            }
+            // 1시간 미만
+            if (diff < 3600000) {
+                const minutes = Math.floor(diff / 60000);
+                return `${minutes}분 전`;
+            }
+            // 24시간 미만
+            if (diff < 86400000) {
+                const hours = Math.floor(diff / 3600000);
+                return `${hours}시간 전`;
+            }
+            // 7일 미만
+            if (diff < 604800000) {
+                const days = Math.floor(diff / 86400000);
+                return `${days}일 전`;
+            }
+            // 그 외는 날짜 형식으로
+            return date.toLocaleDateString('ko-KR', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
         }
 
         // 페이지 로드 시 초기화

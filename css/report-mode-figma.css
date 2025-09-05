@@ -16,11 +16,222 @@
     display: block;
 }
 
+/* Report Mode App Structure */
+.report-app-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background: #f5f5f5;
+}
+
+/* Report Mode Sidebar */
+.report-sidebar {
+    width: 320px;
+    background: #ffffff;
+    border-right: 1px solid #e5e4e3;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.report-sidebar .sidebar-header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid #e5e4e3;
+    background: #f5f5f5;
+}
+
+.report-sidebar .hanwha-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.report-sidebar .hanwha-logo img {
+    height: 32px;
+    width: auto;
+}
+
+.report-sidebar .ai-assistant-title {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #272b2f;
+}
+
+.report-sidebar .sidebar-menu {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.report-sidebar .recent-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.report-sidebar .section-title {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: #5e5c5a;
+}
+
+.report-sidebar .new-chat-button {
+    background: #fa6600;
+    border: none;
+    border-radius: 18px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: white;
+}
+
+.report-sidebar .chat-history-item {
+    border: 1px solid #e5e4e3;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.report-sidebar .chat-title {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #333333;
+    margin-bottom: 4px;
+}
+
+.report-sidebar .chat-preview {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    color: #7e7c7a;
+    margin-bottom: 8px;
+}
+
+.report-sidebar .chat-time {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    color: #b4b3b2;
+}
+
+.report-sidebar .sidebar-bottom-menu {
+    margin-top: auto;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.report-sidebar .bottom-menu-item {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 4px 0;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #5e5c5a;
+    cursor: pointer;
+}
+
+/* Report Mode Main Content */
+.report-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+}
+
+.report-header-bar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px;
+    border-bottom: 1px solid #e5e4e3;
+    background: #ffffff;
+}
+
+.report-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.report-header-actions .notification-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.report-header-actions .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.report-header-actions .user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #f5f5f5;
+    border: 1px solid #d0cfce;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #333333;
+}
+
+.report-header-actions .user-avatar::before {
+    content: '김';
+}
+
+.report-header-actions .user-name {
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #333333;
+}
+
+.report-header-actions .arrow-down {
+    width: 20px;
+    height: 20px;
+}
+
+/* Report Mode Content Area */
+.report-content-area {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+    position: relative;
+}
+
 /* User Message Bubble */
 .report-user-message {
-    position: relative;
+    position: absolute;
+    top: 77px;
+    right: 90px;
     max-width: 508px;
-    margin: 77px auto 24px;
     padding: 16px 24px;
     background: #f5f5f5;
     border-radius: 30px;
@@ -50,9 +261,10 @@
 
 /* Report Selection Panel */
 .report-selection-wrapper {
-    max-width: 1130px;
-    margin: 200px auto 40px;
     position: relative;
+    max-width: 1130px;
+    margin: 292px auto 40px;
+    padding: 0 114px 0 0;
 }
 
 .report-selection-panel {
@@ -260,7 +472,7 @@
     .report-mode-container {
         left: 280px;
     }
-    
+
     .report-template-grid {
         grid-template-columns: repeat(2, 250px);
     }
@@ -271,48 +483,132 @@
         left: 0;
         top: 64px;
     }
-    
+
     .report-user-message {
         margin: 24px 16px;
         padding: 12px 20px;
     }
-    
+
     .report-selection-wrapper {
         margin: 24px 16px;
     }
-    
+
     .report-selection-panel {
         padding: 24px 16px;
         border-radius: 20px;
     }
-    
+
     .report-title {
         font-size: 24px;
     }
-    
+
     .report-template-grid {
         grid-template-columns: 1fr 1fr;
         gap: 12px;
         max-height: none;
     }
-    
+
     .report-card,
     .report-card-add {
         width: 100%;
         height: 180px;
     }
-    
+
     .report-card-title {
         font-size: 16px;
         bottom: 50px;
     }
-    
+
     .report-card-description {
         font-size: 12px;
         bottom: 25px;
     }
-    
+
     .report-ai-avatar {
         display: none;
+    }
+}
+
+/* Report Mode Input Area */
+.report-input-area {
+    position: absolute;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1012px;
+    height: 64px;
+}
+
+.report-input-area .input-wrapper {
+    height: 100%;
+}
+
+.report-input-area .input-container {
+    height: 64px;
+    background: #f5f5f5;
+    border: 1px solid #e5e4e3;
+    border-radius: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+}
+
+.report-input-area .input-plus-button {
+    width: 32px;
+    height: 32px;
+    background: #f7f7f7;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.report-input-area .plus-icon::before {
+    content: '+';
+    font-size: 16px;
+    color: #403f3e;
+    font-weight: 400;
+}
+
+.report-input-area .input-field {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'HanwhaGothic', 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #908f8e;
+    outline: none;
+}
+
+.report-input-area .send-button {
+    width: 40px;
+    height: 40px;
+    background: #fa6600;
+    border: none;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.report-input-area .send-icon::before {
+    content: '→';
+    font-size: 16px;
+    color: white;
+    font-weight: 400;
+}
+
+/* Mobile adjustments for input area */
+@media (max-width: 768px) {
+    .report-input-area {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        transform: none;
     }
 }

@@ -47,29 +47,48 @@ class UserTestModal {
         if (this.modal) {
             this.modal.remove();
             this.modal = null;
-            document.body.style.overflow = '';
         }
         if (this.settingsModal) {
             this.settingsModal.remove();
             this.settingsModal = null;
         }
+        
+        // 기존 화면 복원
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const chatMessages = document.getElementById('chatMessages');
+        if (welcomeScreen) welcomeScreen.style.display = 'block';
+        if (chatMessages && chatMessages.children.length > 0) {
+            chatMessages.style.display = 'block';
+        }
+        
+        document.body.style.overflow = '';
     }
 
     createModal() {
-        // 메인 모달 컨테이너
-        const modalContainer = document.createElement('div');
-        modalContainer.className = 'user-test-main-container';
-        modalContainer.innerHTML = `
-            <div class="user-test-header">
-                <div class="user-test-title">화면 UT를 진행하고싶어.</div>
-            </div>
-            <div class="user-test-content" id="userTestContent">
-                <!-- 내용이 여기에 렌더링됩니다 -->
-            </div>
-        `;
+        // 기존 채팅 영역 숨기기
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const chatMessages = document.getElementById('chatMessages');
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        if (chatMessages) chatMessages.style.display = 'none';
         
-        document.body.appendChild(modalContainer);
-        this.modal = modalContainer;
+        // 채팅 영역에 User Test 컨텐츠 추가
+        const chatArea = document.getElementById('chatArea');
+        if (chatArea) {
+            const userTestContainer = document.createElement('div');
+            userTestContainer.className = 'user-test-container';
+            userTestContainer.id = 'userTestContainer';
+            userTestContainer.innerHTML = `
+                <div class="user-test-header">
+                    <div class="user-test-title">화면 UT를 진행하고싶어.</div>
+                </div>
+                <div class="user-test-content" id="userTestContent">
+                    <!-- 내용이 여기에 렌더링됩니다 -->
+                </div>
+            `;
+            
+            chatArea.appendChild(userTestContainer);
+            this.modal = userTestContainer;
+        }
         
         // 전역 참조 설정
         window.userTestModal = this;
@@ -147,9 +166,15 @@ class UserTestModal {
     }
 
     openSettingsModal() {
-        // AI 테스터 설정하기 모달
+        // AI 테스터 설정하기 모달 (중앙에 표시)
         const settingsOverlay = document.createElement('div');
         settingsOverlay.className = 'settings-modal-overlay';
+        settingsOverlay.onclick = (e) => {
+            if (e.target === settingsOverlay) {
+                this.closeSettingsModal();
+            }
+        };
+        
         settingsOverlay.innerHTML = `
             <div class="settings-modal-container">
                 <div class="settings-header">
@@ -167,6 +192,8 @@ class UserTestModal {
                             <button class="option-btn" data-value="20대">20대</button>
                             <button class="option-btn" data-value="30대">30대</button>
                             <button class="option-btn" data-value="40대">40대</button>
+                        </div>
+                        <div class="option-buttons">
                             <button class="option-btn" data-value="50대">50대</button>
                             <button class="option-btn" data-value="60대">60대</button>
                             <button class="option-btn" data-value="70대이상">70대 이상</button>
