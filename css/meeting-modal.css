@@ -1,0 +1,347 @@
+/* 회의실 예약 모달 스타일 */
+
+/* 오버레이 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+}
+
+/* 모달 컨테이너 */
+.meeting-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 680px;
+    max-width: 90vw;
+    max-height: 90vh;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0px 1px 16px 0px rgba(0, 0, 0, 0.05);
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.meeting-modal.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* 모달 헤더 */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e4e3;
+}
+
+.modal-title {
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.5;
+    color: #272b2f;
+    margin: 0;
+}
+
+.modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s;
+}
+
+.modal-close:hover {
+    opacity: 0.7;
+}
+
+.modal-close img {
+    width: 14px;
+    height: 14px;
+}
+
+/* 모달 서브타이틀 */
+.modal-subtitle {
+    padding: 16px 24px;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #5e5c5a;
+}
+
+/* 모달 바디 */
+.modal-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 폼 필드 */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label {
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #403f3e;
+    padding: 8px 0;
+}
+
+/* 선택 필드 */
+.select-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #ffffff;
+    border: 1px solid #d0cfce;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.select-field:hover {
+    border-color: #fa6600;
+}
+
+.select-value {
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #272b2f;
+}
+
+.select-arrow {
+    width: 20px;
+    height: 20px;
+}
+
+/* 참석자 선택 필드 */
+.participants-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #ffffff;
+    border: 1px solid #d0cfce;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 56px;
+}
+
+.participants-select:hover {
+    border-color: #fa6600;
+}
+
+.participants-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+}
+
+.participant-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #403f3e;
+}
+
+/* 시간 필드 */
+.time-field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.duration-select {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.duration-value {
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #403f3e;
+}
+
+.duration-select .select-arrow {
+    width: 16px;
+    height: 16px;
+}
+
+/* 시간 슬롯 */
+.time-slots {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.time-slot {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border: 1px solid #d0cfce;
+    border-radius: 15px;
+    background-color: #ffffff;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #403f3e;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.time-slot:hover {
+    border-color: #fa6600;
+    background-color: #fff5f0;
+}
+
+.time-slot.active {
+    background-color: #403f3e;
+    color: #ffffff;
+    border-color: #403f3e;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    padding: 0 24px 40px;
+    background: linear-gradient(to top, #ffffff 17.5%, transparent);
+}
+
+/* 버튼 스타일 */
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #fa6600;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #e55a00;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #403f3e;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e4e3;
+}
+
+/* 성공 메시지 */
+.success-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 40px;
+    background-color: #403f3e;
+    color: #ffffff;
+    border-radius: 8px;
+    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
+    font-size: 16px;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .meeting-modal {
+        width: calc(100vw - 32px);
+        max-height: calc(100vh - 32px);
+        border-radius: 20px;
+    }
+    
+    .modal-body {
+        padding: 16px;
+    }
+    
+    .modal-footer {
+        padding: 0 16px 24px;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .time-slots {
+        flex-wrap: wrap;
+    }
+    
+    .participants-tags {
+        max-width: 100%;
+    }
+}
