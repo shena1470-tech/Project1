@@ -1,0 +1,246 @@
+/* 모드 선택 드롭다운 스타일 */
+
+.mode-selector-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: max-content;
+    min-width: 280px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e4e3;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    padding: 8px;
+}
+
+.mode-selector-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mode-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white !important;
+    border: none;
+    color: #333333;
+}
+
+.mode-option:hover {
+    background: #f8f8f8 !important;
+}
+
+.mode-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mode-icon.report {
+    background: #266cc920;
+}
+
+.mode-icon.userTest {
+    background: #3f925220;
+}
+
+.mode-icon img {
+    width: 18px;
+    height: 18px;
+}
+
+.mode-details {
+    flex: 1;
+}
+
+.mode-title {
+    font-family: 'HanwhaGothic', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #333333;
+    margin: 0 0 2px 0;
+    line-height: 1.4;
+}
+
+.mode-description {
+    font-family: 'HanwhaGothic', sans-serif;
+    font-size: 12px;
+    color: #666666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* 선택된 모드 버튼 (모드 선택 버튼을 대체) */
+.selected-mode-button {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: 'HanwhaGothic', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.selected-mode-button.report {
+    background: #266cc920;
+    color: #266cc9;
+}
+
+.selected-mode-button.userTest {
+    background: #3f925220;
+    color: #3f9252;
+}
+
+.selected-mode-button:hover {
+    opacity: 0.8;
+}
+
+.selected-mode-button img {
+    width: 16px;
+    height: 16px;
+}
+
+/* 모드 선택 버튼 */
+.mode-selector-button {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: 'HanwhaGothic', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: #333333;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.mode-selector-button:hover {
+    background: #f0f0f0;
+}
+
+.mode-selector-button img {
+    width: 16px;
+    height: 16px;
+}
+
+/* 입력 컨테이너 수정 */
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg-neutral, #f5f5f5);
+    border: 1px solid var(--border-neutral-3, #e5e4e3);
+    border-radius: 32px;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+    gap: 8px;
+    min-height: 60px;
+}
+
+.input-container:focus-within {
+    border-color: var(--primary-color, #fa6600);
+    box-shadow: 0 0 0 2px rgba(250, 102, 0, 0.1);
+}
+
+.input-container .input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'HanwhaGothic', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--text-body, #333333);
+    min-width: 200px;
+}
+
+.input-container .input-field::placeholder {
+    color: var(--text-neutral-1, #908f8e);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .mode-selector-content {
+        max-width: none;
+        margin: 20px;
+        width: calc(100% - 40px);
+        padding: 24px 20px;
+    }
+
+    .mode-option {
+        padding: 16px 12px;
+        gap: 12px;
+    }
+
+    .mode-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .mode-title {
+        font-size: 15px;
+    }
+
+    .mode-description {
+        font-size: 13px;
+    }
+
+    .input-container .input-field {
+        min-width: 150px;
+    }
+}
+
+/* 다크 모드 대응 (향후 확장) */
+@media (prefers-color-scheme: dark) {
+    .mode-selector-content {
+        background: #2a2a2a;
+        color: white;
+    }
+
+    .mode-option {
+        background: #2a2a2a;
+        border-color: #404040;
+        color: white;
+    }
+
+    .mode-option:hover {
+        background: #333333;
+        border-color: #fa6600;
+    }
+
+    .mode-icon {
+        background: #404040;
+        border-color: #555555;
+    }
+}

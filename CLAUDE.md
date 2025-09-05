@@ -50,6 +50,7 @@ The application follows a state-driven pattern:
 - **`meeting-reservation.js`**: Legacy meeting reservation logic and workflow
 - **`calendar.js`**: Calendar component for schedule management
 - **`storage-manager.js`**: Centralized localStorage management
+- **`contact-detail-manager.js`**: Contact detail panel for staff information
 
 ### Key Technical Decisions
 - **No Framework**: Pure vanilla JavaScript for minimal dependencies and fast loading
@@ -231,3 +232,35 @@ Users have the following structure:
   timestamp: Date.now()
 }
 ```
+
+## Contact Detail Panel System
+
+### Architecture
+The contact detail panel (`contact-detail-manager.js`) provides a slide-in panel from the right side displaying detailed staff information when clicking on staff member names or cards.
+
+### Key Components
+- **ContactDetailManager Class**: Manages panel lifecycle and data population
+- **Panel Creation**: Dynamically creates HTML panel structure on initialization
+- **Data Integration**: Pulls from `SAMPLE_USERS_DATA`, `ORGANIZATION_DATA`, and `VacationManager`
+- **Event Handling**: Click outside to close, ESC key support, staff card integration
+
+### Usage Patterns
+- Click staff member name → `handleResponsibleNameClick()` → `ContactDetailManager.showContactDetail()`
+- Click "문의하기" button → `handleResponsibleCardClick()` → `startChatWithPerson()`
+- Panel displays: Basic info, contact details, responsibilities, skills, projects, work style, org chart
+
+### Debugging Notes
+If the contact detail panel doesn't appear:
+1. Check console for `ContactDetailManager` initialization
+2. Verify CSS classes: `.contact-detail-panel` and `.contact-detail-panel.active`
+3. Ensure z-index is high enough (currently set to 9999)
+4. Check event handlers are not immediately closing the panel after opening
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+      
+      IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.

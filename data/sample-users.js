@@ -424,6 +424,186 @@ const SAMPLE_USERS_DATA = {
             },
             skills: ["Digital Marketing", "Brand Management", "Analytics", "Team Management"],
             certifications: ["Digital Marketing Institute", "Google Ads", "Marketing Analytics"]
+        },
+        {
+            id: "user-008",
+            employeeId: "HW2023008",
+            name: "하하",
+            nameEn: "Ha Ha",
+            email: "haha@hanwhalife.com",
+            phone: "010-7890-1234",
+            department: "IT서비스팀",
+            team: "시스템운영파트",
+            position: "과장",
+            jobTitle: "시스템 관리자",
+            level: "L4",
+            joinDate: "2023-03-10",
+            birthDate: "1989-07-18",
+            avatar: "assets/avatars/haha.png",
+            status: "active",
+            location: {
+                office: "본사",
+                building: "63빌딩",
+                floor: "40F",
+                seat: "C-40-15"
+            },
+            manager: {
+                id: "user-006",
+                name: "정형돈",
+                position: "부장"
+            },
+            permissions: {
+                chat: true,
+                reports: true,
+                schedule: true,
+                board: true,
+                admin: false
+            },
+            preferences: {
+                theme: "light",
+                language: "ko",
+                fontSize: "medium",
+                notifications: {
+                    email: true,
+                    push: true,
+                    sms: false,
+                    desktop: true
+                },
+                workingHours: {
+                    start: "09:00",
+                    end: "18:00",
+                    timezone: "Asia/Seoul"
+                }
+            },
+            stats: {
+                lastLogin: "2024-01-15T08:30:00Z",
+                totalChats: 256,
+                documentsCreated: 72,
+                meetingsScheduled: 38,
+                averageResponseTime: 2.8
+            },
+            skills: ["System Administration", "Network Management", "Database", "Linux"],
+            certifications: ["CISSP", "RHCE", "Oracle DBA"]
+        },
+        {
+            id: "user-009",
+            employeeId: "HW2021009",
+            name: "황광희",
+            nameEn: "Hwang Kwang Hee",
+            email: "kwanghee.hwang@hanwhalife.com",
+            phone: "010-8901-2345",
+            department: "고객서비스팀",
+            team: "콜센터운영파트",
+            position: "대리",
+            jobTitle: "고객 상담 관리",
+            level: "L3",
+            joinDate: "2021-09-20",
+            birthDate: "1993-12-05",
+            avatar: "assets/avatars/hwang-kwanghee.png",
+            status: "active",
+            location: {
+                office: "본사",
+                building: "63빌딩",
+                floor: "35F",
+                seat: "B-35-28"
+            },
+            manager: {
+                id: "user-005",
+                name: "정준하",
+                position: "차장"
+            },
+            permissions: {
+                chat: true,
+                reports: true,
+                schedule: true,
+                board: true,
+                admin: false
+            },
+            preferences: {
+                theme: "light",
+                language: "ko",
+                fontSize: "large",
+                notifications: {
+                    email: true,
+                    push: true,
+                    sms: true,
+                    desktop: false
+                },
+                workingHours: {
+                    start: "09:00",
+                    end: "18:00",
+                    timezone: "Asia/Seoul"
+                }
+            },
+            stats: {
+                lastLogin: "2024-01-15T09:45:00Z",
+                totalChats: 687,
+                documentsCreated: 134,
+                meetingsScheduled: 67,
+                averageResponseTime: 1.5
+            },
+            skills: ["Customer Service", "Communication", "CRM Systems", "Problem Solving"],
+            certifications: ["고객상담사", "서비스품질관리사", "콜센터상담원"]
+        },
+        {
+            id: "user-010",
+            employeeId: "HW2020010",
+            name: "길",
+            nameEn: "Gil",
+            email: "gil@hanwhalife.com",
+            phone: "010-9012-3456",
+            department: "기획관리팀",
+            team: "전략기획파트",
+            position: "과장",
+            jobTitle: "사업 전략 기획",
+            level: "L4",
+            joinDate: "2020-06-15",
+            birthDate: "1987-11-20",
+            avatar: "assets/avatars/gil.png",
+            status: "active",
+            location: {
+                office: "본사",
+                building: "63빌딩",
+                floor: "50F",
+                seat: "A-50-12"
+            },
+            manager: {
+                id: "user-004",
+                name: "박명수",
+                position: "차장"
+            },
+            permissions: {
+                chat: true,
+                reports: true,
+                schedule: true,
+                board: true,
+                admin: false
+            },
+            preferences: {
+                theme: "dark",
+                language: "ko",
+                fontSize: "small",
+                notifications: {
+                    email: true,
+                    push: false,
+                    sms: true,
+                    desktop: true
+                },
+                workingHours: {
+                    start: "08:30",
+                    end: "17:30",
+                    timezone: "Asia/Seoul"
+                }
+            },
+            stats: {
+                lastLogin: "2024-01-15T08:15:00Z",
+                totalChats: 445,
+                documentsCreated: 189,
+                meetingsScheduled: 98,
+                averageResponseTime: 3.1
+            },
+            skills: ["Strategic Planning", "Business Analysis", "Project Management", "Market Research"],
+            certifications: ["전략기획사", "경영지도사", "PMP"]
         }
     ],
     

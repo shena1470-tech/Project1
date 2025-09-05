@@ -236,8 +236,6 @@ body {
 
 .chat-history-item .chat-preview {
     font-size: 11px;
-    font-weight: 300;
-    color: #7e7c7a;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -246,7 +244,6 @@ body {
 
 .chat-history-item .chat-time {
     font-size: 10px;
-    font-weight: 300;
     color: #b4b3b2;
     margin-top: 8px;
     font-family: 'HanwhaGothic', sans-serif;
@@ -920,7 +917,6 @@ body {
 
 .message-text {
     font-size: 18px;
-    font-weight: 300;
     color: var(--color-text-primary);
     line-height: 1.5;
     margin: 0;

@@ -344,6 +344,12 @@ function sendMessage() {
 
     if (!message) return;
 
+    // 선택된 모드 확인
+    const currentMode = getCurrentMode ? getCurrentMode() : null;
+    if (currentMode) {
+        console.log('선택된 모드:', currentMode.name);
+    }
+
     // 새 채팅이면 ChatManager에 새 세션 생성
     if (!currentChatId && currentUser) {
         currentChatId = chatManager.createNewChat(currentUser.id);
@@ -356,14 +362,19 @@ function sendMessage() {
     }
 
     // 사용자 메시지 추가
-    addUserMessage(message);
+    addUserMessage(message, currentMode);
 
     // 입력 필드 초기화
     input.value = '';
+    
+    // 모드 선택 해제 (필요한 경우)
+    if (currentMode && typeof clearSelectedMode === 'function') {
+        clearSelectedMode();
+    }
 
     // AI 응답 시뮬레이션
     setTimeout(() => {
-        addAIResponse(message);
+        addAIResponse(message, currentMode);
     }, 1000);
 }
 
@@ -396,24 +407,37 @@ function initiateChatMode() {
 }
 
 // 사용자 메시지 추가
-function addUserMessage(text) {
-    renderUserMessage(text);
+function addUserMessage(text, mode = null) {
+    renderUserMessage(text, mode);
 
-    messages.push({ type: 'user', text: text });
+    const messageData = { 
+        type: 'user', 
+        text: text,
+        mode: mode ? { id: mode.id, name: mode.name, icon: mode.icon } : null
+    };
+    messages.push(messageData);
 
     // ChatManager에 저장
     if (currentUser && currentChatId) {
-        chatManager.addMessage(currentUser.id, currentChatId, 'user', text);
+        chatManager.addMessage(currentUser.id, currentChatId, 'user', text, mode);
         updateChatHistory();
     }
 }
 
 // 사용자 메시지 렌더링
-function renderUserMessage(text) {
+function renderUserMessage(text, mode = null) {
+    const modeTag = mode ? `
+        <div class="message-mode-tag" style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px; color: rgba(255, 255, 255, 0.8); font-size: 12px;">
+            <img src="${mode.icon}" alt="${mode.name}" style="width: 14px; height: 14px;" />
+            <span>${mode.name}</span>
+        </div>
+    ` : '';
+    
     const messageHtml = `
         <div class="message-container user-message" style="justify-content: flex-end;">
             <div class="message-bubble" style="background: linear-gradient(135deg, #fa6600, #ff8833); color: white; padding: 12px 20px; border-radius: 18px; max-width: 70%;">
-                <p class="message-text" style="color: white; font-size: 16px;">${escapeHtml(text)}</p>
+                ${modeTag}
+                <p class="message-text" style="color: white; font-size: 16px; margin: 0;">${escapeHtml(text)}</p>
             </div>
         </div>
     `;
@@ -423,7 +447,7 @@ function renderUserMessage(text) {
 }
 
 // AI 응답 추가
-function addAIResponse(userMessage) {
+function addAIResponse(userMessage, mode = null) {
     // 상태카드 관련 요청 처리
     const statusCardResponse = handleStatusCardRequest(userMessage);
     if (statusCardResponse) {

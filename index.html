@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/status-card.css">
     <link rel="stylesheet" href="css/vacation-card.css">
     <link rel="stylesheet" href="css/contact-detail-panel.css">
+    <link rel="stylesheet" href="css/mode-selector.css">
 </head>
 <body>
     <!-- 모바일 메뉴 토글 -->
@@ -84,6 +85,10 @@
                         <div class="input-container">
                             <button class="input-plus-button" onclick="showAttachments()">
                                 <span class="plus-icon"></span>
+                            </button>
+                            <button class="mode-selector-button" onclick="handleModeSelectorClick()" title="모드 선택">
+                                <img src="assets/icons/mode-selector.svg" alt="모드 선택" />
+                                <span>모드 선택</span>
                             </button>
                             <input
                                 type="text"
@@ -166,6 +171,7 @@
     <script src="js/meeting-reservation-ui.js"></script>
     <script src="js/meeting-modal.js"></script>
     <script src="js/contact-detail-manager.js"></script>
+    <script src="js/mode-selector.js"></script>
     <script src="js/hanwha-app.js"></script>
 </body>
 </html>
