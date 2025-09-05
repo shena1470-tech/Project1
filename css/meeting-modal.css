@@ -1,347 +1,362 @@
-/* 회의실 예약 모달 스타일 */
+/* 회의실 예약 모달 - 피그마 디자인 스타일 */
 
-/* 오버레이 */
-.modal-overlay {
+/* 모달 오버레이 */
+.meeting-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9998;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-}
-
-/* 모달 컨테이너 */
-.meeting-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.95);
-    width: 680px;
-    max-width: 90vw;
-    max-height: 90vh;
-    background-color: #ffffff;
-    border-radius: 30px;
-    box-shadow: 0px 1px 16px 0px rgba(0, 0, 0, 0.05);
-    z-index: 9999;
-    opacity: 0;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.meeting-modal.active {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-/* 모달 헤더 */
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 24px;
-    border-bottom: 1px solid #e5e4e3;
-}
-
-.modal-title {
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 1.5;
-    color: #272b2f;
-    margin: 0;
-}
-
-.modal-close {
-    width: 28px;
-    height: 28px;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 모달 컨테이너 */
+.meeting-modal-container {
+    background: white;
+    border-radius: 30px;
+    width: 680px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 1px 16px 0px rgba(0, 0, 0, 0.05);
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 모달 헤더 */
+.meeting-modal-header {
+    padding: 16px 24px 0;
+}
+
+.meeting-modal-title-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+}
+
+.meeting-modal-title {
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #272b2f;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.meeting-modal-close {
+    width: 28px;
+    height: 28px;
     border: none;
     background: none;
     cursor: pointer;
     padding: 0;
-    transition: opacity 0.2s;
-}
-
-.modal-close:hover {
-    opacity: 0.7;
-}
-
-.modal-close img {
-    width: 14px;
-    height: 14px;
-}
-
-/* 모달 서브타이틀 */
-.modal-subtitle {
-    padding: 16px 24px;
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 300;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #5e5c5a;
-}
-
-/* 모달 바디 */
-.modal-body {
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* 폼 필드 */
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.field-label {
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #403f3e;
-    padding: 8px 0;
-}
-
-/* 선택 필드 */
-.select-field {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 16px;
-    background-color: #ffffff;
-    border: 1px solid #d0cfce;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
+    justify-content: center;
 }
 
-.select-field:hover {
-    border-color: #fa6600;
-}
-
-.select-value {
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #272b2f;
-}
-
-.select-arrow {
+.meeting-modal-close img {
     width: 20px;
     height: 20px;
 }
 
-/* 참석자 선택 필드 */
-.participants-select {
+.meeting-modal-subtitle {
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: #5e5c5a;
+    line-height: 1.5;
+    margin: 0 0 36px 0;
+}
+
+/* 모달 바디 */
+.meeting-modal-body {
+    padding: 0 24px;
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 76px; /* footer 높이만큼 여백 */
+}
+
+/* 필드 스타일 */
+.meeting-modal-field {
+    margin-bottom: 16px;
+}
+
+.meeting-modal-label {
+    display: block;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    color: #403f3e;
+    margin-bottom: 12px;
+    padding: 16px 0 0;
+}
+
+.meeting-modal-label-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 16px;
-    background-color: #ffffff;
+    justify-content: space-between;
+    padding: 16px 0 0;
+    margin-bottom: 12px;
+}
+
+.meeting-modal-label-row .meeting-modal-label {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/* 선택 박스 */
+.meeting-modal-select {
+    position: relative;
+    background: white;
     border: 1px solid #d0cfce;
     border-radius: 8px;
+    padding: 16px;
     cursor: pointer;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     min-height: 56px;
 }
 
-.participants-select:hover {
-    border-color: #fa6600;
+.meeting-modal-select span {
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    color: #272b2f;
+    flex: 1;
 }
 
-.participants-tags {
+.meeting-modal-placeholder {
+    color: #908f8e !important;
+}
+
+.meeting-modal-arrow {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* 참석자 태그 */
+.meeting-modal-attendees-display {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     flex: 1;
 }
 
-.participant-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    background-color: #f0f0f0;
+.meeting-modal-attendee-tag {
+    background: #f0f0f0;
     border-radius: 15px;
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 300;
+    padding: 6px 12px;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: 14px;
-    line-height: 1.5;
     color: #403f3e;
+    display: inline-block;
 }
 
-/* 시간 필드 */
-.time-field-header {
+/* 드롭다운 */
+.meeting-modal-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d0cfce;
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.meeting-modal-dropdown-small {
+    width: auto;
+    min-width: 120px;
+    right: auto;
+}
+
+.meeting-modal-dropdown-option {
+    padding: 12px 16px;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    color: #272b2f;
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 8px;
 }
 
-.duration-select {
+.meeting-modal-dropdown-option:hover {
+    background: #f5f5f5;
+}
+
+.meeting-modal-dropdown-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* 시간 선택 */
+.meeting-modal-duration {
     display: flex;
     align-items: center;
     gap: 4px;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.duration-value {
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 300;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: 14px;
-    line-height: 1.5;
     color: #403f3e;
+    cursor: pointer;
+    position: relative;
 }
 
-.duration-select .select-arrow {
+.meeting-modal-duration span {
+    font-size: 14px;
+}
+
+.meeting-modal-duration .meeting-modal-arrow {
     width: 16px;
     height: 16px;
 }
 
-/* 시간 슬롯 */
-.time-slots {
+.meeting-modal-time-buttons {
     display: flex;
     gap: 8px;
     padding: 8px 0;
 }
 
-.time-slot {
-    flex: 0 0 auto;
+.meeting-modal-time-button {
     padding: 8px 16px;
-    border: 1px solid #d0cfce;
     border-radius: 15px;
-    background-color: #ffffff;
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 300;
+    border: 1px solid #d0cfce;
+    background: white;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: 16px;
-    line-height: 1.5;
     color: #403f3e;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
-.time-slot:hover {
-    border-color: #fa6600;
-    background-color: #fff5f0;
+.meeting-modal-time-button:hover {
+    background: #f5f5f5;
 }
 
-.time-slot.active {
-    background-color: #403f3e;
-    color: #ffffff;
+.meeting-modal-time-button.active {
+    background: #403f3e;
+    color: white;
     border-color: #403f3e;
 }
 
 /* 모달 푸터 */
-.modal-footer {
+.meeting-modal-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 0 0 30px 30px;
+}
+
+.meeting-modal-footer-gradient {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 17.5%, rgba(255, 255, 255, 0));
+    pointer-events: none;
+}
+
+.meeting-modal-buttons {
     display: flex;
     gap: 8px;
     padding: 0 24px 40px;
-    background: linear-gradient(to top, #ffffff 17.5%, transparent);
 }
 
-/* 버튼 스타일 */
-.btn-primary,
-.btn-secondary {
+.meeting-modal-button {
     flex: 1;
     padding: 16px;
-    border: none;
     border-radius: 8px;
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-weight: 400;
+    border: none;
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: 16px;
-    line-height: 1.5;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    text-align: center;
 }
 
-.btn-primary {
-    background-color: #fa6600;
-    color: #ffffff;
+.meeting-modal-button-primary {
+    background: #fa6600;
+    color: white;
 }
 
-.btn-primary:hover {
-    background-color: #e55a00;
+.meeting-modal-button-primary:hover {
+    background: #e55a00;
 }
 
-.btn-secondary {
-    background-color: #f0f0f0;
+.meeting-modal-button-secondary {
+    background: #f0f0f0;
     color: #403f3e;
 }
 
-.btn-secondary:hover {
-    background-color: #e5e4e3;
+.meeting-modal-button-secondary:hover {
+    background: #e5e5e5;
 }
 
-/* 성공 메시지 */
-.success-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px 40px;
-    background-color: #403f3e;
-    color: #ffffff;
-    border-radius: 8px;
-    font-family: 'HanwhaGothic', 'Pretendard', sans-serif;
-    font-size: 16px;
-    z-index: 10000;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-/* 반응형 디자인 */
+/* 반응형 스타일 */
 @media (max-width: 768px) {
-    .meeting-modal {
-        width: calc(100vw - 32px);
-        max-height: calc(100vh - 32px);
+    .meeting-modal-container {
+        width: 95vw;
+        max-height: 95vh;
         border-radius: 20px;
     }
     
-    .modal-body {
-        padding: 16px;
+    .meeting-modal-header {
+        padding: 12px 16px 0;
     }
     
-    .modal-footer {
+    .meeting-modal-body {
+        padding: 0 16px;
+    }
+    
+    .meeting-modal-buttons {
         padding: 0 16px 24px;
     }
     
-    .btn-primary,
-    .btn-secondary {
+    .meeting-modal-button {
         font-size: 14px;
-        padding: 12px;
+        padding: 14px;
     }
     
-    .time-slots {
+    .meeting-modal-time-buttons {
         flex-wrap: wrap;
     }
     
-    .participants-tags {
-        max-width: 100%;
+    .meeting-modal-time-button {
+        flex: 0 0 calc(50% - 4px);
     }
 }
