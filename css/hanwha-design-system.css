@@ -163,6 +163,21 @@ body {
     object-fit: contain;
 }
 
+.sidebar-header .hanwha-app-name {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.sidebar-header .hanwha-app-name-text {
+    font-family: 'HanwhaGothic', 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #272b2f;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
 .logo-icon {
     width: 32px;
     height: 32px;
@@ -536,13 +551,6 @@ body {
     align-items: center;
     gap: 20px;
     margin-bottom: 16px;
-}
-
-/* Header Greeting */
-.header-greeting {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
 }
 
 .greeting-text {

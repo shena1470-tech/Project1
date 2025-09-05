@@ -97,12 +97,6 @@ function updateUserDisplay() {
         headerUserAvatar.textContent = currentUser.name ? currentUser.name[0] : '?';
     }
 
-    // 헤더 인사말 업데이트 (왼쪽 상단)
-    const greetingText = document.querySelector('.header-greeting .greeting-text');
-    if (greetingText) {
-        greetingText.textContent = `${currentUser.name}${currentUser.position}`;
-    }
-
     // 유저 프로필 클릭 이벤트
     const userProfile = document.querySelector('.user-profile');
     if (userProfile) {

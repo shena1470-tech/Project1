@@ -14,7 +14,7 @@
             overflow: auto;
             background: #f9fafb;
         }
-        
+
         .calendar-container {
             background: white;
             border-radius: var(--radius-lg);
@@ -24,7 +24,7 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .calendar-header {
             display: flex;
             align-items: center;
@@ -35,7 +35,7 @@
             flex-wrap: wrap;
             gap: var(--spacing-md);
         }
-        
+
         /* 일정 추가 버튼 스타일 오버라이드 */
         .add-schedule-btn {
             display: flex;
@@ -52,21 +52,21 @@
             transition: all 0.2s ease;
             white-space: nowrap;
         }
-        
+
         .add-schedule-btn:hover {
             background: #e55a00;
             border-color: #e55a00;
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(250, 102, 0, 0.3);
         }
-        
+
         .add-schedule-btn svg {
             width: 16px;
             height: 16px;
             stroke: white;
             stroke-width: 2;
         }
-        
+
         /* 뷰 토글 버튼 스타일 */
         .calendar-view-toggle {
             display: flex;
@@ -75,7 +75,7 @@
             padding: 4px;
             border-radius: 8px;
         }
-        
+
         .view-btn {
             padding: 8px 16px;
             background: transparent;
@@ -87,36 +87,36 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .view-btn:hover {
             color: #333;
         }
-        
+
         .view-btn.active {
             background: white;
             color: #FA6600;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        
+
         @media (max-width: 768px) {
             .calendar-page-content {
                 padding: var(--spacing-md);
             }
-            
+
             .calendar-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: var(--spacing-sm);
             }
-            
+
             .calendar-controls {
                 justify-content: center;
             }
-            
+
             .calendar-view-toggle {
                 justify-content: center;
             }
-            
+
             .add-schedule-btn {
                 width: 100%;
                 justify-content: center;
@@ -171,15 +171,12 @@
                 </div>
             </nav>
         </aside>
-        
+
         <!-- 메인 콘텐츠 영역 -->
         <main class="main-content">
             <!-- 상단 헤더 -->
             <header class="top-header">
                 <div class="header-actions">
-                    <div class="header-greeting">
-                        <span class="greeting-text">김한화사원</span>
-                    </div>
                     <button class="notification-button" onclick="showNotifications()" aria-label="알림">
                         <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                             <path d="M14 2C10.686 2 8 4.686 8 8C8 11.314 8 15 6 17H22C20 15 20 11.314 20 8C20 4.686 17.314 2 14 2Z" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -195,7 +192,7 @@
                     </div>
                 </div>
             </header>
-            
+
             <!-- 캘린더 페이지 콘텐츠 -->
             <div class="calendar-page-content">
                 <div class="calendar-container">
@@ -214,13 +211,13 @@
                                 </svg>
                             </button>
                         </div>
-                        
+
                         <div class="calendar-view-toggle">
                             <button class="view-btn active" data-view="month" onclick="changeView('month')">월</button>
                             <button class="view-btn" data-view="week" onclick="changeView('week')">주</button>
                             <button class="view-btn" data-view="day" onclick="changeView('day')">일</button>
                         </div>
-                        
+
                         <button class="add-schedule-btn" onclick="openScheduleModal()">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M8 3v10M3 8h10" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -228,7 +225,7 @@
                             일정 추가
                         </button>
                     </div>
-                    
+
                     <!-- 캘린더 컨텐츠 -->
                     <div id="calendarContent" class="calendar-content">
                         <!-- 캘린더 뷰가 여기에 렌더링됩니다 -->
@@ -243,7 +240,7 @@
     <script src="data/sample-sampleData.js"></script>
     <script src="data/sample-users.js"></script>
     <script src="data/sample-chat-history.js"></script>
-    
+
     <!-- JavaScript 파일들 -->
     <script src="js/storage-manager.js"></script>
     <script src="js/chat-manager.js"></script>
@@ -254,7 +251,7 @@
             // 새 대화 시작 - 메인 페이지로 이동
             window.location.href = 'index.html';
         }
-        
+
         function showGuide() {
             alert('가이드 기능은 준비중입니다.');
         }
@@ -262,16 +259,16 @@
         function showSettings() {
             alert('설정 기능은 준비중입니다.');
         }
-        
+
         function showNotifications() {
             alert('알림 기능은 준비중입니다.');
         }
-        
+
         // 모바일 사이드바 토글
         function toggleMobileSidebar() {
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.mobile-sidebar-overlay');
-            
+
             if (sidebar.classList.contains('mobile-open')) {
                 closeMobileSidebar();
             } else {
@@ -280,21 +277,21 @@
                 document.body.style.overflow = 'hidden';
             }
         }
-        
+
         function closeMobileSidebar() {
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.mobile-sidebar-overlay');
-            
+
             sidebar.classList.remove('mobile-open');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
-        
+
         // 채팅 히스토리 로드 - chatManager 사용
         function loadChatHistory() {
             const chatHistoryList = document.getElementById('chatHistoryList');
             if (!chatHistoryList) return;
-            
+
             // 현재 사용자 가져오기
             let currentUserId = null;
             try {
@@ -309,12 +306,12 @@
             } catch (e) {
                 console.error('현재 사용자 ID 조회 실패:', e);
             }
-            
+
             // 기본 사용자 설정
             if (!currentUserId && typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users) {
                 currentUserId = SAMPLE_USERS_DATA.users[0].id;
             }
-            
+
             if (!currentUserId) {
                 chatHistoryList.innerHTML = `
                     <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
@@ -323,11 +320,11 @@
                 `;
                 return;
             }
-            
+
             // chatManager를 사용해서 채팅 히스토리 로드
             if (typeof chatManager !== 'undefined') {
                 const recentChats = chatManager.getRecentChats(currentUserId, 10);
-                
+
                 if (recentChats.length === 0) {
                     chatHistoryList.innerHTML = `
                         <div style="padding: 12px; color: #999; text-align: center; font-size: 14px;">
@@ -336,13 +333,13 @@
                     `;
                     return;
                 }
-                
+
                 chatHistoryList.innerHTML = recentChats.map(chat => {
                     // 마지막 메시지 가져오기
                     const lastMessage = chat.messages && chat.messages.length > 0
                         ? chat.messages[chat.messages.length - 1].text
                         : '대화를 시작하세요';
-                    
+
                     return `
                         <div class="chat-history-item" onclick="goToChat('${chat.id}')">
                             <div class="chat-title">${escapeHtml(chat.title)}</div>
@@ -362,14 +359,14 @@
                 setTimeout(loadChatHistory, 500);
             }
         }
-        
+
         // 채팅으로 이동
         function goToChat(chatId) {
             // 채팅 ID를 세션 스토리지에 저장하고 메인 페이지로 이동
             sessionStorage.setItem('loadChatId', chatId);
             window.location.href = 'index.html';
         }
-        
+
         // HTML 이스케이프
         function escapeHtml(text) {
             if (!text) return '';
@@ -382,14 +379,14 @@
             };
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
-        
+
         // 날짜 포맷팅 (hanwha-app.js와 동일한 로직)
         function formatDate(isoString) {
             if (!isoString) return '';
             const date = new Date(isoString);
             const now = new Date();
             const diff = now - date;
-            
+
             // 1분 미만
             if (diff < 60000) {
                 return '방금 전';
@@ -410,9 +407,9 @@
                 return `${days}일 전`;
             }
             // 그 외는 날짜 형식으로
-            return date.toLocaleDateString('ko-KR', { 
-                month: 'short', 
-                day: 'numeric' 
+            return date.toLocaleDateString('ko-KR', {
+                month: 'short',
+                day: 'numeric'
             });
         }
 
@@ -422,14 +419,14 @@
             if (typeof initCalendar === 'function') {
                 initCalendar();
             }
-            
+
             // 채팅 히스토리 로드
             loadChatHistory();
-            
+
             // 사용자 정보 로드
             try {
                 let currentUserId = null;
-                
+
                 // storageManager가 있으면 사용, 없으면 localStorage 직접 접근
                 if (typeof storageManager !== 'undefined') {
                     currentUserId = storageManager.getCurrentUserId();
@@ -439,7 +436,7 @@
                         currentUserId = JSON.parse(currentUserId);
                     }
                 }
-                
+
                 // 사용자 정보 찾기
                 if (currentUserId && typeof SAMPLE_USERS_DATA !== 'undefined' && SAMPLE_USERS_DATA.users) {
                     const user = SAMPLE_USERS_DATA.users.find(u => u.id === currentUserId);
@@ -504,12 +501,12 @@
                     userNameEl.textContent = '게스트';
                 }
             }
-            
+
             // 테마 로드
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
         });
-        
+
     </script>
 </body>
 </html>
