@@ -22,3 +22,5 @@ yarn-error.log*
 
 tsconfig.tsbuildinfo
 .eslintcache
+
+.playwright-mcp
