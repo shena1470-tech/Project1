@@ -3,7 +3,6 @@
 // 상태 관리
 let chatStarted = false;
 let messages = [];
-let currentTheme = 'light';
 let currentUser = null;
 let usersData = [];
 let currentChatId = null;
@@ -752,41 +751,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 테마 관련 함수
-function initTheme() {
-    // StorageManager를 통해 저장된 테마 확인
-    currentTheme = storageManager.getTheme('light');
-    
-    // 테마 적용
-    if (currentTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-    }
-}
-
-// 테마 전환
-function toggleTheme() {
-    if (currentTheme === 'light') {
-        currentTheme = 'dark';
-        document.body.classList.add('dark-mode');
-    } else {
-        currentTheme = 'light';
-        document.body.classList.remove('dark-mode');
-    }
-    
-    // StorageManager를 통해 저장
-    storageManager.setTheme(currentTheme);
-    
-    // 애니메이션 효과
-    const toggleBtn = document.querySelector('.theme-toggle');
-    if (toggleBtn) {
-        toggleBtn.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            toggleBtn.style.transform = '';
-        }, 200);
-    }
-}
 
 // 회의실 예약 시스템 활성화
 function activateMeetingReservation() {
@@ -920,8 +884,3 @@ function showNotifications() {
     }, 100);
 }
 
-// 시스템 테마 변경 감지 (선택적 - 사용자가 수동으로 설정하지 않은 경우에만)
-// 기본은 라이트 모드를 유지하고, 사용자가 원할 때만 다크모드 전환 가능
-
-// 초기화
-document.addEventListener('DOMContentLoaded', initTheme);

@@ -66,18 +66,6 @@
     --transition-slow: all 0.35s ease;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-    :root.dark {
-        --color-background: #1a1a1a;
-        --color-surface: #2a2a2a;
-        --color-text-primary: #ffffff;
-        --color-text-secondary: #e0e0e0;
-        --color-border-light: #404040;
-        --color-border-medium: #505050;
-        --color-neutral-100: #333333;
-    }
-}
 
 /* Reset & Base Styles */
 * {
@@ -985,51 +973,6 @@ body {
     display: block;
 }
 
-/* Dark Mode Toggle Button */
-.theme-toggle {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: white;
-    border: 1px solid var(--color-border-light);
-    box-shadow: var(--shadow-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition-normal);
-    z-index: 90;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-lg);
-}
-
-.theme-toggle-icon {
-    width: 24px;
-    height: 24px;
-    transition: var(--transition-normal);
-}
-
-.sun-icon {
-    display: block;
-}
-
-.moon-icon {
-    display: none;
-}
-
-body.dark .sun-icon {
-    display: none;
-}
-
-body.dark .moon-icon {
-    display: block;
-}
 
 /* Notification Dropdown */
 .notification-dropdown {
@@ -1235,12 +1178,6 @@ body.dark .moon-icon {
         padding: 10px;
     }
 
-    .theme-toggle {
-        width: 40px;
-        height: 40px;
-        bottom: 16px;
-        right: 16px;
-    }
 }
 
 /* Bottom Input Area */
@@ -1389,7 +1326,6 @@ input:focus-visible {
 @media print {
     .sidebar,
     .mobile-menu-toggle,
-    .theme-toggle,
     .quick-actions,
     .input-wrapper {
         display: none !important;
