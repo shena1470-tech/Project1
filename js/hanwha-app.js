@@ -509,11 +509,12 @@ function addAIResponse(userMessage) {
 
             // 회의실 담당자 카드 추가
             const facilityPerson = {
-                name: '이정은',
-                position: '대리',
-                department: '총무팀',
-                email: 'jungeun.lee@hanwhalife.com',
-                phone: '02-789-3456',
+                id: 'user-006',
+                name: '정형돈',
+                position: '부장',
+                department: '시설관리팀',
+                email: 'hyungdon.jung@hanwhalife.com',
+                phone: '010-5678-9012',
                 extension: '3456'
             };
             const responsibleCard = createResponsibleCard(facilityPerson);
@@ -551,11 +552,12 @@ function addAIResponse(userMessage) {
 
     // 일반 질문에 대한 기본 담당자 (AI 비서 지원팀)
     const defaultPerson = {
-        name: '김지원',
+        id: 'user-001',
+        name: '김동준',
         position: '과장',
         department: 'IT서비스팀',
-        email: 'jiwon.kim@hanwhalife.com',
-        phone: '02-789-5678',
+        email: 'dongjun.kim@hanwhalife.com',
+        phone: '010-1234-5678',
         extension: '5678'
     };
     const responsibleCard = createResponsibleCard(defaultPerson);
@@ -725,10 +727,10 @@ function createResponsibleCard(person) {
         <div class="message-container">
             <div class="ai-avatar"></div>
             <div class="responsible-card">
-                <div class="responsible-avatar" onclick="handleResponsibleNameClick('${person.id || person.name}')">${initial}</div>
+                <div class="responsible-avatar" onclick="handleResponsibleNameClick('${person.id || person.name}', event)">${initial}</div>
                 <div class="responsible-info">
                     <div class="responsible-header">
-                        <span class="responsible-name" onclick="handleResponsibleNameClick('${person.id || person.name}')" style="cursor: pointer; text-decoration: underline; color: #fa6600;">${person.name}</span>
+                        <span class="responsible-name" onclick="handleResponsibleNameClick('${person.id || person.name}', event)" style="cursor: pointer; text-decoration: underline; color: #fa6600;">${person.name}</span>
                         <span class="responsible-position">${person.position}</span>
                     </div>
                     <div class="responsible-department">${person.department}</div>
@@ -746,8 +748,17 @@ function createResponsibleCard(person) {
 }
 
 // 담당자 이름 클릭 처리 - 상세정보 패널 표시
-function handleResponsibleNameClick(personIdentifier) {
+function handleResponsibleNameClick(personIdentifier, event) {
     console.log('담당자 이름 클릭:', personIdentifier);
+    console.log('SAMPLE_USERS_DATA available:', !!window.SAMPLE_USERS_DATA);
+    console.log('ORGANIZATION_DATA available:', !!window.ORGANIZATION_DATA);
+    
+    // 이벤트 전파 중지
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log('이벤트 전파 중지됨');
+    }
 
     // personIdentifier가 ID인지 이름인지 확인
     let contactId = personIdentifier;
@@ -772,10 +783,15 @@ function handleResponsibleNameClick(personIdentifier) {
     }
 
     // 담당자 상세정보 패널 표시
+    console.log('contactDetailManager 확인:', window.contactDetailManager);
+    console.log('최종 contactId:', contactId);
+    
     if (window.contactDetailManager) {
         window.contactDetailManager.showContactDetail(contactId);
     } else {
-        console.error('ContactDetailManager를 찾을 수 없습니다.');
+        console.error('ContactDetailManager를 찾을 수 없습니다. contactDetailManager가 로드되었는지 확인하세요.');
+        // 대체 방안으로 알림 표시
+        alert(`담당자 정보를 로드 중입니다.\n${personIdentifier}의 상세정보는 잠시 후 표시됩니다.`);
     }
 }
 
@@ -783,8 +799,76 @@ function handleResponsibleNameClick(personIdentifier) {
 function handleResponsibleCardClick(personIdentifier) {
     console.log('문의하기 버튼 클릭:', personIdentifier);
 
-    // 먼저 이름 클릭과 동일하게 상세정보 패널을 표시
-    handleResponsibleNameClick(personIdentifier);
+    // 직접 채팅 시작하기
+    startChatWithPerson(personIdentifier);
+}
+
+// 특정 담당자와 채팅 시작 함수
+function startChatWithPerson(personIdentifier) {
+    // personIdentifier가 ID인지 이름인지 확인
+    let contactId = personIdentifier;
+    let userData = null;
+
+    // 이름으로 전달된 경우 ID를 찾아야 함
+    if (personIdentifier && !personIdentifier.startsWith('user-')) {
+        // SAMPLE_USERS_DATA에서 이름으로 ID 찾기
+        const allUsers = window.SAMPLE_USERS_DATA?.users || [];
+        const user = allUsers.find(u => u.name === personIdentifier);
+        if (user) {
+            contactId = user.id;
+            userData = user;
+        } else {
+            // 매니저 데이터에서도 찾아보기
+            const managers = window.ORGANIZATION_DATA?.managers || {};
+            for (const [managerId, managerInfo] of Object.entries(managers)) {
+                if (managerInfo.name === personIdentifier) {
+                    contactId = managerId;
+                    userData = managerInfo;
+                    break;
+                }
+            }
+        }
+    } else {
+        // ID로 전달된 경우 사용자 데이터 찾기
+        const allUsers = window.SAMPLE_USERS_DATA?.users || [];
+        userData = allUsers.find(u => u.id === contactId);
+        if (!userData) {
+            const managers = window.ORGANIZATION_DATA?.managers || {};
+            userData = managers[contactId];
+        }
+    }
+
+    if (!userData) {
+        console.error('사용자 데이터를 찾을 수 없습니다:', personIdentifier);
+        alert('담당자 정보를 찾을 수 없습니다.');
+        return;
+    }
+
+    // 채팅 모드로 전환
+    if (typeof initiateChatMode === 'function') {
+        initiateChatMode();
+    }
+
+    // 담당자와의 채팅 시작 메시지 추가
+    const chatMessage = `${userData.name} ${userData.position}님과의 문의를 시작합니다.`;
+    
+    setTimeout(() => {
+        if (typeof addUserMessage === 'function') {
+            addUserMessage(chatMessage);
+        }
+        
+        // AI 응답 (담당자 정보 기반)
+        setTimeout(() => {
+            const orgDetails = window.ORGANIZATION_DATA?.contactDetails?.[contactId];
+            const responsibilities = orgDetails?.responsibilities?.slice(0, 3) || ['업무 정보를 불러오는 중입니다...'];
+            
+            const aiResponse = `안녕하세요! ${userData.name} ${userData.position}입니다. 무엇을 도와드릴까요? 😊\n\n제가 담당하고 있는 업무는 다음과 같습니다:\n${responsibilities.map(r => `• ${r}`).join('\n')}`;
+            
+            if (typeof addAIResponse === 'function') {
+                addAIResponse(aiResponse);
+            }
+        }, 1500);
+    }, 300);
 }
 
 // 회의 관련 요청 처리
@@ -1711,11 +1795,12 @@ function renderStatusCards(response) {
         renderAIMessage('해당하는 프로젝트를 찾을 수 없습니다.');
         // 담당자 카드 추가 (프로젝트 관련)
         const pmPerson = {
-            name: '박준혁',
-            position: '부장',
+            id: 'user-004',
+            name: '박명수',
+            position: '차장',
             department: '프로젝트관리팀',
-            email: 'junhyuk.park@hanwhalife.com',
-            phone: '02-789-1234',
+            email: 'myungsoo.park@hanwhalife.com',
+            phone: '010-3456-7890',
             extension: '1234'
         };
         const responsibleCard = createResponsibleCard(pmPerson);
@@ -1785,11 +1870,12 @@ function renderStatusCards(response) {
 
     // 프로젝트 담당자 카드 추가
     const pmPerson = {
-        name: '박준혁',
-        position: '부장',
+        id: 'user-004',
+        name: '박명수',
+        position: '차장',
         department: '프로젝트관리팀',
-        email: 'junhyuk.park@hanwhalife.com',
-        phone: '02-789-1234',
+        email: 'myungsoo.park@hanwhalife.com',
+        phone: '010-3456-7890',
         extension: '1234'
     };
     const responsibleCard = createResponsibleCard(pmPerson);

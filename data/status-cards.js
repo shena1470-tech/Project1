@@ -11,14 +11,15 @@ const STATUS_CARDS = [
         lastUpdated: '2025-09-04',
         department: '디지털프로덕트팀',
         manager: {
+            id: 'user-001',
             name: '김동준',
             position: '과장',
             email: 'dongjun.kim@hanwhalife.com'
         },
         members: [
-            { name: '이서연', position: '대리', role: 'UI/UX 디자인' },
-            { name: '박준혁', position: '사원', role: '프론트엔드 개발' },
-            { name: '최민지', position: '사원', role: '백엔드 개발' }
+            { id: 'user-002', name: '이정은', position: '대리', role: 'UI/UX 기획' },
+            { id: 'user-003', name: '유재석', position: '대리', role: '디지털 마케팅' },
+            { id: 'user-005', name: '정준하', position: '사원', role: '교육 프로그램' }
         ],
         description: '고객 경험 개선을 위한 디지털 플랫폼 전면 개편 프로젝트',
         keyTasks: [
@@ -41,14 +42,15 @@ const STATUS_CARDS = [
         lastUpdated: '2025-09-05',
         department: 'AI기술팀',
         manager: {
+            id: 'user-005',
             name: '정준하',
             position: '과장',
             email: 'junha.jung@hanwhalife.com'
         },
         members: [
-            { name: '김동준', position: '과장', role: '프로젝트 관리' },
-            { name: '이정은', position: '대리', role: 'AI 모델 개발' },
-            { name: '하동훈', position: '사원', role: '데이터 처리' }
+            { id: 'user-006', name: '정형돈', position: '부장', role: 'AI 서비스 총괄' },
+            { id: 'user-002', name: '이정은', position: '대리', role: 'UX 기획' },
+            { id: 'user-004', name: '박명수', position: '차장', role: 'AI 모델링' }
         ],
         description: '업무 효율성 향상을 위한 AI 기반 업무 지원 시스템 개발',
         keyTasks: [
@@ -72,14 +74,15 @@ const STATUS_CARDS = [
         lastUpdated: '2025-08-31',
         department: '모바일개발팀',
         manager: {
+            id: 'user-004',
             name: '박명수',
             position: '차장',
             email: 'myungsoo.park@hanwhalife.com'
         },
         members: [
-            { name: '김철수', position: '과장', role: 'iOS 개발' },
-            { name: '이영희', position: '대리', role: 'Android 개발' },
-            { name: '박지성', position: '사원', role: 'QA' }
+            { id: 'user-003', name: '유재석', position: '대리', role: '디지털 마케팅 전략' },
+            { id: 'user-007', name: '노홍철', position: '팀장', role: '디지털마케팅 팀 리더' },
+            { id: 'user-002', name: '이정은', position: '대리', role: 'UX 기획' }
         ],
         description: '사용자 경험 개선 및 최신 디자인 트렌드를 반영한 모바일 앱 전면 리뉴얼',
         keyTasks: [

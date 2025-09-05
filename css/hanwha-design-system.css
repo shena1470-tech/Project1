@@ -192,7 +192,6 @@ body {
     padding: var(--spacing-xl);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
 }
 
 /* Chat History Section */
@@ -257,16 +256,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
     padding: 8px 0;
 }
 
 .recent-chat-header .section-title {
-    font-size: 12px;
-    font-weight: 300;
+    font-size: 14px;
+    font-weight: initial;
     color: #5e5c5a;
     font-family: 'HanwhaGothic', sans-serif;
     line-height: 1.5;
+    margin: 0;
 }
 
 .new-chat-button {

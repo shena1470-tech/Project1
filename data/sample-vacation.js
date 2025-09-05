@@ -204,11 +204,12 @@ const vacationData = {
 
     // 휴가 담당자 정보
     responsiblePerson: {
-        name: '최수진',
-        position: '과장',
+        id: 'user-005',
+        name: '정준하',
+        position: '사원',
         department: '인사팀',
-        email: 'sujin.choi@hanwhalife.com',
-        phone: '02-789-4567',
+        email: 'junha.jung@hanwhalife.com',
+        phone: '010-4567-8901',
         extension: '4567'
     }
 };
